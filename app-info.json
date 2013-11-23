@@ -1,0 +1,4 @@
+{ "class": "app",
+  "description": "cbgm",
+  "include": ["base"]
+}

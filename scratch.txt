@@ -1,0 +1,251 @@
+targetMap: want to reach this state on all nodes & partitions in the cluster.
+currentMap: represents the combined view of currentNodeMap's from all nodes.
+currentNodeMap: represents the current state of partitions on a single node in the cluster.
+
+actor kinds:
+- participant (reads work queue and updates currentState)
+- spectator
+- conductor
+
+"requests": {
+  "checkHealth": ...,
+  "rebalance": ["validateSettings",
+                "planNewRebalanceMap",
+                "actualizeNewMap"],
+  "failOver": ["validateSettings",
+               "planNewFailOverMap",
+               "actualizeNewMap"]
+  "restoreBack": ["validateSettings",
+                  "planNewRestoreBackMap",
+                  "actualizeNewMap"]
+  "actualizeNewMap": ["validateSettings",
+                      "validateNewMap",
+                      "scheduleSteps",
+                      "executeSteps",
+                      "checkHealth"],
+  "cancelRebalance": ["cancelTakeoverSteps",
+                      "takeCurrentMapAsNewMap",
+                      "actualizeNewMap"],
+  "planNewRebalanceMap": ...
+      detect if maintenance mode
+      detect if swap rebalance
+  "health": ...,
+}
+
+hash-partitioned masterSlave:
+"settings": {
+  "constraints": {
+    "slave": 1,
+  },
+  "numPartitions": 1440,
+  "assignment": "masterSlave",
+  "keyFunc": "hash-crc32",
+},
+"map": {
+  "type": "target",
+  "numPartitions": 1440,
+  "partitionFunc": "hash-crc32",
+  "partitions": {
+    "0": {
+      "master": ["nodeA"],
+      "slave": ["nodeB"]
+    },
+    ...
+    "1439": {
+      "master": ["nodeA"],
+      "slave": ["nodeB"]
+    }
+  }
+}
+
+hash-partitioned multiMaster:
+"settings": {
+  "constraints": {
+    "master": 2,
+  },
+  "numPartitions": 1440,
+  "assignment": "multiMaster",
+  "keyFunc": "hash-crc32",
+},
+"map": {
+  "type": "current",
+  "numPartitions": 1440,
+  "partitionFunc": "hash-crc32",
+  "partitions": {
+    "0": {
+      "master": ["nodeA"],
+      "slave": ["nodeB"]
+    },
+    ...
+    "1439": {
+      "master": ["nodeB"],
+      "slave": ["nodeC"]
+    }
+  }
+}
+
+range-partitioned masterSlave:
+"settings": {
+  "constraints": {
+    "master": 2,
+  },
+  "assignment": "multiMaster",
+  "keyFunc": "range",
+},
+"map": {
+  "type": "target",
+  "partitionFunc": "range",
+  "partitions": {
+    "a-c": {
+      "source": "a-h",
+      "master": ["nodeA", "nodeB"]
+    },
+    "d-h": {
+      "source": "a-h",
+      "master": ["nodeA", "nodeB"]
+    },
+    "i-z": {
+      "master": ["nodeA", "nodeB"]
+    }
+  }
+}
+
+request to node X: for partition P on node X,
+  atomic state change from state S0 to S1.
+
+request between node X and node Y: for partition P, want node X to stream data to node Y,
+  with an optional atomic state change ("transition"), where...
+    1) node X optionally turns from state S0 into state S1,
+    2) node Y optionally turns from state S2 into state S3,
+    3) node Y optionally temporarily blocks requests of type R
+      until succeess/failure of step 3,
+    and state changes use OCC / CAS.
+
+  to handle takeovers,
+    when S0 == master, S1 == dead,
+         S2 == slave, S3 == master.
+  to handle replica,
+    when S0 == master, S1 == master,
+         S2 == dead, S3 == slave
+         or,
+         S2 == slave, S3 == slave
+    including XDCR and KV-to-BackIndex.
+
+model masterSlave:
+{
+  "states": {
+    "master": {
+      "description": "can handle reads and writes",
+      "appVisible": "master",
+      "appReadable": true,
+      "appWritable": true,
+      "priority": 40,
+      "transitions": [ "dead" ]
+      "constraints": 1,
+    },
+    "slave": {
+      "description": "a read-only copy that can be converted to master on failures",
+      "appVisible": "slave",
+      "appReadable": true,
+      "appWritable": false,
+      "max": "numWant.slave",
+      "priority": 30,
+      "transitions": [ "master", "dead" ]
+    },
+    "dead": {
+      "description": "partition data might still be on the node",
+      "appVisible": false,
+      "appReadable": false,
+      "appWritable": false,
+      "priority": 20,
+      "transitions": [ "slave", "null" ]
+    },
+    "null": {
+      "description": "partition is unknown to the node",
+      "appVisible": false,
+      "appReadable": false,
+      "appWritable": false,
+      "priority": 10,
+      "transitions": [ "dead" ]
+    }
+  }
+}
+
+To transition safely from dead to master, need to first become a slave.
+To transition safely from master to dead, need to first become a slave.
+
+partition state transitions:
+          | n d s m
+-------------------
+- null    | \ d d d
+- dead    | n \ s s
+- slave   | d d \ m
+- master  | d d d \
+
+pending is a transient / ephemeral state, that helps a takeover of a
+master by a slave; on power reboot, state devolves back to slave or
+master.
+
+partition running transitions:
+          | online | s w r c
+----------------------------
+- stopped | n      | \ w w w
+- warming | y      | c \ r c
+- running | y      | c c \ c
+- cooling | n      | s s r \
+
+persistence & replication pausing are orthogonal concerns.
+
+healthiness:
+- red
+- yellow
+- green
+
+node:
+{
+  "volumes": []
+}
+
+"config": {
+  "maxFullScansPerVolumeType": {
+    "ssd": 10,
+    "hdd": 1
+  }
+}
+
+how about proxy/router
+- should work
+- if have 40,000 nodes, and 40,000 clients,
+  then need levels of indirection, or proxy/router.
+-- that's just a different map,
+   with model of multiMaster, no slaves,
+   and R == W == 1 <= N
+
+how about failOvers
+- should work
+- this is just a slave-to-master state change,
+    as long as there are no other masters,
+    and
+
+rolling upgrade
+- maintenance mode
+-- need to hold old maps
+- swap rebalance
+-- needs to be part of planNewRebalanceMap
+- each process should detect when it's fed info that's the wrong
+  version window
+
+how about GC'ing dead partitions to null?
+
+how about other replica-like things
+- should work
+- index
+- backIndex
+-- need to record the source of each partition
+- XDCR
+- incremental backup
+
+how about range splitting/repartitioning?
+- outside range planner & range executor
+- actualizeNewMap needs to know about steps to...
+

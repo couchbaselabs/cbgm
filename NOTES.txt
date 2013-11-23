@@ -1,0 +1,91 @@
+400000 nodes
+docker cloud ready
+MTTR very, very fast
+
+mgmt container
+- jscion
+- per node
+-- watchdogs local processes
+-- multiple nodes per machine are possible (different ports)
+--- as either one jscion or multiple jscion's
+-- node can be tagged with multiple tags
+--- what if tags are contradictory?
+---- need logging/error
+---- need tag prioritization metadata
+-- child process declares what it needs
+--- cmd-line includes auth credentials to mgmt container
+--- cmd-line includes url's to other services needed by child process
+--- cmd-line includes ports where child process will provide its
+    services
+--- clean shutdown / hup protocol for when ports or things change
+
+how to get the s/w onto the node
+- is responsibility of mgmt container or outside processes (docker? git?)
+
+rebalance
+rolling upgrade
+- maintenance mode
+- swap rebalance
+- each process should detect when it's fed info that's the wrong
+  version window
+- apache helix style declarative state transitions & constraints
+
+chubby/zookeepr
+raft
+etcd
+leases
+serf
+
+versioning everywhere
+- config
+- data
+- mvcc
+
+flex-metadata
+
+declarative
+BOOM
+gdec
+
+multiple buckets
+multiplexing protocol
+
+transactions
+gtx / NBTA
+
+REST
+frames
+
+small parts / loosely joined / unix
+rebalance planner
+rebalance executor
+range planner
+range executor
+
+audit
+logging
+
+change log
+
+rocksdb ready
+
+go-slab ready
+no GC
+
+users
+roles, groups, acl's
+
+backup/restore
+backup server
+
+d3 visualizations
+threejs visualizations
+mortimer-esque visualizations
+
+stats
+aggregates
+time-series
+
+logging style guide
+
+XDCR
