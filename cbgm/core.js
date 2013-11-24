@@ -1,47 +1,50 @@
-function rebalance() {
+function rebalance(req) {
   return run([validatePartitionSettings,
               planNewRebalanceMap,
-              actualizeNewMap]);
+              actualizeNewMap], req);
 }
-function failOver() {
+function failOver(req) {
   return run([validatePartitionSettings,
               planNewFailOverMap,
-              actualizeNewMap]);
+              actualizeNewMap], req);
 }
-function restoreBack() {
+function restoreBack(req) {
   return run([validatePartitionSettings,
               planNewRestoreBackMap,
-              actualizeNewMap]);
+              actualizeNewMap], req);
 }
-function actualizeNewMap() {
+function cancel(req) {
+  return run([cancelTakeOverSteps,
+              takeCurrentMapAsNewMap,
+              actualizeNewMap], req);
+}
+function actualizeNewMap(req) {
   return run([validatePartitionSettings,
               validateNewMap,
               scheduleSteps,
               executeSteps,
-              checkHealth]);
+              checkHealth], req);
 }
-function cancelRebalance() {
-  return run([cancelTakeOverSteps,
-              takeCurrentMapAsNewMap,
-              actualizeNewMap]);
+function run(steps, req) {
+  return _.reduce(steps, function(err, step) { return err || step(req); });
 }
-function checkHealth() {
+function checkHealth(req) {
 }
-function validatePartitionSettings() {
+function validatePartitionSettings(req) {
 }
-function planNewRebalanceMap() {
+function planNewRebalanceMap(req) {
 }
-function planNewFailOverMap() {
+function planNewFailOverMap(req) {
 }
-function planNewRestoreBackMap() {
+function planNewRestoreBackMap(req) {
 }
-function validateNewMap() {
+function validateNewMap(req) {
 }
-function scheduleSteps() {
+function scheduleSteps(req) {
 }
-function executeSteps() {
+function executeSteps(req) {
 }
-function cancelTakeOverSteps() {
+function cancelTakeOverSteps(req) {
 }
-function takeCurrentMapAsNewMap() {
+function takeCurrentMapAsNewMap(req) {
 }
