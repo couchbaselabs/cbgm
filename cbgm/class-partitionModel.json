@@ -1,5 +1,5 @@
 { "class": "class",
-  "name": "partitionAssignment",
+  "name": "partitionModel",
   "super": "object",
   "properties": [
     { "name": "description",
@@ -7,7 +7,7 @@
     },
     { "class": "propertyDict",
       "name": "states",
-      "propertyKind": "partitionState"
+      "propertyKind": "partitionModelState"
     }
   ]
 }

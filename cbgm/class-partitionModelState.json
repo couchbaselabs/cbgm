@@ -1,5 +1,5 @@
 { "class": "class",
-  "name": "partitionState",
+  "name": "partitionModelState",
   "super": "object",
   "properties": [
     { "name": "description",

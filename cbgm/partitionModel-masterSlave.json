@@ -1,5 +1,5 @@
 {
-  "class": "partitionAssignment",
+  "class": "partitionModel",
   "description": "single master, multiple slaves partition allocation",
   "states": {
     "master": {

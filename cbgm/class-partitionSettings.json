@@ -1,0 +1,19 @@
+{ "class": "class",
+  "name": "partitionSettings",
+  "super": "object",
+  "properties": [
+    { "name": "numPartitions",
+      "propertyKind": "int"
+    },
+    { "name": "assignment",
+      "propertyKind": "string"
+    },
+    { "name": "keyFunc",
+      "propertyKind": "string"
+    },
+    { "class": "propertyDict",
+      "name": "constraints",
+      "propertyKind": "int"
+    }
+  ]
+}

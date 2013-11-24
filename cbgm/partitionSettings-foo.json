@@ -1,0 +1,9 @@
+{
+  "class": "partitionSettings",
+  "constraints": {
+    "slave": 1
+  },
+  "numPartitions": 1440,
+  "assignment": "masterSlave",
+  "keyFunc": "hash-crc32"
+}
