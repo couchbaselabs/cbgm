@@ -1,0 +1,6 @@
+{ "class": "class",
+  "name": "partitionState",
+  "super": "object",
+  "properties": [],
+  "openPropertiesKind": "any"
+}

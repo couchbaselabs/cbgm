@@ -2,9 +2,6 @@
   "name": "partitionMap",
   "super": "object",
   "properties": [
-    { "name": "target",
-      "propertyKind": "string"
-    },
     { "class": "propertyArray",
       "name": "nodes",
       "propertyKind": "string"
@@ -17,7 +14,7 @@
     },
     { "class": "propertyDict",
       "name": "partitions",
-      "propertyKind": "dict"
+      "propertyKind": "partitionState"
     }
   ]
 }

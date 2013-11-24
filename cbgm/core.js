@@ -1,4 +1,5 @@
 function rebalance(req) {
+  // Maintenance mode and swap rebalance are detected as part of regular rebalance?
   return run([validatePartitionSettings,
               planNewRebalanceMap,
               actualizeNewMap], req);

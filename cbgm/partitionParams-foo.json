@@ -1,5 +1,5 @@
 {
-  "class": "partitionSettings",
+  "class": "partitionParams",
   "constraints": {
     "slave": 1
   },

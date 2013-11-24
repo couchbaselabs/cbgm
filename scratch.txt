@@ -44,7 +44,7 @@ hash-partitioned masterSlave:
 "map": {
   "type": "target",
   "numPartitions": 1440,
-  "partitionFunc": "hash-crc32",
+  "keyFunc": "hash-crc32",
   "partitions": {
     "0": {
       "master": ["nodeA"],
@@ -70,7 +70,7 @@ hash-partitioned multiMaster:
 "map": {
   "type": "current",
   "numPartitions": 1440,
-  "partitionFunc": "hash-crc32",
+  "keyFunc": "hash-crc32",
   "partitions": {
     "0": {
       "master": ["nodeA"],
@@ -90,11 +90,11 @@ range-partitioned masterSlave:
     "master": 2,
   },
   "assignment": "multiMaster",
-  "keyFunc": "range",
+  "keyFunc": "range"
 },
 "map": {
   "type": "target",
-  "partitionFunc": "range",
+  "keyFunc": "range",
   "partitions": {
     "a-c": {
       "source": "a-h",
@@ -130,46 +130,6 @@ request between node X and node Y: for partition P, want node X to stream data t
          or,
          S2 == slave, S3 == slave
     including XDCR and KV-to-BackIndex.
-
-model masterSlave:
-{
-  "states": {
-    "master": {
-      "description": "can handle reads and writes",
-      "appVisible": "master",
-      "appReadable": true,
-      "appWritable": true,
-      "priority": 40,
-      "transitions": [ "dead" ]
-      "constraints": 1,
-    },
-    "slave": {
-      "description": "a read-only copy that can be converted to master on failures",
-      "appVisible": "slave",
-      "appReadable": true,
-      "appWritable": false,
-      "max": "numWant.slave",
-      "priority": 30,
-      "transitions": [ "master", "dead" ]
-    },
-    "dead": {
-      "description": "partition data might still be on the node",
-      "appVisible": false,
-      "appReadable": false,
-      "appWritable": false,
-      "priority": 20,
-      "transitions": [ "slave", "null" ]
-    },
-    "null": {
-      "description": "partition is unknown to the node",
-      "appVisible": false,
-      "appReadable": false,
-      "appWritable": false,
-      "priority": 10,
-      "transitions": [ "dead" ]
-    }
-  }
-}
 
 To transition safely from dead to master, need to first become a slave.
 To transition safely from master to dead, need to first become a slave.

@@ -1,0 +1,14 @@
+{ "class": "class",
+  "name": "bucketTour",
+  "super": "object",
+  "properties": [
+    { "class": "propertyDict",
+      "name": "partitionParamsLog",
+      "propertyKind": "partitionParams"
+    },
+    { "class": "propertyDict",
+      "name": "partitionMapsLog",
+      "propertyKind": "partitionMap"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "class": "bucketTour",
+  "partitionParamsLog": {
+    "20131120-000000": {
+      "constraints": {
+        "slave": 1
+      },
+      "numPartitions": 10,
+      "assignment": "masterSlave",
+      "keyFunc": "hash-crc32",
+      "nodes": ["nodeA", "nodeB"]
+    }
+  },
+  "partitionMapsLog": {
+    "20131120-000000": {
+      "nodes": ["nodeA", "nodeB"],
+      "numPartitions": 1440,
+      "keyFunc": "hash-crc32",
+      "partitions": {
+        "0": {
+          "master": [0],
+          "slave": [1]
+        },
+        "1439": {
+          "master": [0],
+          "slave": [1]
+        }
+      }
+    }
+  }
+}
