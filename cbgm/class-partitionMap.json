@@ -1,0 +1,23 @@
+{ "class": "class",
+  "name": "partitionMap",
+  "super": "object",
+  "properties": [
+    { "name": "target",
+      "propertyKind": "string"
+    },
+    { "class": "propertyArray",
+      "name": "nodes",
+      "propertyKind": "string"
+    },
+    { "name": "numPartitions",
+      "propertyKind": "int"
+    },
+    { "name": "keyFunc",
+      "propertyKind": "string"
+    },
+    { "class": "propertyDict",
+      "name": "partitions",
+      "propertyKind": "dict"
+    }
+  ]
+}
