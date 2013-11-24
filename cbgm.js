@@ -1,2 +1,0 @@
-function main(ctxIn, page) {
-}

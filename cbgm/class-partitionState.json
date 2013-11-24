@@ -1,0 +1,31 @@
+{ "class": "class",
+  "name": "partitionState",
+  "super": "object",
+  "properties": [
+    { "name": "description",
+      "propertyKind": "string"
+    },
+    { "name": "appVisible",
+      "propertyKind": "string"
+    },
+    { "name": "appReadable",
+      "propertyKind": "boolean"
+    },
+    { "name": "appWritable",
+      "propertyKind": "boolean"
+    },
+    { "name": "priority",
+      "propertyKind": "int"
+    },
+    { "name": "constraints",
+      "propertyKind": "int"
+    },
+    { "name": "max",
+      "propertyKind": "string"
+    },
+    { "class": "propertyDict",
+      "name": "transitions",
+      "propertyKind": "string"
+    }
+  ]
+}

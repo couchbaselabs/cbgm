@@ -1,0 +1,13 @@
+{ "class": "class",
+  "name": "partitionAssignment",
+  "super": "object",
+  "properties": [
+    { "name": "description",
+      "propertyKind": "string"
+    },
+    { "class": "propertyDict",
+      "name": "states",
+      "propertyKind": "partitionState"
+    }
+  ]
+}

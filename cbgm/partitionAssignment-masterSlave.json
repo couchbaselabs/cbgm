@@ -1,0 +1,56 @@
+{
+  "class": "partitionAssignment",
+  "description": "single master, multiple slaves partition allocation",
+  "states": {
+    "master": {
+      "description": "can handle reads and writes",
+      "appVisible": "master",
+      "appReadable": true,
+      "appWritable": true,
+      "priority": 40,
+      "constraints": 1,
+      "transitions": {
+        "null": "dead",
+        "dead": "dead",
+        "slave": "dead"
+      }
+    },
+    "slave": {
+      "description": "a read-only copy that can be converted to master on failures",
+      "appVisible": "slave",
+      "appReadable": true,
+      "appWritable": false,
+      "max": "numWant.slave",
+      "priority": 30,
+      "transitions": {
+        "null": "dead",
+        "dead": "dead",
+        "master": "master"
+      }
+    },
+    "dead": {
+      "description": "partition data might still be on the node",
+      "appVisible": false,
+      "appReadable": false,
+      "appWritable": false,
+      "priority": 20,
+      "transitions": {
+        "null": "null",
+        "slave": "slave",
+        "master": "slave"
+      }
+    },
+    "null": {
+      "description": "partition is unknown to the node",
+      "appVisible": false,
+      "appReadable": false,
+      "appWritable": false,
+      "priority": 10,
+      "transitions": {
+        "dead": "dead",
+        "slave": "dead",
+        "master": "dead"
+      }
+    }
+  }
+}
