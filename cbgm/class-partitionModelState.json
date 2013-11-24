@@ -20,9 +20,6 @@
     { "name": "constraints",
       "propertyKind": "int"
     },
-    { "name": "max",
-      "propertyKind": "string"
-    },
     { "class": "propertyDict",
       "name": "transitions",
       "propertyKind": "string"
