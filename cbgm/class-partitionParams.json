@@ -1,6 +1,6 @@
 { "class": "class",
   "name": "partitionParams",
-  "super": "object",
+  "super": "bucketEvent",
   "properties": [
     { "name": "numPartitions",
       "propertyKind": "int"

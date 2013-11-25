@@ -1,0 +1,9 @@
+{ "class": "class",
+  "name": "bucketEvent",
+  "super": "object",
+  "properties": [
+    { "name": "when",
+      "propertyKind": "dateTimeStamp"
+    }
+  ]
+}

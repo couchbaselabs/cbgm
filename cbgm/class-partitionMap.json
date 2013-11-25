@@ -1,6 +1,6 @@
 { "class": "class",
   "name": "partitionMap",
-  "super": "object",
+  "super": "bucketEvent",
   "properties": [
     { "class": "propertyArray",
       "name": "nodes",

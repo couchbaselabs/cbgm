@@ -1,35 +1,41 @@
+/* Core rebalance algorithms, no UI. */
+
 function rebalance(req) {
-  // Maintenance mode and swap rebalance are detected as part of regular rebalance?
-  return run([validatePartitionSettings,
-              planNewRebalanceMap,
-              actualizeNewMap], req);
+  // TODO: maintenance mode & swap rebalance detected as part of rebalance.
+  return run(req,
+             validatePartitionSettings,
+             planNewRebalanceMap,
+             actualizeNewMap);
 }
 function failOver(req) {
-  return run([validatePartitionSettings,
-              planNewFailOverMap,
-              actualizeNewMap], req);
+  return run(req,
+             validatePartitionSettings,
+             planNewFailOverMap,
+             actualizeNewMap);
 }
 function restoreBack(req) {
-  return run([validatePartitionSettings,
-              planNewRestoreBackMap,
-              actualizeNewMap], req);
+  return run(req,
+             validatePartitionSettings,
+             planNewRestoreBackMap,
+             actualizeNewMap);
 }
 function cancel(req) {
-  return run([cancelTakeOverSteps,
-              takeCurrentMapAsNewMap,
-              actualizeNewMap], req);
+  return run(req,
+             cancelTakeOverSteps,
+             takeCurrentMapAsNewMap,
+             actualizeNewMap);
 }
 function actualizeNewMap(req) {
-  return run([validatePartitionSettings,
-              validateNewMap,
-              scheduleSteps,
-              executeSteps,
-              checkHealth], req);
+  return run(req,
+             validatePartitionSettings,
+             validateNewMap,
+             scheduleSteps,
+             executeSteps,
+             checkHealth);
 }
-function run(steps, req) {
-  return _.reduce(steps, function(err, step) { return err || step(req); });
-}
-function checkHealth(req) {
+function run(req) { // Rest of arguments are steps to apply to req as long as no req.err.
+  return _.reduce(_.rest(arguments),
+                  function(req, step) { return req.err ? req : step(req) || req; }, req);
 }
 function validatePartitionSettings(req) {
 }
@@ -48,4 +54,6 @@ function executeSteps(req) {
 function cancelTakeOverSteps(req) {
 }
 function takeCurrentMapAsNewMap(req) {
+}
+function checkHealth(req) {
 }
