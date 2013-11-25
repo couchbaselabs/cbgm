@@ -19,7 +19,7 @@ function restoreBack(req) {
              planNewRestoreBackMap,
              actualizeNewMap);
 }
-function cancel(req) {
+function cancelRebalance(req) {
   return run(req,
              cancelTakeOverSteps,
              takeCurrentMapAsNewMap,

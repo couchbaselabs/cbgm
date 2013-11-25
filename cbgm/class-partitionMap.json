@@ -1,17 +1,7 @@
 { "class": "class",
   "name": "partitionMap",
-  "super": "bucketEvent",
+  "super": "partitionParams",
   "properties": [
-    { "class": "propertyArray",
-      "name": "nodes",
-      "propertyKind": "string"
-    },
-    { "name": "numPartitions",
-      "propertyKind": "int"
-    },
-    { "name": "keyFunc",
-      "propertyKind": "string"
-    },
     { "class": "propertyDict",
       "name": "partitions",
       "propertyKind": "partitionState"

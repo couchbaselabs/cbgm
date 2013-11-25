@@ -2,22 +2,22 @@
   "name": "partitionParams",
   "super": "bucketEvent",
   "properties": [
-    { "name": "numPartitions",
-      "propertyKind": "int"
+    { "name": "keyFunc",
+      "propertyKind": "string"
     },
     { "name": "assignment",
       "propertyKind": "string"
     },
-    { "name": "keyFunc",
+    { "class": "propertyArray",
+      "name": "nodes",
       "propertyKind": "string"
+    },
+    { "name": "numPartitions",
+      "propertyKind": "int"
     },
     { "class": "propertyDict",
       "name": "constraints",
       "propertyKind": "int"
-    },
-    { "class": "propertyArray",
-      "name": "nodes",
-      "propertyKind": "string"
     }
   ]
 }

@@ -2,25 +2,29 @@
   "events": [
     { "class": "partitionParams",
       "when": "2013-10-20T10:00:00.000Z",
+      "keyFunc": "hash-crc32",
+      "assignment": "masterSlave",
+      "nodes": ["nodeA", "nodeB"],
+      "numPartitions": 10,
       "constraints": {
         "slave": 1
-      },
-      "numPartitions": 10,
-      "assignment": "masterSlave",
-      "keyFunc": "hash-crc32",
-      "nodes": ["nodeA", "nodeB"]
+      }
     },
     { "class": "partitionMap",
       "when": "2013-10-20T10:01:00.000Z",
-      "nodes": ["nodeA", "nodeB"],
-      "numPartitions": 1440,
       "keyFunc": "hash-crc32",
+      "assignment": "masterSlave",
+      "nodes": ["nodeA", "nodeB"],
+      "numPartitions": 10,
+      "constraints": {
+        "slave": 1
+      },
       "partitions": {
         "0": {
           "master": [0],
           "slave": [1]
         },
-        "1439": {
+        "9": {
           "master": [0],
           "slave": [1]
         }
