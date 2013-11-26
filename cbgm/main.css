@@ -6,13 +6,16 @@
     margin-top: 3.5em;
     margin-bottom: 3.5em;
 }
-.visual li {
+.visual .partitionMap {
     display: inline-block;
     vertical-align: top;
     margin-right: 1em;
-}
-.visual .partitionMap {
+    margin-top: 8em;
     padding-bottom: 1em;
+}
+.visual .partition_when {
+    position: absolute;
+    -webkit-transform: translate(0,-4.5em) rotate(-30deg);
 }
 .visual .partition {
     position: relative;

@@ -3,6 +3,7 @@
     {{#sortDesc(obj.events,"when"):eventIdx}}
       {{# class == 'partitionMap' }}
         <li class="partitionMap">
+          <div class="partition_when">{{when}}</div>
           {{#partitions:partitionId}}
             <div class="partition">
               {{partitionId}}
