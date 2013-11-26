@@ -5,10 +5,8 @@
       {{#.class == 'partitionMap'}}
         <li class="partitionMap">
           {{when}}
-          <ul class="partitions">
           {{#partitions:partitionId}}
-            <li>
-              {{partitionId}}:
+            <div>
               {{#obj.events[eventIdx].nodes:nodeIdx}}
                 <div class="node">
                   {{#partitions[partitionId]:state}}
@@ -18,9 +16,8 @@
                   {{/partitions[partitionId]}}
                 </div>
               {{/obj.events[eventIdx].nodes}}
-            </li>
+            </div>
           {{/partitions}}
-          </ul>
         </li>
       {{/}}
     {{/events}}

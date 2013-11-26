@@ -6,36 +6,21 @@
     margin-top: 3.5em;
     margin-bottom: 3.5em;
 }
-.visual .nodeId {
-    display: none;
-}
-.visual .nodeId:hover {
-    display: block;
-}
 .visual .node {
-    position: relative;
     display: inline-block;
-    min-width: 1em;
-    min-height: 1em;
 }
 .visual .node .master {
-    position: relative;
-    display: block;
-    min-width: 1em;
-    min-height: 1em;
+    width: 1em;
+    height: 1em;
     background-color: green;
 }
 .visual .node .slave {
-    position: relative;
-    display: block;
-    min-width: 1em;
-    min-height: 1em;
+    width: 1em;
+    height: 1em;
     background-color: orange;
 }
 .visual .node .dead {
-    position: relative;
-    display: block;
-    min-width: 1em;
-    min-height: 1em;
-    background-color: grey;
+    width: 1em;
+    height: 1em;
+    background-color: #bbb;
 }
