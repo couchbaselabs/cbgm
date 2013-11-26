@@ -23,8 +23,8 @@ function registerEventHandlers(ctx, r) {
         alert("error: obj is not a bucketEvents");
         return;
       }
-      var want = r.get("want")
-      var res = rebalance({
+      var want = r.get("want");
+      var res = rebalance(ctx, {
         prevBucketEvents: deepClone(obj),
         wantPartitionParams: ctx.newObj("partitionParams",
                                         { keyFunc: want.keyFunc,

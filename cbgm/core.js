@@ -1,39 +1,39 @@
 /* Core rebalance algorithms, no UI. */
 
-function rebalance(req) {
+function rebalance(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
-  return run(req,
+  return run(ctx, req,
              validatePartitionSettings,
              planNewRebalanceMap,
              actualizeNewMap);
 }
-function failOver(req) {
-  return run(req,
+function failOver(ctx, req) {
+  return run(ctx, req,
              validatePartitionSettings,
              planNewFailOverMap,
              actualizeNewMap);
 }
-function restoreBack(req) {
-  return run(req,
+function restoreBack(ctx, req) {
+  return run(ctx, req,
              validatePartitionSettings,
              planNewRestoreBackMap,
              actualizeNewMap);
 }
-function cancelRebalance(req) {
-  return run(req,
+function cancelRebalance(ctx, req) {
+  return run(ctx, req,
              cancelTakeOverSteps,
              takeCurrentMapAsNewMap,
              actualizeNewMap);
 }
-function actualizeNewMap(req) {
-  return run(req,
+function actualizeNewMap(ctx, req) {
+  return run(ctx, req,
              validatePartitionSettings,
              validateNewMap,
              scheduleSteps,
              executeSteps,
              checkHealth);
 }
-function validatePartitionSettings(req) {
+function validatePartitionSettings(ctx, req) {
   req.nextBucketEvents = _.clone(req.prevBucketEvents);
   req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [], "when");
 
@@ -52,27 +52,27 @@ function validatePartitionSettings(req) {
       }, null);
   }
 }
-function planNewRebalanceMap(req) {
-  console.log(req);
+function planNewRebalanceMap(ctx, req) {
+  req.nextPartitionMap = ctx.newObj("partitionMap");
 }
-function planNewFailOverMap(req) {
+function planNewFailOverMap(ctx, req) {
 }
-function planNewRestoreBackMap(req) {
+function planNewRestoreBackMap(ctx, req) {
 }
-function validateNewMap(req) {
+function validateNewMap(ctx, req) {
 }
-function scheduleSteps(req) {
+function scheduleSteps(ctx, req) {
 }
-function executeSteps(req) {
+function executeSteps(ctx, req) {
 }
-function cancelTakeOverSteps(req) {
+function cancelTakeOverSteps(ctx, req) {
 }
-function takeCurrentMapAsNewMap(req) {
+function takeCurrentMapAsNewMap(ctx, req) {
 }
-function checkHealth(req) {
+function checkHealth(ctx, req) {
 }
-function run(req) { // Rest of arguments are steps to apply to req as long as no req.err.
-  return _.reduce(_.rest(arguments),
-                  function(req, step) { return req.err ? req : step(req) || req; }, req);
+function run(ctx, req) { // Rest of arguments are steps to apply to req as long as no req.err.
+  return _.reduce(_.rest(arguments, 2),
+                  function(req, step) { return req.err ? req : step(ctx, req) || req; }, req);
 }
 function sortDesc(a, field) { return _.sortBy(a, field).reverse(); }
