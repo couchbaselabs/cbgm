@@ -1,7 +1,6 @@
 /* Core rebalance algorithms, no UI. */
 
 function rebalance(ctx, req) {
-  // TODO: maintenance mode & swap rebalance detected as part of rebalance.
   return run(ctx, req,
              validatePartitionSettings,
              planNewRebalanceMap,
@@ -33,6 +32,9 @@ function actualizeNewMap(ctx, req) {
              executeSteps,
              checkHealth);
 }
+
+// --------------------------------------------------------
+
 function validatePartitionSettings(ctx, req) {
   req.nextBucketEvents = _.clone(req.prevBucketEvents);
   req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [], "when");
@@ -61,32 +63,46 @@ function validatePartitionSettings(ctx, req) {
     req.arrNodesRemoved = [];
     req.arrNodesSame = [];
   }
-  function mapAdd(m, k) { m[k] = {}; return m; }
-  req.nodesAdded = _.reduce(req.arrNodesAdded, mapAdd, {});
-  req.nodesRemoved = _.reduce(req.arrNodesRemoved, mapAdd, {});
-  req.nodesSame = _.reduce(req.arrNodesSame, mapAdd, {});
+  function arrToMap(a) { return _.reduce(a, function(m, k) { m[k] = {}; return m; }, {}); }
+  req.nodesAdded   = arrToMap(req.arrNodesAdded);
+  req.nodesRemoved = arrToMap(req.arrNodesRemoved);
+  req.nodesSame    = arrToMap(req.arrNodesSame);
 }
+
 function planNewRebalanceMap(ctx, req) {
+  // TODO: maintenance mode & swap rebalance detected as part of rebalance.
   req.nextPartitionMap = ctx.newObj("partitionMap", req.wantPartitionParams).result;
 }
+
 function planNewFailOverMap(ctx, req) {
 }
+
 function planNewRestoreBackMap(ctx, req) {
 }
+
 function validateNewMap(ctx, req) {
 }
+
 function scheduleSteps(ctx, req) {
 }
+
 function executeSteps(ctx, req) {
 }
+
 function cancelTakeOverSteps(ctx, req) {
 }
+
 function takeCurrentMapAsNewMap(ctx, req) {
 }
+
 function checkHealth(ctx, req) {
 }
+
+// --------------------------------------------------------
+
 function run(ctx, req) { // Rest of arguments are steps to apply to req as long as no req.err.
   return _.reduce(_.rest(arguments, 2),
                   function(req, step) { return req.err ? req : step(ctx, req) || req; }, req);
 }
+
 function sortDesc(a, field) { return _.sortBy(a, field).reverse(); }

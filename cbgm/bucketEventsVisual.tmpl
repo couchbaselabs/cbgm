@@ -1,6 +1,6 @@
 {{# obj.class == 'bucketEvents' }}
   <ul class="visual">
-    {{#sortDesc(obj.events,"when"):eventIdx}}
+    {{#obj.events:eventIdx}}
       <li class="bucketEvent">
         <div class="bucketEvent_when">{{when}}</div>
         {{# class == 'partitionMap' }}
@@ -35,6 +35,6 @@
           </div>
         {{/}}
       </li>
-    {{/}}
+    {{/obj.events}}
   </ul>
 {{/}}

@@ -3,16 +3,9 @@ function main(ctx, page) {
   page.want = page.want ||
     { keyFunc: "hash-crc32", assignment: "masterSlave", nodes: "a",
       numPartitions: 10, slaves: 1 };
+  sortEvents(page.obj);
   page.r = registerEventHandlers(ctx, page.render("main"));
-}
-
-function deepClone(x) {
-  return JSON.parse(JSON.stringify(x));
-}
-
-function render(r, obj) {
-  r.set("obj", obj);
-  r.set("objJSON", JSON.stringify(obj));
+  refresh(page.r, page.obj);
 }
 
 function registerEventHandlers(ctx, r) {
@@ -41,9 +34,25 @@ function registerEventHandlers(ctx, r) {
       }
       alert("done");
       if (res.nextBucketEvents) {
-        render(r, res.nextBucketEvents);
+        refresh(r, res.nextBucketEvents);
       }
     }
   });
   return r;
+}
+
+function sortEvents(obj) {
+  if (obj.events) {
+    obj.events = sortDesc(obj.events, "when");
+  }
+}
+
+function refresh(r, obj) {
+  sortEvents(obj);
+  r.set("obj", obj);
+  r.set("objJSON", JSON.stringify(obj));
+}
+
+function deepClone(x) {
+  return JSON.parse(JSON.stringify(x));
 }
