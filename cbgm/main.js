@@ -10,12 +10,13 @@ function registerEventHandlers(ctx, r) {
   r.on({
     "rebalance": function(event) {
       var obj = r.get("obj");
-      if (obj.class != "bucketTour") {
-        alert("obj is not a bucketTour");
+      if (obj.class != "bucketEvents") {
+        alert("obj is not a bucketEvents");
         return;
       }
-      var res = rebalance({ prevBucketTour: deepClone(obj) }) ||
-        { err: "something wrong happened" };
+      var res = rebalance({ prevBucketEvents: deepClone(obj) }) ||
+        { err: "unexpected rebalance error" };
+      console.log(res)
       alert(res.err || "done");
     }
   });
