@@ -4,7 +4,7 @@
       "when": "2013-10-20T10:00:00.000Z",
       "keyFunc": "hash-crc32",
       "assignment": "masterSlave",
-      "nodes": ["nodeA", "nodeB", "nodeC", "nodeD", "nodeE"],
+      "nodes": ["a", "b", "c", "d", "e"],
       "numPartitions": 10,
       "constraints": {
         "slave": 1
@@ -14,7 +14,7 @@
       "when": "2013-10-20T10:01:00.000Z",
       "keyFunc": "hash-crc32",
       "assignment": "masterSlave",
-      "nodes": ["nodeA", "nodeB", "nodeC", "nodeD", "nodeE"],
+      "nodes": ["a", "b", "c", "d", "e"],
       "numPartitions": 10,
       "constraints": {
         "slave": 1
@@ -38,7 +38,7 @@
       "when": "2013-10-20T10:02:00.000Z",
       "keyFunc": "hash-crc32",
       "assignment": "masterSlave",
-      "nodes": ["nodeA", "nodeB"],
+      "nodes": ["a", "b"],
       "numPartitions": 10,
       "constraints": {
         "slave": 1

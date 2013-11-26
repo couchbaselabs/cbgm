@@ -50,7 +50,21 @@ function validatePartitionSettings(ctx, req) {
         }
         return memo;
       }, null);
+    req.arrNodesAdded =
+      _.difference(req.wantPartitionParams.nodes, req.lastPartitionParams.nodes);
+    req.arrNodesRemoved =
+      _.difference(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
+    req.arrNodesSame =
+      _.intersection(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
+  } else {
+    req.arrNodesAdded = req.wantPartitionParams.nodes;
+    req.arrNodesRemoved = [];
+    req.arrNodesSame = [];
   }
+  function mapAdd(m, k) { m[k] = {}; return m; }
+  req.nodesAdded = _.reduce(req.arrNodesAdded, mapAdd, {});
+  req.nodesRemoved = _.reduce(req.arrNodesRemoved, mapAdd, {});
+  req.nodesSame = _.reduce(req.arrNodesSame, mapAdd, {});
 }
 function planNewRebalanceMap(ctx, req) {
   req.nextPartitionMap = ctx.newObj("partitionMap", req.wantPartitionParams).result;
