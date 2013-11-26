@@ -33,6 +33,38 @@
           "slave": [0]
         }
       }
+    },
+    { "class": "partitionMap",
+      "when": "2013-10-20T10:02:00.000Z",
+      "keyFunc": "hash-crc32",
+      "assignment": "masterSlave",
+      "nodes": ["nodeA", "nodeB"],
+      "numPartitions": 10,
+      "constraints": {
+        "slave": 1
+      },
+      "partitions": {
+        "0": {
+          "master": [0],
+          "slave": [1]
+        },
+        "6": {
+          "dead": [],
+          "slave": []
+        },
+        "7": {
+          "dead": [1],
+          "slave": []
+        },
+        "8": {
+          "dead": [1, 0],
+          "slave": []
+        },
+        "9": {
+          "master": [1],
+          "slave": [0]
+        }
+      }
     }
   ]
 }

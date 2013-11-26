@@ -1,26 +1,28 @@
-{{#obj.class == 'bucketEvents'}}
-  {{#obj}}
-    <ul class="visual">
-    {{#events:eventIdx}}
-      {{#.class == 'partitionMap'}}
+{{# obj.class == 'bucketEvents' }}
+  <ul class="visual">
+    {{#obj.events:eventIdx}}
+      {{# class == 'partitionMap' }}
         <li class="partitionMap">
           {{when}}
           {{#partitions:partitionId}}
-            <div>
+            <div class="partition">
+              {{partitionId}}
               {{#obj.events[eventIdx].nodes:nodeIdx}}
                 <div class="node">
                   {{#partitions[partitionId]:state}}
-                    {{# _.contains(partitions[partitionId][state],nodeIdx) }}
+                    {{# _.contains(partitions[partitionId][state], nodeIdx) }}
                       <div class="{{state}}"></div>
                     {{/}}
-                  {{/partitions[partitionId]}}
+                  {{/}}
+                  {{^ _.contains(_.flatten(_.values(partitions[partitionId])), nodeIdx) }}
+                    <div class="null"></div>
+                  {{/}}
                 </div>
-              {{/obj.events[eventIdx].nodes}}
+              {{/}}
             </div>
           {{/partitions}}
         </li>
       {{/}}
-    {{/events}}
-    </ul>
-  {{/obj}}
+    {{/obj.events}}
+  </ul>
 {{/}}

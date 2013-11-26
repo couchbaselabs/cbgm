@@ -6,21 +6,34 @@
     margin-top: 3.5em;
     margin-bottom: 3.5em;
 }
+.visual .partitionMap {
+    padding-bottom: 1em;
+}
+.visual .partition {
+    position: relative;
+    min-width: 200px;
+    height: 8px;
+    font-size: 6px;
+}
 .visual .node {
     display: inline-block;
+    border: 1px solid #888;
+}
+.visual .node div {
+    position: relative;
+    width: 10px;
+    height: 8px;
 }
 .visual .node .master {
-    width: 1em;
-    height: 1em;
     background-color: green;
 }
 .visual .node .slave {
-    width: 1em;
-    height: 1em;
     background-color: orange;
 }
 .visual .node .dead {
-    width: 1em;
-    height: 1em;
-    background-color: #bbb;
+    background-color: #ccc;
 }
+.visual .node .null {
+    background-color: white;
+}
+
