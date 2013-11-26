@@ -5,7 +5,14 @@
     <div class="span3">
       <div class="lhs">
         <h3>cbgm</h3>
-
+        <div>
+          <label>nodes (comma separated)</label>
+          <input type="text" value="{{want.nodes}}"/>
+          <label>numPartitions</label>
+          <input type="text" value="{{want.numPartitions}}"/>
+          <label>slaves</label>
+          <input type="text" value="{{want.slaves}}"/>
+        </div>
         <button class="btn btn-small" on-click="rebalance">
           rebalance
         </button>

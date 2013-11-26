@@ -1,5 +1,8 @@
 function main(ctx, page) {
   page.sortDesc = sortDesc;
+  page.want = page.want ||
+    { keyFunc: "hash-crc32", assignment: "masterSlave", nodes: "a",
+      numPartitions: 10, slaves: 1 };
   page.r = registerEventHandlers(ctx, page.render("main"));
 }
 
@@ -20,7 +23,16 @@ function registerEventHandlers(ctx, r) {
         alert("error: obj is not a bucketEvents");
         return;
       }
-      var res = rebalance({ prevBucketEvents: deepClone(obj) }) ||
+      var want = r.get("want")
+      var res = rebalance({
+        prevBucketEvents: deepClone(obj),
+        wantPartitionParams: ctx.newObj("partitionParams",
+                                        { keyFunc: want.keyFunc,
+                                            assignment: want.assignment,
+                                            nodes: want.nodes.split(','),
+                                            numPartitions: parseInt(want.numPartitions),
+                                            constraints: { slaves: parseInt(want.slaves) }
+                                        }).result }) ||
         { err: "unexpected rebalance error" };
       console.log(res);
       if (res.err) {
