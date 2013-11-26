@@ -1,9 +1,15 @@
 {{# obj.class == 'bucketEvents' }}
   <ul class="visual">
     {{#sortDesc(obj.events,"when"):eventIdx}}
-      {{# class == 'partitionMap' }}
-        <li class="partitionMap">
-          <div class="partition_when">{{when}}</div>
+      <li class="bucketEvent">
+        <div class="bucketEvent_when">{{when}}</div>
+        {{# class == 'partitionMap' }}
+          <div class="nodes">
+            <div class="partitionId">{{partitionId}}</div>
+            {{#obj.events[eventIdx].nodes:nodeIdx}}
+              <div class="nodeId">{{.}}</div>
+            {{/}}
+          </div>
           {{#partitions:partitionId}}
             <div class="partition">
               <div class="partitionId">{{partitionId}}</div>
@@ -21,8 +27,14 @@
               {{/}}
             </div>
           {{/partitions}}
-        </li>
-      {{/}}
+        {{/}}
+        {{# class == 'partitionParams' }}
+          <div class="partitionParams">
+            <div class="partitionParam">{{nodes}}</div>
+            <div class="partitionParam">{{JSON.stringify(constraints)}}</div>
+          </div>
+        {{/}}
+      </li>
     {{/}}
   </ul>
 {{/}}

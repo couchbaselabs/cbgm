@@ -6,16 +6,16 @@
     margin-top: 3.5em;
     margin-bottom: 3.5em;
 }
-.visual .partitionMap {
+.visual .bucketEvent {
     display: inline-block;
     vertical-align: top;
     margin-right: 1em;
     margin-top: 8em;
     padding-bottom: 1em;
 }
-.visual .partition_when {
+.visual .bucketEvent_when {
     position: absolute;
-    -webkit-transform: translate(1em,-4.5em) rotate(-30deg);
+    -webkit-transform: translate(-0.5em,-4em) rotate(-40deg);
 }
 .visual .partition {
     position: relative;
@@ -30,6 +30,16 @@
     text-align: right;
     vertical-align: top;
     white-space: nowrap;
+}
+.visual .nodes {
+    margin-top: 1em;
+}
+.visual .nodeId {
+    position: relative;
+    display: inline-block;
+    width: 12px;
+    font-size: 6px;
+    -webkit-transform: rotate(-40deg);
 }
 .visual .node {
     display: inline-block;
@@ -52,4 +62,12 @@
 .visual .node .null {
     background-color: white;
 }
-
+.visual .partitionParams {
+    margin-top: 3em;
+    font-size: 8px;
+}
+.visual .partitionParams .partitionParam {
+    max-width: 20em;
+    -webkit-transform: translate(2em,0)
+                       translate(-50%,-50%) rotate(-40deg) translate(50%,50%);
+}
