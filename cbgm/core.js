@@ -53,7 +53,7 @@ function validatePartitionSettings(ctx, req) {
   }
 }
 function planNewRebalanceMap(ctx, req) {
-  req.nextPartitionMap = ctx.newObj("partitionMap");
+  req.nextPartitionMap = ctx.newObj("partitionMap", req.wantPartitionParams).result;
 }
 function planNewFailOverMap(ctx, req) {
 }
