@@ -37,7 +37,10 @@ function run(req) { // Rest of arguments are steps to apply to req as long as no
   return _.reduce(_.rest(arguments),
                   function(req, step) { return req.err ? req : step(req) || req; }, req);
 }
+function sortDesc(a, field) { return _.sortBy(a, field).reverse(); }
 function validatePartitionSettings(req) {
+  req.nextBucketEvents = _.clone(req.prevBucketEvents);
+  req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [], "when");
 }
 function planNewRebalanceMap(req) {
 }

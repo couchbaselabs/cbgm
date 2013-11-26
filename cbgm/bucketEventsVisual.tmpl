@@ -6,7 +6,7 @@
         {{# class == 'partitionMap' }}
           <div class="nodes">
             <div class="partitionId">{{partitionId}}</div>
-            {{#obj.events[eventIdx].nodes:nodeIdx}}
+            {{#obj.events[eventIdx].nodes}}
               <div class="nodeId">{{.}}</div>
             {{/}}
           </div>

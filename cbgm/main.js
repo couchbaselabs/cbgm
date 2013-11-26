@@ -1,5 +1,5 @@
 function main(ctx, page) {
-  page.sortDesc = function(a, field) { return _.sortBy(a, field).reverse(); }
+  page.sortDesc = sortDesc;
   page.r = registerEventHandlers(ctx, page.render("main"));
 }
 
