@@ -1,0 +1,29 @@
+{{#obj.class == 'bucketEvents'}}
+  {{#obj}}
+    <ul class="visual">
+    {{#events:eventIdx}}
+      {{#.class == 'partitionMap'}}
+        <li class="partitionMap">
+          {{when}}
+          <ul class="partitions">
+          {{#partitions:partitionId}}
+            <li>
+              {{partitionId}}:
+              {{#obj.events[eventIdx].nodes:nodeIdx}}
+                <div class="node">
+                  {{#partitions[partitionId]:state}}
+                    {{# _.contains(partitions[partitionId][state],nodeIdx) }}
+                      <div class="{{state}}"></div>
+                    {{/}}
+                  {{/partitions[partitionId]}}
+                </div>
+              {{/obj.events[eventIdx].nodes}}
+            </li>
+          {{/partitions}}
+          </ul>
+        </li>
+      {{/}}
+    {{/events}}
+    </ul>
+  {{/obj}}
+{{/}}
