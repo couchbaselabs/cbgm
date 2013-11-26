@@ -1,0 +1,14 @@
+{ "class": "bucketEvents",
+  "events": [
+    { "class": "partitionParams",
+      "when": "2013-10-20T10:00:00.000Z",
+      "keyFunc": "hash-crc32",
+      "assignment": "masterSlave",
+      "nodes": ["nodeA"],
+      "numPartitions": 10,
+      "constraints": {
+        "slave": 1
+      }
+    }
+  ]
+}

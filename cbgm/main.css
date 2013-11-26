@@ -6,12 +6,16 @@
     margin-top: 3.5em;
     margin-bottom: 3.5em;
 }
+.visual li {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 1em;
+}
 .visual .partitionMap {
     padding-bottom: 1em;
 }
 .visual .partition {
     position: relative;
-    min-width: 200px;
     height: 8px;
     font-size: 6px;
 }
