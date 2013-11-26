@@ -6,7 +6,7 @@
           <div class="partition_when">{{when}}</div>
           {{#partitions:partitionId}}
             <div class="partition">
-              {{partitionId}}
+              <div class="partitionId">{{partitionId}}</div>
               {{#obj.events[eventIdx].nodes:nodeIdx}}
                 <div class="node">
                   {{#partitions[partitionId]:state}}

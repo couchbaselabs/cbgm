@@ -15,12 +15,21 @@
 }
 .visual .partition_when {
     position: absolute;
-    -webkit-transform: translate(0,-4.5em) rotate(-30deg);
+    -webkit-transform: translate(1em,-4.5em) rotate(-30deg);
 }
 .visual .partition {
     position: relative;
     height: 8px;
+}
+.visual .partitionId {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 8px;
     font-size: 6px;
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
 }
 .visual .node {
     display: inline-block;
