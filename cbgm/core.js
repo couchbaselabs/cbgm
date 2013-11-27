@@ -72,15 +72,18 @@ function validatePartitionSettings(ctx, req) {
 }
 
 function allocNewMap(ctx, req) {
-  // TODO: maintenance mode & swap rebalance detected as part of rebalance.
   req.nextPartitionMap = ctx.newObj("partitionMap",
                                     _.omit(req.wantPartitionParams, "class")).result;
+  req.nextPartitionMap.partitions =
+    keyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req.wantPartitionParams);
 }
 
 function planNewRebalanceMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
   if (req.lastPartitionMap) {
-    req.nextPartitionMap.partitions = req.lastPartitionMap.partitions;
+    _.each(req.lastPartitionMap.partitions, function(partition, partitionId) {
+        req.nextPartitionMap.partitions[partitionId] = partition;
+      });
   }
 }
 
