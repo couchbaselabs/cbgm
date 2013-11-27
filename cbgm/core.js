@@ -89,16 +89,19 @@ function allocNewMap(ctx, req) {
   req.nextPartitionMap =
     ctx.newObj("partitionMap", _.omit(req.wantPartitionParams, "class")).result;
   req.nextPartitionMap.partitions =
-    keyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req.wantPartitionParams);
+    keyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req);
 }
 
 function planNewRebalanceMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
+
   if (req.lastPartitionMap) {
     _.each(req.lastPartitionMap.partitions, function(partition, partitionId) {
         req.nextPartitionMap.partitions[partitionId] = partition;
       });
   }
+
+  // TODO: mark partitions on removed node as dead.
 }
 
 function planNewFailOverMap(ctx, req) {

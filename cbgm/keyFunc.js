@@ -1,16 +1,20 @@
 keyFunc = {
   "hash-crc32": {
-    allocPartitions: function(partitionParams) {
+    allocPartitions: function(req) {
       var res = {};
-      for (var i = 0; i < partitionParams.numPartitions; i++) {
+      for (var i = 0; i < req.wantPartitionParams.numPartitions; i++) {
         res[i.toString()] = {};
       }
       return res;
     }
   },
   "range": {
-    allocPartitions: function(partitionParams) {
-      return {};
+    allocPartitions: function(req) {
+      return _.reduce((req.lastPartitionMap && req.lastPartitionMap.partitions) || {},
+                      function(res, partition, partitionId) {
+                        res[partitionId] = {};
+                        return res;
+                      }, {});
     }
   }
 }
