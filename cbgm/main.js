@@ -1,11 +1,9 @@
 function main(ctx, page) {
-  page.sortDesc = sortDesc;
-  page.isClass = function(o, cn) { return o.class == cn; }
-  page.field = function(o, f) { return o[f]; }
+  sortEvents(page.obj);
   page.want = page.want ||
     { keyFunc: "hash-crc32", assignment: "masterSlave", nodes: "a",
       numPartitions: 10, slaves: 1 };
-  sortEvents(page.obj);
+  page.visualBucketEvent = visualBucketEvent;
   page.r = registerEventHandlers(ctx, page.render("main"));
   refresh(page.r, page.obj);
 }
@@ -23,10 +21,10 @@ function registerEventHandlers(ctx, r) {
         prevBucketEvents: deepClone(obj),
         wantPartitionParams: ctx.newObj("partitionParams",
                                         { keyFunc: want.keyFunc,
-                                            assignment: want.assignment,
-                                            nodes: want.nodes.split(','),
-                                            numPartitions: parseInt(want.numPartitions),
-                                            constraints: { slaves: parseInt(want.slaves) }
+                                          assignment: want.assignment,
+                                          nodes: want.nodes.split(','),
+                                          numPartitions: parseInt(want.numPartitions),
+                                          constraints: { slaves: parseInt(want.slaves) }
                                         }).result }) ||
         { err: "unexpected rebalance error" };
       console.log(res);
@@ -41,6 +39,52 @@ function registerEventHandlers(ctx, r) {
     }
   });
   return r;
+}
+
+function visualBucketEvent(be) {
+  var res = [];
+  if (be.class == "partitionMap") {
+    res.push('<div class="nodes">');
+    res.push('<div class="partitionId"></div>');
+    _.each(be.nodes, function(nodeName) {
+        res.push('<div class="nodeId">' + nodeName + '</div>');
+      });
+    res.push('</div>');
+    _.each(be.partitions, function(partition, partitionId) {
+        res.push('<div class="partition">');
+        res.push('<div class="partitionId">' + partitionId + '</div>');
+        res.push(visualNodes(partition, be.nodes));
+        res.push('</div>');
+      });
+  }
+  if (be.class == "partitionParams") {
+    res.push('<div class="partitionParams">');
+    res.push('<div class="partitionParam">' +
+             be.nodes + '</div>');
+    res.push('<div class="partitionParam">' +
+             JSON.stringify(be.constraints) + '</div>');
+    res.push('</div>');
+  }
+  return res.join('\n');
+}
+
+function visualNodes(partition, nodes) {
+  var res = [];
+  _.each(nodes, function(node, nodeIdx) {
+      res.push('<div class="node">');
+      var empty = true;
+      _.each(partition, function(partitionState, state) {
+          if (_.contains(partitionState, nodeIdx)) {
+            res.push('<div class="' + state + '"></div>');
+            empty = false;
+          }
+        });
+      if (empty) {
+        res.push('<div class="null"></div>');
+      }
+      res.push('</div>');
+    });
+  return res.join('\n');
 }
 
 function sortEvents(obj) {
