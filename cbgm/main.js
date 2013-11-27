@@ -41,6 +41,17 @@ function registerEventHandlers(ctx, r) {
   return r;
 }
 
+function refresh(r, obj) {
+  sortEvents(obj);
+  r.set({ obj: obj, objJSON: JSON.stringify(obj) });
+}
+
+function sortEvents(obj) {
+  if (obj.events) {
+    obj.events = sortDesc(obj.events, "when");
+  }
+}
+
 function visualBucketEvent(be) {
   var res = [];
   if (be.class == "partitionMap") {
@@ -53,7 +64,7 @@ function visualBucketEvent(be) {
     _.each(be.partitions, function(partition, partitionId) {
         res.push('<div class="partition">');
         res.push('<div class="partitionId">' + partitionId + '</div>');
-        res.push(visualNodes(partition, be.nodes));
+        res.push(visualPartitionNodes(partition, be.nodes));
         res.push('</div>');
       });
   }
@@ -68,7 +79,7 @@ function visualBucketEvent(be) {
   return res.join('\n');
 }
 
-function visualNodes(partition, nodes) {
+function visualPartitionNodes(partition, nodes) {
   var res = [];
   _.each(nodes, function(node, nodeIdx) {
       res.push('<div class="node">');
@@ -85,17 +96,6 @@ function visualNodes(partition, nodes) {
       res.push('</div>');
     });
   return res.join('\n');
-}
-
-function sortEvents(obj) {
-  if (obj.events) {
-    obj.events = sortDesc(obj.events, "when");
-  }
-}
-
-function refresh(r, obj) {
-  sortEvents(obj);
-  r.set({ obj: obj, objJSON: JSON.stringify(obj) });
 }
 
 function deepClone(x) {
