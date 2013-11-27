@@ -1,8 +1,11 @@
 function main(ctx, page) {
   sortEvents(page.obj);
   page.want = page.want ||
-    { keyFunc: "hash-crc32", assignment: "masterSlave", nodes: "a",
-      numPartitions: 10, slaves: 1 };
+    { keyFunc: "hash-crc32",
+      assignment: "masterSlave",
+      nodes: "a",
+      numPartitions: 10,
+      slaves: 1 };
   page.visualBucketEvent = visualBucketEvent;
   page.r = registerEventHandlers(ctx, page.render("main"));
   refresh(page.r, page.obj);
