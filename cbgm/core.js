@@ -46,16 +46,16 @@ function validatePartitionSettings(ctx, req) {
   req.lastPartitionMap =
     _.findWhere(req.nextBucketEvents.events, { class: "partitionMap" });
 
-  req.arrNodes = {};
+  req.arrNodes = { want: req.wantPartitionParams.nodes };
   req.mapNodes = {};
 
   if (req.lastPartitionParams) {
-    req.err = _.reduce(["keyFunc", "assignment", "numPartitions"], function(memo, k) {
+    req.err = _.reduce(["keyFunc", "assignment", "numPartitions"], function(r, k) {
         if (req.lastPartitionParams[k] != req.wantPartitionParams[k]) {
           return "partitionParams." + k + " not equal: " +
             req.lastPartitionParams[k] + " vs " + req.wantPartitionParams[k];
         }
-        return memo;
+        return r;
       }, null);
     req.arrNodes.added =
       _.difference(req.wantPartitionParams.nodes, req.lastPartitionParams.nodes);
@@ -68,9 +68,7 @@ function validatePartitionSettings(ctx, req) {
     req.arrNodes.removed = [];
     req.arrNodes.same = [];
   }
-  _.each(req.arrNodes, function(a, k) {
-      req.mapNodes[k] = arrToMap(a);
-    });
+  _.each(req.arrNodes, function(a, k) { req.mapNodes[k] = arrToMap(a); });
   function arrToMap(a) { return _.reduce(a, function(m, k) { m[k] = {}; return m; }, {}); }
 
   req.partitionModel =
