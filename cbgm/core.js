@@ -3,18 +3,21 @@
 function rebalance(ctx, req) {
   return run(ctx, req,
              validatePartitionSettings,
+             allocNewMap,
              planNewRebalanceMap,
              actualizeNewMap);
 }
 function failOver(ctx, req) {
   return run(ctx, req,
              validatePartitionSettings,
+             allocNewMap,
              planNewFailOverMap,
              actualizeNewMap);
 }
 function restoreBack(ctx, req) {
   return run(ctx, req,
              validatePartitionSettings,
+             allocNewMap,
              planNewRestoreBackMap,
              actualizeNewMap);
 }
@@ -26,7 +29,6 @@ function cancelRebalance(ctx, req) {
 }
 function actualizeNewMap(ctx, req) {
   return run(ctx, req,
-             validatePartitionSettings,
              validateNewMap,
              scheduleSteps,
              executeSteps,
@@ -69,10 +71,14 @@ function validatePartitionSettings(ctx, req) {
   req.nodesSame    = arrToMap(req.arrNodesSame);
 }
 
-function planNewRebalanceMap(ctx, req) {
+function allocNewMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
   req.nextPartitionMap = ctx.newObj("partitionMap",
                                     _.omit(req.wantPartitionParams, "class")).result;
+}
+
+function planNewRebalanceMap(ctx, req) {
+  // TODO: maintenance mode & swap rebalance detected as part of rebalance.
   if (req.lastPartitionMap) {
     req.nextPartitionMap.partitions = req.lastPartitionMap.partitions;
   }
