@@ -41,14 +41,19 @@ function validatePartitionSettings(ctx, req) {
   req.nextBucketEvents = _.clone(req.prevBucketEvents);
   req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [], "when");
 
-  req.lastPartitionParams =
-    _.findWhere(req.nextBucketEvents.events, { class: "partitionParams" });
   req.lastPartitionMap =
     _.findWhere(req.nextBucketEvents.events, { class: "partitionMap" });
+  if (req.lastPartitionMap) {
+    req.lastPartitionMapPartitions =
+      partitionsWithNodeNames(req.lastPartitionMap.partitions,
+                              req.lastPartitionMap.nodes);
+  }
 
   req.arrNodes = { want: req.wantPartitionParams.nodes };
   req.mapNodes = {};
 
+  req.lastPartitionParams =
+    _.findWhere(req.nextBucketEvents.events, { class: "partitionParams" });
   if (req.lastPartitionParams) {
     req.err = _.reduce(["keyFunc", "assignment", "numPartitions"], function(r, k) {
         if (req.lastPartitionParams[k] != req.wantPartitionParams[k]) {
@@ -64,9 +69,9 @@ function validatePartitionSettings(ctx, req) {
     req.arrNodes.same =
       _.intersection(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
   } else {
-    req.arrNodes.added = req.wantPartitionParams.nodes;
+    req.arrNodes.added   = req.wantPartitionParams.nodes;
     req.arrNodes.removed = [];
-    req.arrNodes.same = [];
+    req.arrNodes.same    = [];
   }
   _.each(req.arrNodes, function(a, k) { req.mapNodes[k] = arrToMap(a); });
   function arrToMap(a) { return _.reduce(a, function(m, k) { m[k] = {}; return m; }, {}); }
@@ -74,7 +79,7 @@ function validatePartitionSettings(ctx, req) {
   req.partitionModel =
     ctx.getObj("partitionModel-" + req.wantPartitionParams.assignment).result;
   if (!req.partitionModel) {
-    req.err = "error: could not find partitionModel-" + req.wantPartitionParams.assignment;
+    req.err = "error: missing partitionModel-" + req.wantPartitionParams.assignment;
     return;
   }
   req.partitionModelStates =
@@ -83,6 +88,25 @@ function validatePartitionSettings(ctx, req) {
                         a.push(_.defaults(_.clone(v), { name: k }));
                         return a;
                       }, []), "priority");
+}
+
+// Converts node indexes to node names.  Example, with "nodes": ["a", "b"]:
+//   before - "partitions": { "0": { "master": [0], "slave": [1] }, ... }
+//   after  - "partitions": { "0": { "master": ["a"], "slave": ["b"] }, ... }
+function partitionsWithNodeNames(partitions, nodes) {
+  var r = _.map(partitions,
+                function(partition, partitionId) {
+                  return [partitionId,
+                          _.object(_.map(partition,
+                                         function(nodeIdxs, state) {
+                                           return [state,
+                                                   _.map(nodeIdxs,
+                                                         function(nodeIdx) {
+                                                           return nodes[nodeIdx];
+                                                         })];
+                                         }))];
+                });
+  return _.object(r);
 }
 
 function allocNewMap(ctx, req) {
@@ -94,6 +118,17 @@ function allocNewMap(ctx, req) {
 
 function planNewRebalanceMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
+  _.each(req.partitionModelStates,
+         function(partitionModelState) {
+           var state = partitionModelState.name;
+           var constraints =
+             parseInt((req.wantPartitionParams.constraints || {})[state]) ||
+             parseInt(partitionModelState.constraints);
+           if (constraints >= 0) {
+             planNewRebalanceMapPMSConstraints(ctx, req,
+                                               partitionModelState, constraints);
+           }
+         });
 
   if (req.lastPartitionMap) {
     _.each(req.lastPartitionMap.partitions, function(partition, partitionId) {
@@ -102,6 +137,10 @@ function planNewRebalanceMap(ctx, req) {
   }
 
   // TODO: mark partitions on removed node as dead.
+}
+
+function planNewRebalanceMapPMSConstraints(ctx, req,
+                                           partitionModelState, constraints) {
 }
 
 function planNewFailOverMap(ctx, req) {
