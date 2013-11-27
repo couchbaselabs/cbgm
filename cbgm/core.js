@@ -46,6 +46,9 @@ function validatePartitionSettings(ctx, req) {
   req.lastPartitionMap =
     _.findWhere(req.nextBucketEvents.events, { class: "partitionMap" });
 
+  req.arrNodes = {};
+  req.mapNodes = {};
+
   if (req.lastPartitionParams) {
     req.err = _.reduce(["keyFunc", "assignment", "numPartitions"], function(memo, k) {
         if (req.lastPartitionParams[k] != req.wantPartitionParams[k]) {
@@ -54,26 +57,39 @@ function validatePartitionSettings(ctx, req) {
         }
         return memo;
       }, null);
-    req.arrNodesAdded =
+    req.arrNodes.added =
       _.difference(req.wantPartitionParams.nodes, req.lastPartitionParams.nodes);
-    req.arrNodesRemoved =
+    req.arrNodes.removed =
       _.difference(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
-    req.arrNodesSame =
+    req.arrNodes.same =
       _.intersection(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
   } else {
-    req.arrNodesAdded = req.wantPartitionParams.nodes;
-    req.arrNodesRemoved = [];
-    req.arrNodesSame = [];
+    req.arrNodes.added = req.wantPartitionParams.nodes;
+    req.arrNodes.removed = [];
+    req.arrNodes.same = [];
   }
+  _.each(req.arrNodes, function(a, k) {
+      req.mapNodes[k] = arrToMap(a);
+    });
   function arrToMap(a) { return _.reduce(a, function(m, k) { m[k] = {}; return m; }, {}); }
-  req.nodesAdded   = arrToMap(req.arrNodesAdded);
-  req.nodesRemoved = arrToMap(req.arrNodesRemoved);
-  req.nodesSame    = arrToMap(req.arrNodesSame);
+
+  req.partitionModel =
+    ctx.getObj("partitionModel-" + req.wantPartitionParams.assignment).result;
+  if (!req.partitionModel) {
+    req.err = "error: could not find partitionModel-" + req.wantPartitionParams.assignment;
+    return;
+  }
+  req.partitionModelStates =
+    sortDesc(_.reduce(req.partitionModel.states,
+                      function(a, v, k) {
+                        a.push(_.defaults(_.clone(v), { name: k }));
+                        return a;
+                      }, []), "priority");
 }
 
 function allocNewMap(ctx, req) {
-  req.nextPartitionMap = ctx.newObj("partitionMap",
-                                    _.omit(req.wantPartitionParams, "class")).result;
+  req.nextPartitionMap =
+    ctx.newObj("partitionMap", _.omit(req.wantPartitionParams, "class")).result;
   req.nextPartitionMap.partitions =
     keyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req.wantPartitionParams);
 }

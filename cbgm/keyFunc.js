@@ -7,5 +7,10 @@ keyFunc = {
       }
       return res;
     }
+  },
+  "range": {
+    allocPartitions: function(partitionParams) {
+      return {};
+    }
   }
 }
