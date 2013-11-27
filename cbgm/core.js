@@ -71,7 +71,8 @@ function validatePartitionSettings(ctx, req) {
 
 function planNewRebalanceMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
-  req.nextPartitionMap = ctx.newObj("partitionMap", req.wantPartitionParams).result;
+  req.nextPartitionMap = ctx.newObj("partitionMap",
+                                    _.omit(req.wantPartitionParams, "class")).result;
 }
 
 function planNewFailOverMap(ctx, req) {
@@ -81,6 +82,8 @@ function planNewRestoreBackMap(ctx, req) {
 }
 
 function validateNewMap(ctx, req) {
+  req.nextBucketEvents.events.push(req.wantPartitionParams);
+  req.nextBucketEvents.events.push(req.nextPartitionMap);
 }
 
 function scheduleSteps(ctx, req) {

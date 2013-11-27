@@ -1,5 +1,7 @@
 function main(ctx, page) {
   page.sortDesc = sortDesc;
+  page.isClass = function(o, cn) { return o.class == cn; }
+  page.field = function(o, f) { return o[f]; }
   page.want = page.want ||
     { keyFunc: "hash-crc32", assignment: "masterSlave", nodes: "a",
       numPartitions: 10, slaves: 1 };
@@ -49,8 +51,7 @@ function sortEvents(obj) {
 
 function refresh(r, obj) {
   sortEvents(obj);
-  r.set("obj", obj);
-  r.set("objJSON", JSON.stringify(obj));
+  r.set({ obj: obj, objJSON: JSON.stringify(obj) });
 }
 
 function deepClone(x) {
