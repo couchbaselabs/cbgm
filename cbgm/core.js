@@ -163,6 +163,9 @@ function planNextMap(ctx, req) {
                        var nodesToAssign =
                          findBestNodes(partitionId, partition, state, constraints);
                        partition = removeNodesFromPartition(partition,
+                                                            partition[state],
+                                                            decStateNodeCountsCur);
+                       partition = removeNodesFromPartition(partition,
                                                             nodesToAssign,
                                                             decStateNodeCountsCur);
                        partition[state] = nodesToAssign;
@@ -172,7 +175,9 @@ function planNextMap(ctx, req) {
   }
 
   function findBestNodes(partitionId, partition, state, constraints) {
-    var stateNodeCounts = req.stateNodeCountsCur[state] || {}
+    var stateNodeCounts =
+      req.stateNodeCountsCur[state] =
+      req.stateNodeCountsCur[state] || {};
     var statePriority = req.mapStatePriority[state];
     var candidateNodes = req.nextPartitionMap.nodes;
     _.each(partition,
@@ -188,9 +193,10 @@ function planNextMap(ctx, req) {
 
     function scoreNode(node) {
       var isCurrent = _.contains(partition[state] || [], node);
-      var currentFactor = isCurrent ? 0 : 0.1;
+      var currentFactor = isCurrent ? 0.1 : 0;
       var r = stateNodeCounts[node] || 0;
-      return r + currentFactor;
+      r = r + currentFactor;
+      return r;
     }
   }
 
