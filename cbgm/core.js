@@ -66,7 +66,7 @@ function validatePartitionSettings(ctx, req) {
     req.arrNodes.removed =
       _.difference(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
   } else {
-    req.arrNodes.added   = req.wantPartitionParams.nodes;
+    req.arrNodes.added = req.wantPartitionParams.nodes;
     req.arrNodes.removed = [];
   }
 
@@ -139,9 +139,15 @@ function planNextMap(ctx, req) {
         // scheduled to be removed.
         if (!_.isEmpty(_.intersection(lastPartition[state],
                                       req.arrNodes.removed))) {
-          return -1;
+          return 0;
         }
-        return 0;
+        // Then, favor partitions who haven't been assigned to any
+        // newly added nodes yet for any state.
+        if (_.isEmpty(_.intersection(_.flatten(_.values(nextPartitions[partitionId])),
+                                     req.arrNodes.added))) {
+          return 1;
+        }
+        return 2;
       });
 
     nextPartitions =
