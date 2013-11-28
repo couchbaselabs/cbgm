@@ -27,13 +27,6 @@ function cancelRebalance(ctx, req) {
              takeCurrentMapAsNextMap,
              actualizeNextMap);
 }
-function actualizeNextMap(ctx, req) {
-  return run(ctx, req,
-             validateNextMap,
-             scheduleSteps,
-             executeSteps,
-             checkHealth);
-}
 
 // --------------------------------------------------------
 
@@ -244,16 +237,10 @@ function planNextMap(ctx, req) {
   // TODO: mark partitions on removed node as dead.
 }
 
-function validateNextMap(ctx, req) {
+function actualizeNextMap(ctx, req) {
   // TODO: do real validation here.
   req.nextBucketEvents.events.unshift(req.wantPartitionParams);
   req.nextBucketEvents.events.unshift(req.nextPartitionMap);
-}
-
-function scheduleSteps(ctx, req) {
-}
-
-function executeSteps(ctx, req) {
 }
 
 function cancelTakeOverSteps(ctx, req) {
