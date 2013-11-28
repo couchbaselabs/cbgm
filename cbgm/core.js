@@ -138,6 +138,9 @@ function planNextMap(ctx, req) {
                      return [partitionId, nextPartition];
                    }));
 
+  req.stateNodeCountsBeg = countStateNodes(nextPartitions);
+  req.stateNodeCountsCur = countStateNodes(nextPartitions);
+
   // Run through the sorted partition states (master, slave, etc) and
   // invoke assignStateToPartitions().
   _.each(req.partitionModelStates,
@@ -173,6 +176,7 @@ function planNextMap(ctx, req) {
     var candidateNodes = req.nextPartitionMap.nodes;
     _.each(partition,
            function(sNodes, s) {
+             // Filter out or don't touch nodes at a higher priority state.
              if (req.mapStatePriority[s] > statePriority) {
                candidateNodes = _.difference(candidateNodes, sNodes);
              }
@@ -183,6 +187,8 @@ function planNextMap(ctx, req) {
       candidateNodes.slice(0, constraints - sNodes.length);
     return candidateNodes;
   }
+
+  req.stateNodeCountsCur = countStateNodes(nextPartitions);
 
   req.nextPartitionMap.partitions = nextPartitions;
   req.nextPartitionMap.partitions =
@@ -255,6 +261,24 @@ function partitionsMap(partitions, f) {
                                                    return [state, _.map(arr, f)];
                                                  }))];
                         }));
+}
+
+// Example, with partitions of...
+//   { "0": { "master": ["a"], "slave": ["b", "c"] } },
+//   { "1": { "master": ["b"], "slave": ["c"] } }
+// then return value will be...
+//   { "master": { "a": 1, "b": 1 } },
+//   { "slave": { "b": 1, "c": 2 } }
+function countStateNodes(partitions) {
+  return _.reduce(partitions, function(r, partition, partitionId) {
+      return _.reduce(partition, function(r, nodes, state) {
+          _.each(nodes, function(node) {
+              var s = r[state] = r[state] || {};
+              s[node] = (s[node] || 0) + 1;
+            });
+          return r;
+        }, r);
+    }, {});
 }
 
 // --------------------------------------------------------
