@@ -71,12 +71,9 @@ function validatePartitionSettings(ctx, req) {
       _.difference(req.wantPartitionParams.nodes, req.lastPartitionParams.nodes);
     req.arrNodes.removed =
       _.difference(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
-    req.arrNodes.same =
-      _.intersection(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
   } else {
     req.arrNodes.added   = req.wantPartitionParams.nodes;
     req.arrNodes.removed = [];
-    req.arrNodes.same    = [];
   }
   _.each(req.arrNodes, function(a, k) { req.mapNodes[k] = arrToMap(a); });
   function arrToMap(a) {
