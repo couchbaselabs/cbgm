@@ -21,11 +21,15 @@ function restoreBack(ctx, req) {
              planNextRestoreBackMap,
              actualizeNextMap);
 }
-function cancelRebalance(ctx, req) {
-  return run(ctx, req,
-             cancelTakeOverSteps,
-             takeCurrentMapAsNextMap,
-             actualizeNextMap);
+
+function planNextRebalanceMap(ctx, req) {
+  return planNextMap(ctx, req);
+}
+function planNextFailOverMap(ctx, req) {
+  return planNextMap(ctx, req);
+}
+function planNextRestoreBackMap(ctx, req) {
+  return planNextMap(ctx, req);
 }
 
 // --------------------------------------------------------
@@ -103,21 +107,7 @@ function allocNextMap(ctx, req) {
     _.size(req.nextPartitionMap.partitions);
 }
 
-function planNextRebalanceMap(ctx, req) {
-  return planNextMap(ctx, req);
-}
-
-function planNextFailOverMap(ctx, req) {
-  return planNextMap(ctx, req);
-}
-
-function planNextRestoreBackMap(ctx, req) {
-  return planNextMap(ctx, req);
-}
-
 function planNextMap(ctx, req) {
-  // TODO: maintenance mode & swap rebalance detected as part of rebalance.
-
   // Remove nodes that user wants to be removed.
   var lastPartitions = req.lastPartitions || {};
   var nextPartitions =
@@ -211,7 +201,6 @@ function planNextMap(ctx, req) {
   function decStateNodeCountsCur(state, nodes) {
     adjustStateNodeCounts(req.stateNodeCountsCur, state, nodes, -1);
   }
-
   function adjustStateNodeCounts(stateNodeCounts, state, nodes, amt) {
     _.each(nodes, function(n) {
         var s = stateNodeCounts[state] = stateNodeCounts[state] || {};
@@ -241,15 +230,6 @@ function actualizeNextMap(ctx, req) {
   // TODO: do real validation here.
   req.nextBucketEvents.events.unshift(req.wantPartitionParams);
   req.nextBucketEvents.events.unshift(req.nextPartitionMap);
-}
-
-function cancelTakeOverSteps(ctx, req) {
-}
-
-function takeCurrentMapAsNextMap(ctx, req) {
-}
-
-function checkHealth(ctx, req) {
 }
 
 // --------------------------------------------------------
