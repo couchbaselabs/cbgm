@@ -27,7 +27,7 @@ function registerEventHandlers(ctx, r) {
                                           assignment: want.assignment,
                                           nodes: want.nodes.split(','),
                                           numPartitions: parseInt(want.numPartitions),
-                                          constraints: { slaves: parseInt(want.slaves) }
+                                          constraints: { slave: parseInt(want.slaves) }
                                         }).result }) ||
         { err: "unexpected rebalance error" };
       console.log(res);

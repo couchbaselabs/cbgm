@@ -99,35 +99,6 @@ function validatePartitionSettings(ctx, req) {
              "priority");
 }
 
-// Converts node indexes to node names.  Example, with "nodes": ["a", "b"]:
-//   before - "partitions": { "0": { "master": [0], "slave": [1] }, ... }
-//   after  - "partitions": { "0": { "master": ["a"], "slave": ["b"] }, ... }
-// Reverse of partitionsWithNodeIndexes().
-function partitionsWithNodeNames(partitions, nodes) {
-  return partitionsMap(partitions,
-                       function(nodeIdx) { return nodes[nodeIdx]; });
-}
-
-// Converts node names to indexes.  Example, with "nodes": ["a", "b"]:
-//   before - "partitions": { "0": { "master": ["a"], "slave": ["b"] }, ... }
-//   after  - "partitions": { "0": { "master": [0], "slave": [1] }, ... }
-// Reverse of partitionsWithNodeNames().
-function partitionsWithNodeIndexes(partitions, nodes) {
-  return partitionsMap(partitions,
-                       function(nodeName) { return _.indexOf(nodes, nodeName); });
-}
-
-function partitionsMap(partitions, f) {
-  return _.object(_.map(partitions,
-                        function(partition, partitionId) {
-                          return [partitionId,
-                                  _.object(_.map(partition,
-                                                 function(arr, state) {
-                                                   return [state, _.map(arr, f)];
-                                                 }))];
-                        }));
-}
-
 function allocNewMap(ctx, req) {
   req.nextPartitionMap =
     ctx.newObj("partitionMap",
@@ -144,13 +115,8 @@ function planNewRebalanceMap(ctx, req) {
     _.object(_.map(req.nextPartitionMap.partitions,
                    function(partition, partitionId) {
                      var lastPartition = lastPartitions[partitionId] || {};
-                     var nextPartition =
-                       _.object(_.map(lastPartition,
-                                      function(nodes, state) {
-                                        return [state,
-                                                _.difference(nodes,
-                                                             req.arrNodes.removed)];
-                                      }));
+                     var nextPartition = removeNodesFromPartition(lastPartition,
+                                                                  req.arrNodes.removed);
                      return [partitionId, nextPartition];
                    }));
 
@@ -166,9 +132,16 @@ function planNewRebalanceMap(ctx, req) {
 
   function planWithPMSConstraints(pms, constraints) {
     var state = pms.name;
-    req.nextPartitionMap.partitions =
+    nextPartitions =
       _.object(_.map(nextPartitions,
                      function(partition, partitionId) {
+                       if ((partition[state] || []).length < constraints) {
+                         var nodeToAssign = "a";
+                         partition = removeNodesFromPartition(partition,
+                                                              [nodeToAssign]);
+                         partition[state] = partition[state] || [];
+                         partition[state].push(nodeToAssign);
+                       }
                        return [partitionId, partition];
                      }));
   }
@@ -205,6 +178,50 @@ function takeCurrentMapAsNewMap(ctx, req) {
 }
 
 function checkHealth(ctx, req) {
+}
+
+// --------------------------------------------------------
+
+// Returns partition with nodes removed.  Example, when removeNodes == ["a"],
+//   before - partition: {"0": { "master": ["a"], "slave": ["b"] } }
+//   after  - partition: {"0": { "master": [], "slave": ["b"] } }
+function removeNodesFromPartition(partition, removeNodes) {
+  return _.object(_.map(partition,
+                        function(partitionNodes, state) {
+                          return [state, _.difference(partitionNodes, removeNodes)];
+                        }));
+}
+
+// Converts node indexes to node names.  Example, with "nodes": ["a", "b"]:
+//   before - "partitions": { "0": { "master": [0], "slave": [1] }, ... }
+//   after  - "partitions": { "0": { "master": ["a"], "slave": ["b"] }, ... }
+// Reverse of partitionsWithNodeIndexes().
+function partitionsWithNodeNames(partitions, nodes) {
+  return partitionsMap(partitions,
+                       function(nodeIdx) { return nodes[nodeIdx]; });
+}
+
+// Converts node names to indexes.  Example, with node" == ["a", "b"]:
+//   before - partitions: { "0": { "master": ["a"], "slave": ["b"] }, ... }
+//   after  - partitions: { "0": { "master": [0], "slave": [1] }, ... }
+// Reverse of partitionsWithNodeNames().
+function partitionsWithNodeIndexes(partitions, nodes) {
+  return partitionsMap(partitions,
+                       function(nodeName) { return _.indexOf(nodes, nodeName); });
+}
+
+// Like map(), but runs f() on every nodes array in the partition.
+// Example, with partitions == { "0": { "master": ["a"], "slave": ["b", "c"] } }
+// then you'll see f(["a"]) and f(["b", "c"]).
+function partitionsMap(partitions, f) {
+  return _.object(_.map(partitions,
+                        function(partition, partitionId) {
+                          return [partitionId,
+                                  _.object(_.map(partition,
+                                                 function(arr, state) {
+                                                   return [state, _.map(arr, f)];
+                                                 }))];
+                        }));
 }
 
 // --------------------------------------------------------
