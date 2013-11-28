@@ -124,16 +124,18 @@ function allocNewMap(ctx, req) {
 function planNewRebalanceMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
   _.each(req.partitionModelStates,
-         function(partitionModelState) {
-           var state = partitionModelState.name;
+         function(pms) {
            var constraints =
-             parseInt((req.wantPartitionParams.constraints || {})[state]) ||
-             parseInt(partitionModelState.constraints);
+             parseInt((req.wantPartitionParams.constraints || {})[pms.name]) ||
+             parseInt(pms.constraints);
            if (constraints >= 0) {
-             planNewRebalanceMapPMSConstraints(ctx, req,
-                                               partitionModelState, constraints);
+             planWithPMSConstraints(ctx, req, pms, constraints);
            }
          });
+
+  function planWithPMSConstraints(pms, constraints) {
+    var state = pms.name;
+  }
 
   if (req.lastPartitionMap) {
     _.each(req.lastPartitionMap.partitions, function(partition, partitionId) {
@@ -142,10 +144,6 @@ function planNewRebalanceMap(ctx, req) {
   }
 
   // TODO: mark partitions on removed node as dead.
-}
-
-function planNewRebalanceMapPMSConstraints(ctx, req,
-                                           partitionModelState, constraints) {
 }
 
 function planNewFailOverMap(ctx, req) {
