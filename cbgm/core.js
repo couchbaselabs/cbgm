@@ -146,7 +146,7 @@ function planNewRebalanceMap(ctx, req) {
                      function(partition, partitionId) {
                        if ((partition[state] || []).length < constraints) {
                          var nodesToAssign =
-                           findBestNodes(partitionId, partition, state);
+                           findBestNodes(partitionId, partition, state, constraints);
                          partition = removeNodesFromPartition(partition,
                                                               nodesToAssign);
                          partition[state] =
@@ -156,9 +156,20 @@ function planNewRebalanceMap(ctx, req) {
                      }));
   }
 
-  function findBestNodes(partitionId, partition, state) {
-    console.log(partitionId, state);
-    return ["a"];
+  function findBestNodes(partitionId, partition, state, constraints) {
+    var statePriority = req.mapStatePriority[state];
+    var candidateNodes = req.nextPartitionMap.nodes;
+    _.each(partition,
+           function(sNodes, s) {
+             if (req.mapStatePriority[s] > statePriority) {
+               candidateNodes = _.difference(candidateNodes, sNodes);
+             }
+           });
+    var sNodes = partition[state] || [];
+    candidateNodes = _.difference(candidateNodes, sNodes);
+    candidateNodes =
+      candidateNodes.slice(0, constraints - sNodes.length);
+    return candidateNodes;
   }
 
   req.nextPartitionMap.partitions = nextPartitions;
