@@ -157,9 +157,11 @@ function planNextMap(ctx, req) {
   // Given a state and its constraints, for every partition, find and
   // assign the best nodes to that state.
   function assignStateToPartitions(state, constraints) {
+    var partitionIds = _.keys(nextPartitions);
     nextPartitions =
-      _.object(_.map(nextPartitions,
-                     function(partition, partitionId) {
+      _.object(_.map(partitionIds,
+                     function(partitionId) {
+                       var partition = nextPartitions[partitionId];
                        var nodesToAssign =
                          findBestNodes(partitionId, partition, state, constraints);
                        partition = removeNodesFromPartition(partition,
