@@ -138,6 +138,22 @@ function allocNewMap(ctx, req) {
 
 function planNewRebalanceMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
+
+  var lastPartitions = req.lastPartitionMapPartitions || {};
+  var nextPartitions = // Remove nodes that need to be removed.
+    _.object(_.map(req.nextPartitionMap.partitions,
+                   function(partition, partitionId) {
+                     var lastPartition = lastPartitions[partitionId] || {};
+                     var nextPartition =
+                       _.object(_.map(lastPartition,
+                                      function(nodes, state) {
+                                        return [state,
+                                                _.difference(nodes,
+                                                             req.arrNodes.removed)];
+                                      }));
+                     return [partitionId, nextPartition];
+                   }));
+
   _.each(req.partitionModelStates,
          function(pms) {
            var constraints =
@@ -150,19 +166,14 @@ function planNewRebalanceMap(ctx, req) {
 
   function planWithPMSConstraints(pms, constraints) {
     var state = pms.name;
-    var lastPartitions = req.lastPartitionMapPartitions || {};
     req.nextPartitionMap.partitions =
-      _.object(_.map(req.nextPartitionMap.partitions,
+      _.object(_.map(nextPartitions,
                      function(partition, partitionId) {
-                       var lastNodes =
-                         ((lastPartitions[partitionId] || {})[state] || []);
-                       var currNodes =
-                         _.difference(lastNodes, req.arrNodes.removed);
-                       partition[state] = currNodes;
                        return [partitionId, partition];
                      }));
   }
 
+  req.nextPartitionMap.partitions = nextPartitions;
   req.nextPartitionMap.partitions =
     partitionsWithNodeIndexes(req.nextPartitionMap.partitions,
                               req.nextPartitionMap.nodes);
