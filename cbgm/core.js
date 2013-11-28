@@ -109,6 +109,8 @@ function allocNextMap(ctx, req) {
     ctx.newObj("partitionMap", _.omit(req.wantPartitionParams, "class")).result;
   req.nextPartitionMap.partitions =
     keyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req);
+  req.nextPartitionMapNumPartitions =
+    _.size(req.nextPartitionMap.partitions);
 }
 
 function planNextRebalanceMap(ctx, req) {
@@ -160,8 +162,11 @@ function planNextMap(ctx, req) {
                      function(partition, partitionId) {
                        var nodesToAssign =
                          findBestNodes(partitionId, partition, state, constraints);
-                       partition = removeNodesFromPartition(partition, nodesToAssign);
+                       partition = removeNodesFromPartition(partition,
+                                                            nodesToAssign,
+                                                            decStateNodeCountsCur);
                        partition[state] = nodesToAssign;
+                       incStateNodeCountsCur(state, nodesToAssign);
                        return [partitionId, partition];
                      }));
   }
@@ -181,6 +186,28 @@ function planNextMap(ctx, req) {
         return stateNodeCounts[n] || 0;
       });
     return candidateNodes.slice(0, constraints);
+  }
+
+  function incStateNodeCountsCur(state, nodes) {
+    adjustStateNodeCounts(req.stateNodeCountsCur, state, nodes, 1);
+  }
+  function decStateNodeCountsCur(state, nodes) {
+    adjustStateNodeCounts(req.stateNodeCountsCur, state, nodes, -1);
+  }
+
+  function adjustStateNodeCounts(stateNodeCounts, state, nodes, amt) {
+    _.each(nodes, function(n) {
+        var s = stateNodeCounts[state] = stateNodeCounts[state] || {};
+        s[n] = (s[n] || 0) + amt;
+        if (s[n] < 0) {
+          console.log("ERROR: adjustStateNodeCounts < 0" +
+                      ", state: " + state + " node: " + n + " s[n]: " + s[n]);
+        }
+        if (s[n] > req.nextPartitionMapNumPartitions) {
+          console.log("ERROR: adjustStateNodeCounts < numPartitions" +
+                      ", state: " + state + " node: " + n + " s[n]: " + s[n]);
+        }
+      });
   }
 
   req.stateNodeCountsCur = countStateNodes(nextPartitions);
@@ -219,9 +246,12 @@ function checkHealth(ctx, req) {
 // Returns partition with nodes removed.  Example, when removeNodes == ["a"],
 //   before - partition: {"0": { "master": ["a"], "slave": ["b"] } }
 //   after  - partition: {"0": { "master": [], "slave": ["b"] } }
-function removeNodesFromPartition(partition, removeNodes) {
+function removeNodesFromPartition(partition, removeNodes, cb) {
   return _.object(_.map(partition,
                         function(partitionNodes, state) {
+                          if (cb) {
+                            cb(state, _.intersection(partitionNodes, removeNodes));
+                          }
                           return [state, _.difference(partitionNodes, removeNodes)];
                         }));
 }
