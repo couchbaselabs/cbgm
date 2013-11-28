@@ -182,8 +182,11 @@ function planNextMap(ctx, req) {
                candidateNodes = _.difference(candidateNodes, sNodes);
              }
            });
-    candidateNodes = _.sortBy(candidateNodes, function(n) {
-        return stateNodeCounts[n] || 0;
+    candidateNodes = _.sortBy(candidateNodes, function(node) {
+        var isCurrent = _.contains(partition[state] || [], node);
+        var currentFactor = isCurrent ? 0 : 1;
+        var r = stateNodeCounts[node] || 0;
+        return (r * 100) + currentFactor;
       });
     return candidateNodes.slice(0, constraints);
   }
