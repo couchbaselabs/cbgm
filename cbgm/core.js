@@ -3,33 +3,33 @@
 function rebalance(ctx, req) {
   return run(ctx, req,
              validatePartitionSettings,
-             allocNewMap,
-             planNewRebalanceMap,
-             actualizeNewMap);
+             allocNextMap,
+             planNextRebalanceMap,
+             actualizeNextMap);
 }
 function failOver(ctx, req) {
   return run(ctx, req,
              validatePartitionSettings,
-             allocNewMap,
-             planNewFailOverMap,
-             actualizeNewMap);
+             allocNextMap,
+             planNextFailOverMap,
+             actualizeNextMap);
 }
 function restoreBack(ctx, req) {
   return run(ctx, req,
              validatePartitionSettings,
-             allocNewMap,
-             planNewRestoreBackMap,
-             actualizeNewMap);
+             allocNextMap,
+             planNextRestoreBackMap,
+             actualizeNextMap);
 }
 function cancelRebalance(ctx, req) {
   return run(ctx, req,
              cancelTakeOverSteps,
-             takeCurrentMapAsNewMap,
-             actualizeNewMap);
+             takeCurrentMapAsNextMap,
+             actualizeNextMap);
 }
-function actualizeNewMap(ctx, req) {
+function actualizeNextMap(ctx, req) {
   return run(ctx, req,
-             validateNewMap,
+             validateNextMap,
              scheduleSteps,
              executeSteps,
              checkHealth);
@@ -104,7 +104,7 @@ function validatePartitionSettings(ctx, req) {
              }, {});
 }
 
-function allocNewMap(ctx, req) {
+function allocNextMap(ctx, req) {
   req.nextPartitionMap =
     ctx.newObj("partitionMap",
                _.omit(req.wantPartitionParams, "class")).result;
@@ -112,7 +112,19 @@ function allocNewMap(ctx, req) {
     keyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req);
 }
 
-function planNewRebalanceMap(ctx, req) {
+function planNextRebalanceMap(ctx, req) {
+  return planNextMap(ctx, req);
+}
+
+function planNextFailOverMap(ctx, req) {
+  return planNextMap(ctx, req);
+}
+
+function planNextRestoreBackMap(ctx, req) {
+  return planNextMap(ctx, req);
+}
+
+function planNextMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
 
   // Remove nodes that user wants to be removed.
@@ -180,13 +192,8 @@ function planNewRebalanceMap(ctx, req) {
   // TODO: mark partitions on removed node as dead.
 }
 
-function planNewFailOverMap(ctx, req) {
-}
-
-function planNewRestoreBackMap(ctx, req) {
-}
-
-function validateNewMap(ctx, req) {
+function validateNextMap(ctx, req) {
+  // TODO: do real validation here.
   req.nextBucketEvents.events.unshift(req.wantPartitionParams);
   req.nextBucketEvents.events.unshift(req.nextPartitionMap);
 }
@@ -200,7 +207,7 @@ function executeSteps(ctx, req) {
 function cancelTakeOverSteps(ctx, req) {
 }
 
-function takeCurrentMapAsNewMap(ctx, req) {
+function takeCurrentMapAsNextMap(ctx, req) {
 }
 
 function checkHealth(ctx, req) {
