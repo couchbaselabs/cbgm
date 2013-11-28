@@ -5,7 +5,7 @@
     { "name": "keyFunc",
       "propertyKind": "string"
     },
-    { "name": "assignment",
+    { "name": "model",
       "propertyKind": "string"
     },
     { "class": "propertyArray",

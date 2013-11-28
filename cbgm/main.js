@@ -2,13 +2,18 @@ function main(ctx, page) {
   sortEvents(page.obj);
   page.want = page.want ||
     { keyFunc: "hash-crc32",
-      assignment: "masterSlave",
+      model: "masterSlave",
       nodes: "a",
       numPartitions: 10,
-      slaves: 1 };
+      constraints: 1 };
   page.visualBucketEvent = visualBucketEvent;
   page.r = registerEventHandlers(ctx, page.render("main"));
   refresh(page.r, page.obj);
+}
+
+var modelToConstraints = {
+  masterSlave: "slave",
+  multiMaster: "master"
 }
 
 function registerEventHandlers(ctx, r) {
@@ -20,15 +25,18 @@ function registerEventHandlers(ctx, r) {
         return;
       }
       var want = r.get("want");
+      var params = {
+        keyFunc: want.keyFunc,
+        model: want.model,
+        nodes: want.nodes.split(','),
+        numPartitions: parseInt(want.numPartitions),
+        constraints: {}
+      };
+      params.constraints[modelToConstraints[params.model]] =
+        parseInt(want.constraints);
       var res = rebalance(ctx, {
         prevBucketEvents: deepClone(obj),
-        wantPartitionParams: ctx.newObj("partitionParams",
-                                        { keyFunc: want.keyFunc,
-                                          assignment: want.assignment,
-                                          nodes: want.nodes.split(','),
-                                          numPartitions: parseInt(want.numPartitions),
-                                          constraints: { slave: parseInt(want.slaves) }
-                                        }).result }) ||
+        wantPartitionParams: ctx.newObj("partitionParams", params).result }) ||
         { err: "unexpected rebalance error" };
       console.log(res);
       if (res.err) {

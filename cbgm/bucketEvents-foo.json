@@ -3,7 +3,7 @@
     { "class": "partitionParams",
       "when": "2013-10-20T10:00:00.000Z",
       "keyFunc": "hash-crc32",
-      "assignment": "masterSlave",
+      "model": "masterSlave",
       "nodes": ["a", "b", "c", "d", "e"],
       "numPartitions": 10,
       "constraints": {
@@ -13,7 +13,7 @@
     { "class": "partitionMap",
       "when": "2013-10-20T10:01:00.000Z",
       "keyFunc": "hash-crc32",
-      "assignment": "masterSlave",
+      "model": "masterSlave",
       "nodes": ["a", "b", "c", "d", "e"],
       "numPartitions": 10,
       "constraints": {
@@ -37,7 +37,7 @@
     { "class": "partitionMap",
       "when": "2013-10-20T10:02:00.000Z",
       "keyFunc": "hash-crc32",
-      "assignment": "masterSlave",
+      "model": "masterSlave",
       "nodes": ["a", "b"],
       "numPartitions": 10,
       "constraints": {

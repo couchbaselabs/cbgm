@@ -4,6 +4,6 @@
     "slave": 1
   },
   "numPartitions": 1440,
-  "assignment": "masterSlave",
+  "model": "masterSlave",
   "keyFunc": "hash-crc32"
 }

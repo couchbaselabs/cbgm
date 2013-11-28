@@ -8,10 +8,14 @@
         <div>
           <label>nodes (comma separated)</label>
           <input type="text" value="{{want.nodes}}"/>
+          <label>keyFunc</label>
+          <input type="text" value="{{want.keyFunc}}"/>
+          <label>model (masterSlave, multiMaster, etc)</label>
+          <input type="text" value="{{want.model}}"/>
           <label>num partitions</label>
           <input type="text" value="{{want.numPartitions}}"/>
-          <label>num slaves</label>
-          <input type="text" value="{{want.slaves}}"/>
+          <label>constraints</label>
+          <input type="text" value="{{want.constraints}}"/>
         </div>
         <button class="btn btn-small" on-click="rebalance">
           rebalance

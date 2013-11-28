@@ -56,7 +56,7 @@ function validatePartitionSettings(ctx, req) {
                                         { class: "partitionParams" });
   if (req.lastPartitionParams) {
     req.err =
-      _.reduce(["keyFunc", "assignment", "numPartitions"], function(r, k) {
+      _.reduce(["keyFunc", "model", "numPartitions"], function(r, k) {
           if (req.lastPartitionParams[k] != req.wantPartitionParams[k]) {
             return "partitionParams." + k + " not equal: " +
               req.lastPartitionParams[k] + " vs " + req.wantPartitionParams[k];
@@ -84,9 +84,9 @@ function validatePartitionSettings(ctx, req) {
   }
 
   req.partitionModel =
-    ctx.getObj("partitionModel-" + req.wantPartitionParams.assignment).result;
+    ctx.getObj("partitionModel-" + req.wantPartitionParams.model).result;
   if (!req.partitionModel) {
-    req.err = "error: missing partitionModel-" + req.wantPartitionParams.assignment;
+    req.err = "error: missing partitionModel-" + req.wantPartitionParams.model;
     return;
   }
   req.partitionModelStates =

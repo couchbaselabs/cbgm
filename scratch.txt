@@ -19,7 +19,7 @@ hash-partitioned multiMaster:
     "master": 2,
   },
   "numPartitions": 1440,
-  "assignment": "multiMaster",
+  "model": "multiMaster",
   "keyFunc": "hash-crc32",
 },
 "map": {
@@ -44,7 +44,7 @@ range-partitioned masterSlave:
   "constraints": {
     "master": 2,
   },
-  "assignment": "multiMaster",
+  "model": "multiMaster",
   "keyFunc": "range"
 },
 "map": {
