@@ -47,8 +47,6 @@ function validatePartitionSettings(ctx, req) {
   }
 
   req.arrNodes = { want: req.wantPartitionParams.nodes };
-  req.mapNodes = {};
-
   req.lastPartitionParams = _.findWhere(req.nextBucketEvents.events,
                                         { class: "partitionParams" });
   if (req.lastPartitionParams) {
@@ -63,7 +61,6 @@ function validatePartitionSettings(ctx, req) {
     if (req.err) {
       return;
     }
-
     req.arrNodes.added =
       _.difference(req.wantPartitionParams.nodes, req.lastPartitionParams.nodes);
     req.arrNodes.removed =
@@ -71,10 +68,6 @@ function validatePartitionSettings(ctx, req) {
   } else {
     req.arrNodes.added   = req.wantPartitionParams.nodes;
     req.arrNodes.removed = [];
-  }
-  _.each(req.arrNodes, function(a, k) { req.mapNodes[k] = arrToMap(a); });
-  function arrToMap(a) {
-    return _.reduce(a, function(m, k) { m[k] = {}; return m; }, {});
   }
 
   req.partitionModel =
@@ -139,8 +132,8 @@ function planNextMap(ctx, req) {
   function assignStateToPartitions(state, constraints) {
     // The order that we visit the partitions can help us reach a
     // better assignment.
-    var partitionIds = _.keys(nextPartitions).sort();
-    partitionIds = _.sortBy(partitionIds, function(partitionId) {
+    var partitionIds =
+      _.sortBy(_.keys(nextPartitions).sort(), function(partitionId) {
         var lastPartition = lastPartitions[partitionId] || {};
         // First, visit partitions assigned to nodes that are
         // scheduled to be removed.
@@ -216,14 +209,10 @@ function planNextMap(ctx, req) {
       });
   }
 
-  req.stateNodeCountsCur = countStateNodes(nextPartitions);
-
   req.nextPartitionMap.partitions = nextPartitions;
   req.nextPartitionMap.partitions =
     partitionsWithNodeIndexes(req.nextPartitionMap.partitions,
                               req.nextPartitionMap.nodes);
-
-  // TODO: mark partitions on removed node as dead.
 }
 
 function actualizeNextMap(ctx, req) {
