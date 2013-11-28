@@ -115,8 +115,9 @@ function allocNewMap(ctx, req) {
 function planNewRebalanceMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
 
+  // Remove nodes that user wants to be removed.
   var lastPartitions = req.lastPartitions || {};
-  var nextPartitions = // Remove nodes that need to be removed.
+  var nextPartitions =
     _.object(_.map(req.nextPartitionMap.partitions,
                    function(partition, partitionId) {
                      var lastPartition = lastPartitions[partitionId] || {};
@@ -125,30 +126,39 @@ function planNewRebalanceMap(ctx, req) {
                      return [partitionId, nextPartition];
                    }));
 
+  // Run through the sorted partition states (master, slave, etc) and
+  // invoke assignStateToPartitions().
   _.each(req.partitionModelStates,
-         function(pms) {
+         function(s) {
            var constraints =
-             parseInt((req.wantPartitionParams.constraints || {})[pms.name]) ||
-             parseInt(pms.constraints);
+             parseInt((req.wantPartitionParams.constraints || {})[s.name]) ||
+             parseInt(s.constraints);
            if (constraints >= 0) {
-             planWithPMSConstraints(pms, constraints);
+             assignStateToPartitions(s.name, constraints);
            }
          });
 
-  function planWithPMSConstraints(pms, constraints) {
-    var state = pms.name;
+  // Given a state and its constraints, for every partition, find and
+  // assign the best nodes to that state.
+  function assignStateToPartitions(state, constraints) {
     nextPartitions =
       _.object(_.map(nextPartitions,
                      function(partition, partitionId) {
                        if ((partition[state] || []).length < constraints) {
-                         var nodeToAssign = "a";
+                         var nodesToAssign =
+                           findBestNodes(partitionId, partition, state);
                          partition = removeNodesFromPartition(partition,
-                                                              [nodeToAssign]);
-                         partition[state] = partition[state] || [];
-                         partition[state].push(nodeToAssign);
+                                                              nodesToAssign);
+                         partition[state] =
+                           (partition[state] || []).concat(nodesToAssign);
                        }
                        return [partitionId, partition];
                      }));
+  }
+
+  function findBestNodes(partitionId, partition, state) {
+    console.log(partitionId, state);
+    return ["a"];
   }
 
   req.nextPartitionMap.partitions = nextPartitions;
