@@ -178,17 +178,20 @@ function planNextMap(ctx, req) {
     _.each(partition,
            function(sNodes, s) {
              // Filter out or don't touch nodes at a higher priority state.
+             // E.g., if we're assigning slaves, leave the masters untouched.
              if (req.mapStatePriority[s] > statePriority) {
                candidateNodes = _.difference(candidateNodes, sNodes);
              }
            });
-    candidateNodes = _.sortBy(candidateNodes, function(node) {
-        var isCurrent = _.contains(partition[state] || [], node);
-        var currentFactor = isCurrent ? 0 : 1;
-        var r = stateNodeCounts[node] || 0;
-        return (r * 100) + currentFactor;
-      });
+    candidateNodes = _.sortBy(candidateNodes, scoreNode);
     return candidateNodes.slice(0, constraints);
+
+    function scoreNode(node) {
+      var isCurrent = _.contains(partition[state] || [], node);
+      var currentFactor = isCurrent ? 0 : 0.1;
+      var r = stateNodeCounts[node] || 0;
+      return r + currentFactor;
+    }
   }
 
   function incStateNodeCountsCur(state, nodes) {
