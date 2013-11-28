@@ -39,10 +39,11 @@ function actualizeNewMap(ctx, req) {
 
 function validatePartitionSettings(ctx, req) {
   req.nextBucketEvents = _.clone(req.prevBucketEvents);
-  req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [], "when");
+  req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [],
+                                         "when");
 
-  req.lastPartitionMap =
-    _.findWhere(req.nextBucketEvents.events, { class: "partitionMap" });
+  req.lastPartitionMap = _.findWhere(req.nextBucketEvents.events,
+                                     { class: "partitionMap" });
   if (req.lastPartitionMap) {
     req.lastPartitionMapPartitions =
       partitionsWithNodeNames(req.lastPartitionMap.partitions,
@@ -52,16 +53,17 @@ function validatePartitionSettings(ctx, req) {
   req.arrNodes = { want: req.wantPartitionParams.nodes };
   req.mapNodes = {};
 
-  req.lastPartitionParams =
-    _.findWhere(req.nextBucketEvents.events, { class: "partitionParams" });
+  req.lastPartitionParams = _.findWhere(req.nextBucketEvents.events,
+                                        { class: "partitionParams" });
   if (req.lastPartitionParams) {
-    req.err = _.reduce(["keyFunc", "assignment", "numPartitions"], function(r, k) {
-        if (req.lastPartitionParams[k] != req.wantPartitionParams[k]) {
-          return "partitionParams." + k + " not equal: " +
-            req.lastPartitionParams[k] + " vs " + req.wantPartitionParams[k];
-        }
-        return r;
-      }, null);
+    req.err =
+      _.reduce(["keyFunc", "assignment", "numPartitions"], function(r, k) {
+          if (req.lastPartitionParams[k] != req.wantPartitionParams[k]) {
+            return "partitionParams." + k + " not equal: " +
+              req.lastPartitionParams[k] + " vs " + req.wantPartitionParams[k];
+          }
+          return r;
+        }, null);
     if (req.err) {
       return;
     }
@@ -78,7 +80,9 @@ function validatePartitionSettings(ctx, req) {
     req.arrNodes.same    = [];
   }
   _.each(req.arrNodes, function(a, k) { req.mapNodes[k] = arrToMap(a); });
-  function arrToMap(a) { return _.reduce(a, function(m, k) { m[k] = {}; return m; }, {}); }
+  function arrToMap(a) {
+    return _.reduce(a, function(m, k) { m[k] = {}; return m; }, {});
+  }
 
   req.partitionModel =
     ctx.getObj("partitionModel-" + req.wantPartitionParams.assignment).result;
@@ -98,25 +102,36 @@ function validatePartitionSettings(ctx, req) {
 // Converts node indexes to node names.  Example, with "nodes": ["a", "b"]:
 //   before - "partitions": { "0": { "master": [0], "slave": [1] }, ... }
 //   after  - "partitions": { "0": { "master": ["a"], "slave": ["b"] }, ... }
+// Reverse of partitionsWithNodeIndexes().
 function partitionsWithNodeNames(partitions, nodes) {
-  var r = _.map(partitions,
-                function(partition, partitionId) {
-                  return [partitionId,
-                          _.object(_.map(partition,
-                                         function(nodeIdxs, state) {
-                                           return [state,
-                                                   _.map(nodeIdxs,
-                                                         function(nodeIdx) {
-                                                           return nodes[nodeIdx];
-                                                         })];
-                                         }))];
-                });
-  return _.object(r);
+  return partitionsMap(partitions,
+                       function(nodeIdx) { return nodes[nodeIdx]; });
+}
+
+// Converts node names to indexes.  Example, with "nodes": ["a", "b"]:
+//   before - "partitions": { "0": { "master": ["a"], "slave": ["b"] }, ... }
+//   after  - "partitions": { "0": { "master": [0], "slave": [1] }, ... }
+// Reverse of partitionsWithNodeNames().
+function partitionsWithNodeIndexes(partitions, nodes) {
+  return partitionsMap(partitions,
+                       function(nodeName) { return _.indexOf(nodes, nodeName); });
+}
+
+function partitionsMap(partitions, f) {
+  return _.object(_.map(partitions,
+                        function(partition, partitionId) {
+                          return [partitionId,
+                                  _.object(_.map(partition,
+                                                 function(arr, state) {
+                                                   return [state, _.map(arr, f)];
+                                                 }))];
+                        }));
 }
 
 function allocNewMap(ctx, req) {
   req.nextPartitionMap =
-    ctx.newObj("partitionMap", _.omit(req.wantPartitionParams, "class")).result;
+    ctx.newObj("partitionMap",
+               _.omit(req.wantPartitionParams, "class")).result;
   req.nextPartitionMap.partitions =
     keyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req);
 }
@@ -129,19 +144,28 @@ function planNewRebalanceMap(ctx, req) {
              parseInt((req.wantPartitionParams.constraints || {})[pms.name]) ||
              parseInt(pms.constraints);
            if (constraints >= 0) {
-             planWithPMSConstraints(ctx, req, pms, constraints);
+             planWithPMSConstraints(pms, constraints);
            }
          });
 
   function planWithPMSConstraints(pms, constraints) {
     var state = pms.name;
+    var lastPartitions = req.lastPartitionMapPartitions || {};
+    req.nextPartitionMap.partitions =
+      _.object(_.map(req.nextPartitionMap.partitions,
+                     function(partition, partitionId) {
+                       var lastNodes =
+                         ((lastPartitions[partitionId] || {})[state] || []);
+                       var currNodes =
+                         _.difference(lastNodes, req.arrNodes.removed);
+                       partition[state] = currNodes;
+                       return [partitionId, partition];
+                     }));
   }
 
-  if (req.lastPartitionMap) {
-    _.each(req.lastPartitionMap.partitions, function(partition, partitionId) {
-        req.nextPartitionMap.partitions[partitionId] = partition;
-      });
-  }
+  req.nextPartitionMap.partitions =
+    partitionsWithNodeIndexes(req.nextPartitionMap.partitions,
+                              req.nextPartitionMap.nodes);
 
   // TODO: mark partitions on removed node as dead.
 }
@@ -174,9 +198,11 @@ function checkHealth(ctx, req) {
 
 // --------------------------------------------------------
 
-function run(ctx, req) { // Rest of arguments are steps to apply to req as long as no req.err.
+function run(ctx, req) { // Varargs are steps to apply to req as long as no req.err.
   return _.reduce(_.rest(arguments, 2),
-                  function(req, step) { return req.err ? req : step(ctx, req) || req; }, req);
+                  function(req, step) {
+                    return req.err ? req : step(ctx, req) || req;
+                  }, req);
 }
 
 function sortDesc(a, field) { return _.sortBy(a, field).reverse(); }
