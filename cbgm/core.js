@@ -157,7 +157,20 @@ function planNextMap(ctx, req) {
   // Given a state and its constraints, for every partition, find and
   // assign the best nodes to that state.
   function assignStateToPartitions(state, constraints) {
-    var partitionIds = _.keys(nextPartitions);
+    // The order that we visit the partitions can help us reach a
+    // better assignment.
+    var partitionIds = _.keys(nextPartitions).sort();
+    partitionIds = _.sortBy(partitionIds, function(partitionId) {
+        var lastPartition = lastPartitions[partitionId] || {};
+        // First, visit partitions assigned to nodes that are
+        // scheduled to be removed.
+        if (!_.isEmpty(_.intersection(lastPartition[state],
+                                      req.arrNodes.removed))) {
+          return -1;
+        }
+        return 0;
+      });
+
     nextPartitions =
       _.object(_.map(partitionIds,
                      function(partitionId) {
@@ -194,7 +207,7 @@ function planNextMap(ctx, req) {
     return candidateNodes.slice(0, constraints);
 
     function scoreNode(node) {
-      var isCurrent = _.contains(partition[state] || [], node);
+      var isCurrent = _.contains(partition[state], node);
       var currentFactor = isCurrent ? -1 : 0;
       var r = stateNodeCounts[node] || 0;
       r = r + currentFactor;
