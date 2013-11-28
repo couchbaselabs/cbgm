@@ -62,6 +62,10 @@ function validatePartitionSettings(ctx, req) {
         }
         return r;
       }, null);
+    if (req.err) {
+      return;
+    }
+
     req.arrNodes.added =
       _.difference(req.wantPartitionParams.nodes, req.lastPartitionParams.nodes);
     req.arrNodes.removed =
@@ -87,7 +91,8 @@ function validatePartitionSettings(ctx, req) {
                       function(a, v, k) {
                         a.push(_.defaults(_.clone(v), { name: k }));
                         return a;
-                      }, []), "priority");
+                      }, []),
+             "priority");
 }
 
 // Converts node indexes to node names.  Example, with "nodes": ["a", "b"]:
