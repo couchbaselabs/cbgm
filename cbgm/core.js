@@ -193,7 +193,7 @@ function planNextMap(ctx, req) {
 
     function scoreNode(node) {
       var isCurrent = _.contains(partition[state] || [], node);
-      var currentFactor = isCurrent ? 0.1 : 0;
+      var currentFactor = isCurrent ? -1 : 0;
       var r = stateNodeCounts[node] || 0;
       r = r + currentFactor;
       return r;
