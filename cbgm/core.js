@@ -97,6 +97,12 @@ function validatePartitionSettings(ctx, req) {
                         return a;
                       }, []),
              "priority");
+  req.mapStatePriority = // Key is state name (e.g., "master"), val is priority int.
+    _.reduce(req.partitionModel.states,
+             function(m, partitionModel, name) {
+               m[name] = partitionModel.priority;
+               return m;
+             }, {});
 }
 
 function allocNewMap(ctx, req) {
