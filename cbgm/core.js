@@ -45,9 +45,8 @@ function validatePartitionSettings(ctx, req) {
   req.lastPartitionMap = _.findWhere(req.nextBucketEvents.events,
                                      { class: "partitionMap" });
   if (req.lastPartitionMap) {
-    req.lastPartitionMapPartitions =
-      partitionsWithNodeNames(req.lastPartitionMap.partitions,
-                              req.lastPartitionMap.nodes);
+    req.lastPartitions = partitionsWithNodeNames(req.lastPartitionMap.partitions,
+                                                 req.lastPartitionMap.nodes);
   }
 
   req.arrNodes = { want: req.wantPartitionParams.nodes };
@@ -116,7 +115,7 @@ function allocNewMap(ctx, req) {
 function planNewRebalanceMap(ctx, req) {
   // TODO: maintenance mode & swap rebalance detected as part of rebalance.
 
-  var lastPartitions = req.lastPartitionMapPartitions || {};
+  var lastPartitions = req.lastPartitions || {};
   var nextPartitions = // Remove nodes that need to be removed.
     _.object(_.map(req.nextPartitionMap.partitions,
                    function(partition, partitionId) {
