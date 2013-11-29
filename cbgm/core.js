@@ -118,18 +118,20 @@ function planNextMap(ctx, req) {
   // Run through the sorted partition states (master, slave, etc) that
   // have constraints and invoke assignStateToPartitions().
   _.each(req.partitionModelStates,
-         function(s) {
+         function(s, sIndex) {
            var constraints =
              parseInt((req.wantPartitionParams.constraints || {})[s.name]) ||
              parseInt(s.constraints);
            if (constraints >= 0) {
-             assignStateToPartitions(s.name, constraints);
+             assignStateToPartitions(s.name, constraints,
+                                     (req.partitionModelStates[sIndex - 1] || {}).name);
            }
          });
 
   // Given a state and its constraints, for every partition, find and
-  // assign the best nodes to that state.
-  function assignStateToPartitions(state, constraints) {
+  // assign the best nodes to that state.  If state is "slave", then
+  // the immediately superior state is "master".
+  function assignStateToPartitions(state, constraints, superiorState) {
     // The order that we visit the partitions can help us reach a
     // better assignment.
     var partitionIds =
@@ -155,7 +157,8 @@ function planNextMap(ctx, req) {
                      function(partitionId) {
                        var partition = nextPartitions[partitionId];
                        var nodesToAssign =
-                         findBestNodes(partitionId, partition, state, constraints);
+                         findBestNodes(partitionId, partition,
+                                       state, constraints, superiorState);
                        partition = removeNodesFromPartition(partition,
                                                             partition[state],
                                                             decStateNodeCountsCur);
@@ -168,7 +171,8 @@ function planNextMap(ctx, req) {
                      }));
   }
 
-  function findBestNodes(partitionId, partition, state, constraints) {
+  function findBestNodes(partitionId, partition,
+                         state, constraints, superiorState) {
     var stateNodeCounts =
       req.stateNodeCountsCur[state] =
       req.stateNodeCountsCur[state] || {};
