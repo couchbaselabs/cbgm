@@ -112,6 +112,10 @@ range-partitioned masterSlave:
   }
 }
 
+how about heterogeneous machines
+- some machines are stronger than others and can handle more patitions?
+- this is supported by weighting the stateNodeCounts
+
 request to node X: for partition P on node X,
   atomic state change from state S0 to S1.
 
@@ -214,6 +218,3 @@ how about range splitting/repartitioning?
 detect when constraints aren't met?
 - e.g., number of slaves doesn't meet constraints
 
-heterogeneous machines?
-- some machines are stronger than others and can handle more patitions?
-- idea is to handle this be weighting the stateNodeCounts

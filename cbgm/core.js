@@ -89,7 +89,7 @@ function planNextMap(ctx, req) {
   _.each(req.partitionModelStates, function(s, sIndex) {
       var constraints =
         parseInt((req.wantPartitionParams.constraints || {})[s.name]) ||
-        parseInt(s.constraints);
+        parseInt(s.constraints) || 0;
       if (constraints >= 0) {
         assignStateToPartitions(s.name, constraints,
                                 (req.partitionModelStates[sIndex - 1] || {}).name);
