@@ -57,8 +57,8 @@ function validatePartitionSettings(ctx, req) {
 
   req.deltaNodes = { added: _.difference(req.wantPartitionParams.nodes,
                                        (req.lastPartitionParams || {}).nodes),
-                   removed: _.difference((req.lastPartitionParams || {}).nodes,
-                                         req.wantPartitionParams.nodes) };
+                     removed: _.difference((req.lastPartitionParams || {}).nodes,
+                                           req.wantPartitionParams.nodes) };
 }
 
 function allocNextMap(ctx, req) {
@@ -71,43 +71,39 @@ function allocNextMap(ctx, req) {
 }
 
 function planNextMap(ctx, req) {
-  // Remove nodes that user wants to be removed.
+  // Start by filling out nextPartitions same as lastPartitions, but
+  // filter out the to-be-removed nodes.
   var lastPartitions = req.lastPartitions || {};
   var nextPartitions =
-    _.object(_.map(req.nextPartitionMap.partitions,
-                   function(partition, partitionId) {
-                     var lastPartition = lastPartitions[partitionId] || {};
-                     var nextPartition =
-                       removeNodesFromPartition(lastPartition, req.deltaNodes.removed);
-                     return [partitionId, nextPartition];
-                   }));
+    _.object(_.map(req.nextPartitionMap.partitions, function(_, partitionId) {
+          var lastPartition = lastPartitions[partitionId] || {};
+          var nextPartition = removeNodesFromPartition(lastPartition,
+                                                       req.deltaNodes.removed);
+          return [partitionId, nextPartition];
+        }));
 
   req.stateNodeCounts = countStateNodes(nextPartitions);
 
   // Run through the sorted partition states (master, slave, etc) that
   // have constraints and invoke assignStateToPartitions().
-  _.each(req.partitionModelStates,
-         function(s, sIndex) {
-           var constraints =
-             parseInt((req.wantPartitionParams.constraints || {})[s.name]) ||
-             parseInt(s.constraints);
-           if (constraints >= 0) {
-             assignStateToPartitions(s.name, constraints,
-                                     (req.partitionModelStates[sIndex - 1] || {}).name);
-           }
-         });
+  _.each(req.partitionModelStates, function(s, sIndex) {
+      var constraints =
+        parseInt((req.wantPartitionParams.constraints || {})[s.name]) ||
+        parseInt(s.constraints);
+      if (constraints >= 0) {
+        assignStateToPartitions(s.name, constraints,
+                                (req.partitionModelStates[sIndex - 1] || {}).name);
+      }
+    });
 
-  // Given a state and its constraints, for every partition, find and
-  // assign the best nodes to that state.  If state is "slave", then
-  // the immediately superior state is "master".
+  // Given a state and its constraints, for every partition, assign nodes.
+  // Also, if state is "slave", an example superiorState is "master".
   function assignStateToPartitions(state, constraints, superiorState) {
-    // The order that we visit the partitions can help us reach a
-    // better assignment.
+    // Sort the partitions to help reach a better assignment.
     var partitionIds =
       _.sortBy(_.keys(nextPartitions).sort(), function(partitionId) {
+        // First, favor partitions on nodes that are to-be-removed.
         var lastPartition = lastPartitions[partitionId] || {};
-        // First, visit partitions assigned to nodes that are
-        // scheduled to be removed.
         if (!_.isEmpty(_.intersection(lastPartition[state],
                                       req.deltaNodes.removed))) {
           return 0;
@@ -122,22 +118,20 @@ function planNextMap(ctx, req) {
       });
 
     nextPartitions =
-      _.object(_.map(partitionIds,
-                     function(partitionId) {
-                       var partition = nextPartitions[partitionId];
-                       var nodesToAssign =
-                         findBestNodes(partitionId, partition,
-                                       state, constraints, superiorState);
-                       partition = removeNodesFromPartition(partition,
-                                                            partition[state],
-                                                            decStateNodeCounts);
-                       partition = removeNodesFromPartition(partition,
-                                                            nodesToAssign,
-                                                            decStateNodeCounts);
-                       partition[state] = nodesToAssign;
-                       incStateNodeCounts(state, nodesToAssign);
-                       return [partitionId, partition];
-                     }));
+      _.object(_.map(partitionIds, function(partitionId) {
+            var partition = nextPartitions[partitionId];
+            var nodesToAssign = findBestNodes(partitionId, partition,
+                                              state, constraints, superiorState);
+            partition = removeNodesFromPartition(partition,
+                                                 partition[state],
+                                                 decStateNodeCounts);
+            partition = removeNodesFromPartition(partition,
+                                                 nodesToAssign,
+                                                 decStateNodeCounts);
+            partition[state] = nodesToAssign;
+            incStateNodeCounts(state, nodesToAssign);
+            return [partitionId, partition];
+          }));
   }
 
   function findBestNodes(partitionId, partition,
@@ -147,14 +141,13 @@ function planNextMap(ctx, req) {
       req.stateNodeCounts[state] || {};
     var statePriority = req.mapStatePriority[state];
     var candidateNodes = req.nextPartitionMap.nodes;
-    _.each(partition,
-           function(sNodes, s) {
-             // Filter out or don't touch nodes at a higher priority state.
-             // E.g., if we're assigning slaves, leave the masters untouched.
-             if (req.mapStatePriority[s] > statePriority) {
-               candidateNodes = _.difference(candidateNodes, sNodes);
-             }
-           });
+    _.each(partition, function(sNodes, s) {
+        // Filter out nodes of a higher priority state; e.g., if
+        // we're assigning slaves, leave the masters untouched.
+        if (req.mapStatePriority[s] > statePriority) {
+          candidateNodes = _.difference(candidateNodes, sNodes);
+        }
+      });
     candidateNodes = _.sortBy(candidateNodes, scoreNode);
     return candidateNodes.slice(0, constraints);
 
@@ -202,13 +195,12 @@ function validateNextMap(ctx, req) {
 //   before - partition: {"0": { "master": ["a"], "slave": ["b"] } }
 //   after  - partition: {"0": { "master": [], "slave": ["b"] } }
 function removeNodesFromPartition(partition, removeNodes, cb) {
-  return _.object(_.map(partition,
-                        function(partitionNodes, state) {
-                          if (cb) {
-                            cb(state, _.intersection(partitionNodes, removeNodes));
-                          }
-                          return [state, _.difference(partitionNodes, removeNodes)];
-                        }));
+  return _.object(_.map(partition, function(partitionNodes, state) {
+        if (cb) {
+          cb(state, _.intersection(partitionNodes, removeNodes));
+        }
+        return [state, _.difference(partitionNodes, removeNodes)];
+      }));
 }
 
 // Converts node indexes to node names.  Example, with "nodes": ["a", "b"]:
@@ -233,14 +225,12 @@ function partitionsWithNodeIndexes(partitions, nodes) {
 // Example, with partitions == { "0": { "master": ["a"], "slave": ["b", "c"] } }
 // then you'll see f(["a"]) and f(["b", "c"]).
 function partitionsMap(partitions, f) {
-  return _.object(_.map(partitions,
-                        function(partition, partitionId) {
-                          return [partitionId,
-                                  _.object(_.map(partition,
-                                                 function(arr, state) {
-                                                   return [state, _.map(arr, f)];
-                                                 }))];
-                        }));
+  return _.object(_.map(partitions, function(partition, partitionId) {
+        return [partitionId,
+                _.object(_.map(partition, function(arr, state) {
+                      return [state, _.map(arr, f)];
+                    }))];
+      }));
 }
 
 // Example, with partitions of...
