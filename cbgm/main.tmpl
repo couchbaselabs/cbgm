@@ -16,8 +16,10 @@
           <input type="text" value="{{want.numPartitions}}"/>
           <label>constraints</label>
           <input type="text" value="{{want.constraints}}"/>
-          <label>tags (JSON dict string:string)</label>
+          <label>tags (json dict nodeName to string)</label>
           <input type="text" value="{{want.tags}}"/>
+          <label>weights (json dict nodeName to float)</label>
+          <input type="text" value="{{want.weights}}"/>
         </div>
         <button class="btn btn-small" on-click="rebalance">
           rebalance

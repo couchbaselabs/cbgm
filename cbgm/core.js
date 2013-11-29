@@ -136,6 +136,7 @@ function planNextMap(ctx, req) {
 
   function findBestNodes(partitionId, partition,
                          state, constraints, superiorState) {
+    var weights = req.nextPartitionMap.weights || {};
     var stateNodeCounts =
       req.stateNodeCounts[state] =
       req.stateNodeCounts[state] || {};
@@ -155,6 +156,10 @@ function planNextMap(ctx, req) {
       var isCurrent = _.contains(partition[state], node);
       var currentFactor = isCurrent ? -1 : 0;
       var r = stateNodeCounts[node] || 0;
+      var w = weights[node] || 0;
+      if (w > 0) {
+        r = r / w;
+      }
       r = r + currentFactor;
       return r;
     }

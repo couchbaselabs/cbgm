@@ -6,7 +6,9 @@ function main(ctx, page) {
       nodes: "a",
       numPartitions: 10,
       constraints: 1,
-      tags: "{}" };
+      tags: "{}",
+      weights: "{}",
+    };
   page.visualBucketEvent = visualBucketEvent;
   page.r = registerEventHandlers(ctx, page.render("main"));
   refresh(page.r, page.obj);
@@ -32,7 +34,8 @@ function registerEventHandlers(ctx, r) {
         nodes: want.nodes.split(','),
         numPartitions: parseInt(want.numPartitions),
         constraints: {},
-        tags: JSON.parse(want.tags)
+        tags: JSON.parse(want.tags),
+        weights: JSON.parse(want.weights)
       };
       params.constraints[modelToConstraints[params.model]] =
         parseInt(want.constraints);

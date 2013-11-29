@@ -22,6 +22,10 @@
     { "class": "propertyDict",
       "name": "tags",
       "propertyKind": "string"
+    },
+    { "class": "propertyDict",
+      "name": "weights",
+      "propertyKind": "float"
     }
   ]
 }

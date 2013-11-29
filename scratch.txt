@@ -46,6 +46,10 @@ for slave-0, w.r.t. master-0, same zone, different cabinet
 for slave-1, w.r.t. master-0, same cabinet, different shelf
 for slave-2, w.r.t. master-0, same shelf, (different node)
 
+is max fan-out just an edge case of rack/zone tagging?
+- same hash clump as master?
+- it's kind of like a sub-sorting?
+
 ----------------
 targetMap: want to reach this state on all nodes & partitions in the cluster.
 currentMap: represents the combined view of currentNodeMap's from all nodes.
@@ -209,3 +213,7 @@ how about range splitting/repartitioning?
 
 detect when constraints aren't met?
 - e.g., number of slaves doesn't meet constraints
+
+heterogeneous machines?
+- some machines are stronger than others and can handle more patitions?
+- idea is to handle this be weighting the stateNodeCounts
