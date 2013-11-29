@@ -55,8 +55,7 @@ function validatePartitionSettings(ctx, req) {
                                                  req.lastPartitionMap.nodes);
   }
 
-  req.arrNodes = { want: req.wantPartitionParams.nodes,
-                   added: _.difference(req.wantPartitionParams.nodes,
+  req.deltaNodes = { added: _.difference(req.wantPartitionParams.nodes,
                                        (req.lastPartitionParams || {}).nodes),
                    removed: _.difference((req.lastPartitionParams || {}).nodes,
                                          req.wantPartitionParams.nodes) };
@@ -78,8 +77,8 @@ function planNextMap(ctx, req) {
     _.object(_.map(req.nextPartitionMap.partitions,
                    function(partition, partitionId) {
                      var lastPartition = lastPartitions[partitionId] || {};
-                     var nextPartition = removeNodesFromPartition(lastPartition,
-                                                                  req.arrNodes.removed);
+                     var nextPartition =
+                       removeNodesFromPartition(lastPartition, req.deltaNodes.removed);
                      return [partitionId, nextPartition];
                    }));
 
@@ -110,13 +109,13 @@ function planNextMap(ctx, req) {
         // First, visit partitions assigned to nodes that are
         // scheduled to be removed.
         if (!_.isEmpty(_.intersection(lastPartition[state],
-                                      req.arrNodes.removed))) {
+                                      req.deltaNodes.removed))) {
           return 0;
         }
         // Then, favor partitions who haven't been assigned to any
         // newly added nodes yet for any state.
         if (_.isEmpty(_.intersection(_.flatten(_.values(nextPartitions[partitionId])),
-                                     req.arrNodes.added))) {
+                                     req.deltaNodes.added))) {
           return 1;
         }
         return 2;
