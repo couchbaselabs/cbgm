@@ -18,6 +18,10 @@
     { "class": "propertyDict",
       "name": "constraints",
       "propertyKind": "int"
+    },
+    { "class": "propertyDict",
+      "name": "tags",
+      "propertyKind": "string"
     }
   ]
 }

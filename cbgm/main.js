@@ -5,7 +5,8 @@ function main(ctx, page) {
       model: "masterSlave",
       nodes: "a",
       numPartitions: 10,
-      constraints: 1 };
+      constraints: 1,
+      tags: "{}" };
   page.visualBucketEvent = visualBucketEvent;
   page.r = registerEventHandlers(ctx, page.render("main"));
   refresh(page.r, page.obj);
@@ -30,7 +31,8 @@ function registerEventHandlers(ctx, r) {
         model: want.model,
         nodes: want.nodes.split(','),
         numPartitions: parseInt(want.numPartitions),
-        constraints: {}
+        constraints: {},
+        tags: JSON.parse(want.tags)
       };
       params.constraints[modelToConstraints[params.model]] =
         parseInt(want.constraints);
