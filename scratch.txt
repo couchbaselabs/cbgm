@@ -23,17 +23,17 @@ z0
     second slave on different shelf, same cabinet as master; (1)
        third slave on different zone. (3)
 - same X, but optionally not same X.child as master or slave-0...
-       shelf, n/a            1,0
-       cabinet, shelf        2,1
-       cabinet, n/a          2,0
-       zone, cabinet         3,2
-       zone, shelf           3,1
-       zone, n/a             3,0
-       universe, zone        0,3
-       universe, cabinent    0,2
-       universe, shelf       0,1
-       anywhere              0,0
-- and, hard versus soft limits
+       same      but not same
+       shelf,    n/a          1,0 => 10
+       cabinet,  shelf        2,1 => 21
+       cabinet,  n/a          2,0 => 20
+       zone,     cabinet      3,2 => 32
+       zone,     shelf        3,1 => 31
+       zone,     n/a          3,0 => 30
+       universe, zone         0,3 =>  3
+       universe, cabinent     0,2 =>  2
+       universe, shelf        0,1 =>  1
+       anywhere, n/a          0,0 =>  0
 
 for master-1, w.r.t. master-0, same cabinet, different shelf
 
@@ -46,9 +46,12 @@ for slave-0, w.r.t. master-0, same zone, different cabinet
 for slave-1, w.r.t. master-0, same cabinet, different shelf
 for slave-2, w.r.t. master-0, same shelf, (different node)
 
+rack/zone limits as hard versus soft
+
 is max fan-out just an edge case of rack/zone tagging?
-- same hash clump as master?
+- same hash clump as master-0?
 - it's kind of like a sub-sorting?
+  same clump - 1,0
 
 ----------------
 targetMap: want to reach this state on all nodes & partitions in the cluster.
