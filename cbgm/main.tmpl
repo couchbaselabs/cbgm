@@ -27,7 +27,9 @@
     <div class="span7">
       <div class="rhs">
         {{>bucketEventsVisual}}
-        {{#obj}}{{>__object}}{{/obj}}
+        {{# obj.class != 'bucketEvents' }}
+          {{#obj}}{{>__object}}{{/obj}}
+        {{/}}
         <pre>
           {{{objJSON}}}
         </pre>

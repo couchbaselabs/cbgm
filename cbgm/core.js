@@ -2,42 +2,51 @@
 
 function rebalance(ctx, req) {
   return run(ctx, req,
+             initPartitionModel,
              validatePartitionSettings,
              allocNextMap,
-             planNextRebalanceMap,
-             actualizeNextMap);
-}
-function failOver(ctx, req) {
-  return run(ctx, req,
-             validatePartitionSettings,
-             allocNextMap,
-             planNextFailOverMap,
-             actualizeNextMap);
-}
-function restoreBack(ctx, req) {
-  return run(ctx, req,
-             validatePartitionSettings,
-             allocNextMap,
-             planNextRestoreBackMap,
-             actualizeNextMap);
+             planNextMap,
+             validateNextMap);
 }
 
-function planNextRebalanceMap(ctx, req) {
-  return planNextMap(ctx, req);
+function initPartitionModel(ctx, req) {
+  req.partitionModel =
+    ctx.getObj("partitionModel-" + req.wantPartitionParams.model).result;
+  if (!req.partitionModel) {
+    req.err = "error: missing partitionModel-" + req.wantPartitionParams.model;
+    return;
+  }
+  req.partitionModelStates =
+    sortDesc(_.reduce(req.partitionModel.states, function(a, v, k) {
+          a.push(_.defaults(_.clone(v), { name: k }));
+          return a;
+        }, []),
+      "priority");
+  req.mapStatePriority = // Key is state name (e.g., "master"), val is priority int.
+    _.reduce(req.partitionModel.states, function(m, partitionModel, name) {
+        m[name] = partitionModel.priority;
+        return m;
+      }, {});
 }
-function planNextFailOverMap(ctx, req) {
-  return planNextMap(ctx, req);
-}
-function planNextRestoreBackMap(ctx, req) {
-  return planNextMap(ctx, req);
-}
-
-// --------------------------------------------------------
 
 function validatePartitionSettings(ctx, req) {
   req.nextBucketEvents = _.clone(req.prevBucketEvents);
-  req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [],
-                                         "when");
+  req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [], "when");
+
+  req.lastPartitionParams = _.findWhere(req.nextBucketEvents.events,
+                                        { class: "partitionParams" });
+  if (req.lastPartitionParams) {
+    req.err = _.reduce(["keyFunc", "model", "numPartitions"], function(r, k) {
+        if (req.lastPartitionParams[k] != req.wantPartitionParams[k]) {
+          return "partitionParams." + k + " not equal: " +
+            req.lastPartitionParams[k] + " vs " + req.wantPartitionParams[k];
+        }
+        return r;
+      }, null);
+    if (req.err) {
+      return;
+    }
+  }
 
   req.lastPartitionMap = _.findWhere(req.nextBucketEvents.events,
                                      { class: "partitionMap" });
@@ -46,49 +55,11 @@ function validatePartitionSettings(ctx, req) {
                                                  req.lastPartitionMap.nodes);
   }
 
-  req.arrNodes = { want: req.wantPartitionParams.nodes };
-  req.lastPartitionParams = _.findWhere(req.nextBucketEvents.events,
-                                        { class: "partitionParams" });
-  if (req.lastPartitionParams) {
-    req.err =
-      _.reduce(["keyFunc", "model", "numPartitions"], function(r, k) {
-          if (req.lastPartitionParams[k] != req.wantPartitionParams[k]) {
-            return "partitionParams." + k + " not equal: " +
-              req.lastPartitionParams[k] + " vs " + req.wantPartitionParams[k];
-          }
-          return r;
-        }, null);
-    if (req.err) {
-      return;
-    }
-    req.arrNodes.added =
-      _.difference(req.wantPartitionParams.nodes, req.lastPartitionParams.nodes);
-    req.arrNodes.removed =
-      _.difference(req.lastPartitionParams.nodes, req.wantPartitionParams.nodes);
-  } else {
-    req.arrNodes.added = req.wantPartitionParams.nodes;
-    req.arrNodes.removed = [];
-  }
-
-  req.partitionModel =
-    ctx.getObj("partitionModel-" + req.wantPartitionParams.model).result;
-  if (!req.partitionModel) {
-    req.err = "error: missing partitionModel-" + req.wantPartitionParams.model;
-    return;
-  }
-  req.partitionModelStates =
-    sortDesc(_.reduce(req.partitionModel.states,
-                      function(a, v, k) {
-                        a.push(_.defaults(_.clone(v), { name: k }));
-                        return a;
-                      }, []),
-             "priority");
-  req.mapStatePriority = // Key is state name (e.g., "master"), val is priority int.
-    _.reduce(req.partitionModel.states,
-             function(m, partitionModel, name) {
-               m[name] = partitionModel.priority;
-               return m;
-             }, {});
+  req.arrNodes = { want: req.wantPartitionParams.nodes,
+                   added: _.difference(req.wantPartitionParams.nodes,
+                                       (req.lastPartitionParams || {}).nodes),
+                   removed: _.difference((req.lastPartitionParams || {}).nodes,
+                                         req.wantPartitionParams.nodes) };
 }
 
 function allocNextMap(ctx, req) {
@@ -112,8 +83,7 @@ function planNextMap(ctx, req) {
                      return [partitionId, nextPartition];
                    }));
 
-  req.stateNodeCountsBeg = countStateNodes(nextPartitions);
-  req.stateNodeCountsCur = countStateNodes(nextPartitions);
+  req.stateNodeCounts = countStateNodes(nextPartitions);
 
   // Run through the sorted partition states (master, slave, etc) that
   // have constraints and invoke assignStateToPartitions().
@@ -161,12 +131,12 @@ function planNextMap(ctx, req) {
                                        state, constraints, superiorState);
                        partition = removeNodesFromPartition(partition,
                                                             partition[state],
-                                                            decStateNodeCountsCur);
+                                                            decStateNodeCounts);
                        partition = removeNodesFromPartition(partition,
                                                             nodesToAssign,
-                                                            decStateNodeCountsCur);
+                                                            decStateNodeCounts);
                        partition[state] = nodesToAssign;
-                       incStateNodeCountsCur(state, nodesToAssign);
+                       incStateNodeCounts(state, nodesToAssign);
                        return [partitionId, partition];
                      }));
   }
@@ -174,8 +144,8 @@ function planNextMap(ctx, req) {
   function findBestNodes(partitionId, partition,
                          state, constraints, superiorState) {
     var stateNodeCounts =
-      req.stateNodeCountsCur[state] =
-      req.stateNodeCountsCur[state] || {};
+      req.stateNodeCounts[state] =
+      req.stateNodeCounts[state] || {};
     var statePriority = req.mapStatePriority[state];
     var candidateNodes = req.nextPartitionMap.nodes;
     _.each(partition,
@@ -198,22 +168,18 @@ function planNextMap(ctx, req) {
     }
   }
 
-  function incStateNodeCountsCur(state, nodes) {
-    adjustStateNodeCounts(req.stateNodeCountsCur, state, nodes, 1);
+  function incStateNodeCounts(state, nodes) {
+    adjustStateNodeCounts(req.stateNodeCounts, state, nodes, 1);
   }
-  function decStateNodeCountsCur(state, nodes) {
-    adjustStateNodeCounts(req.stateNodeCountsCur, state, nodes, -1);
+  function decStateNodeCounts(state, nodes) {
+    adjustStateNodeCounts(req.stateNodeCounts, state, nodes, -1);
   }
   function adjustStateNodeCounts(stateNodeCounts, state, nodes, amt) {
     _.each(nodes, function(n) {
         var s = stateNodeCounts[state] = stateNodeCounts[state] || {};
         s[n] = (s[n] || 0) + amt;
-        if (s[n] < 0) {
-          console.log("ERROR: adjustStateNodeCounts < 0" +
-                      ", state: " + state + " node: " + n + " s[n]: " + s[n]);
-        }
-        if (s[n] > req.nextPartitionMapNumPartitions) {
-          console.log("ERROR: adjustStateNodeCounts < numPartitions" +
+        if (s[n] < 0 || s[n] > req.nextPartitionMapNumPartitions) {
+          console.log("ERROR: adjustStateNodeCounts out of range" +
                       ", state: " + state + " node: " + n + " s[n]: " + s[n]);
         }
       });
@@ -225,7 +191,7 @@ function planNextMap(ctx, req) {
                               req.nextPartitionMap.nodes);
 }
 
-function actualizeNextMap(ctx, req) {
+function validateNextMap(ctx, req) {
   // TODO: do real validation here.
   req.nextBucketEvents.events.unshift(req.wantPartitionParams);
   req.nextBucketEvents.events.unshift(req.nextPartitionMap);
@@ -299,10 +265,9 @@ function countStateNodes(partitions) {
 // --------------------------------------------------------
 
 function run(ctx, req) { // Varargs are steps to apply to req as long as no req.err.
-  return _.reduce(_.rest(arguments, 2),
-                  function(req, step) {
-                    return req.err ? req : step(ctx, req) || req;
-                  }, req);
+  return _.reduce(_.rest(arguments, 2), function(req, step) {
+      return req.err ? req : step(ctx, req) || req;
+    }, req);
 }
 
 function sortDesc(a, field) { return _.sortBy(a, field).reverse(); }
