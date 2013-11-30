@@ -165,6 +165,3 @@ how about other replica-like things
 how about range splitting/repartitioning?
 - outside range planner & range executor
 - actualizeNewMap needs to know about steps to...
-
-detect when constraints aren't met?
-- e.g., number of slaves doesn't meet constraints

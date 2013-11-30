@@ -10,6 +10,7 @@ function rebalanceMap(ctx, req) {
 }
 
 function initPartitionModel(ctx, req) {
+  req.warnings = [];
   req.partitionModel =
     ctx.getObj("partitionModel-" + req.wantPartitionParams.model).result;
   if (!req.partitionModel) {
@@ -150,7 +151,13 @@ function planNextMap(ctx, req) {
         }
       });
     candidateNodes = _.sortBy(candidateNodes, scoreNode);
-    return candidateNodes.slice(0, constraints);
+    candidateNodes = candidateNodes.slice(0, constraints);
+    if (candidateNodes.length < constraints) {
+      req.warnings.push("warning: could not meet constraints: " + constraints +
+                        ", state: " + state +
+                        ", partitionId: " + partitionId);
+    }
+    return candidateNodes;
 
     function scoreNode(node) {
       var isCurrent = _.contains(partition[state], node);
