@@ -89,14 +89,12 @@ function planNextMap(ctx, req) {
         parseInt((req.wantPartitionParams.constraints || {})[s.name]) ||
         parseInt(s.constraints) || 0;
       if (constraints >= 0) {
-        assignStateToPartitions(s.name, constraints,
-                                (req.partitionModelStates[sIndex - 1] || {}).name);
+        assignStateToPartitions(s.name, constraints);
       }
     });
 
   // Given a state and its constraints, for every partition, assign nodes.
-  // Also, if state is "slave", an example superiorState is "master".
-  function assignStateToPartitions(state, constraints, superiorState) {
+  function assignStateToPartitions(state, constraints) {
     // Sort the partitions to help reach a better assignment.
     var partitionIds =
       _.sortBy(_.keys(nextPartitions).sort(), function(partitionId) {
@@ -119,7 +117,7 @@ function planNextMap(ctx, req) {
       _.object(_.map(partitionIds, function(partitionId) {
             var partition = nextPartitions[partitionId];
             var nodesToAssign = findBestNodes(partitionId, partition,
-                                              state, constraints, superiorState);
+                                              state, constraints);
             partition = removeNodesFromPartition(partition,
                                                  partition[state],
                                                  decStateNodeCounts);
@@ -132,8 +130,7 @@ function planNextMap(ctx, req) {
           }));
   }
 
-  function findBestNodes(partitionId, partition,
-                         state, constraints, superiorState) {
+  function findBestNodes(partitionId, partition, state, constraints) {
     var weights = req.nextPartitionMap.weights || {};
     var stateNodeCounts =
       req.stateNodeCounts[state] =
