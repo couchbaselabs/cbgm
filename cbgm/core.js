@@ -1,6 +1,6 @@
-/* Core rebalance algorithms, no UI. */
+/* Core partition rebalance algorithms, no UI. */
 
-function rebalance(ctx, req) {
+function rebalanceMap(ctx, req) {
   return run(ctx, req,
              initPartitionModel,
              validatePartitionSettings,

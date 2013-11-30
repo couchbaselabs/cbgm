@@ -39,7 +39,7 @@ function registerEventHandlers(ctx, r) {
       };
       params.constraints[modelToConstraints[params.model]] =
         parseInt(want.constraints);
-      var res = rebalance(ctx, {
+      var res = rebalanceMap(ctx, {
         prevBucketEvents: deepClone(obj),
         wantPartitionParams: ctx.newObj("partitionParams", params).result }) ||
         { err: "unexpected rebalance error" };
