@@ -81,6 +81,8 @@ function planNextMap(ctx, req) {
         }));
 
   req.stateNodeCounts = countStateNodes(nextPartitions);
+  req.hierarchy = req.nextPartitionMap.hierarchy;
+  req.hierarchyChildren = mapParentsToMapChildren(req.hierarchy);
 
   // Run through the sorted partition states (master, slave, etc) that
   // have constraints and invoke assignStateToPartitions().
@@ -132,18 +134,11 @@ function planNextMap(ctx, req) {
 
   function findBestNodes(partitionId, partition, state, constraints) {
     var weights = req.nextPartitionMap.weights || {};
+    var statePriority = req.mapStatePriority[state];
     var stateNodeCounts =
       req.stateNodeCounts[state] =
       req.stateNodeCounts[state] || {};
-    var statePriority = req.mapStatePriority[state];
-    var candidateNodes = req.nextPartitionMap.nodes;
-    _.each(partition, function(sNodes, s) {
-        // Filter out nodes of a higher priority state; e.g., if
-        // we're assigning slaves, leave the masters untouched.
-        if (req.mapStatePriority[s] > statePriority) {
-          candidateNodes = _.difference(candidateNodes, sNodes);
-        }
-      });
+    var candidateNodes = excludeHigherPriorityNodes(req.nextPartitionMap.nodes);
     candidateNodes = _.sortBy(candidateNodes, scoreNode);
     candidateNodes = candidateNodes.slice(0, constraints);
     if (candidateNodes.length < constraints) {
@@ -152,6 +147,17 @@ function planNextMap(ctx, req) {
                         ", partitionId: " + partitionId);
     }
     return candidateNodes;
+
+    function excludeHigherPriorityNodes(nodes) {
+      // Filter out nodes of a higher priority state; e.g., if
+      // we're assigning slaves, leave the masters untouched.
+      _.each(partition, function(sNodes, s) {
+          if (req.mapStatePriority[s] > statePriority) {
+            nodes = _.difference(nodes, sNodes);
+          }
+        });
+      return nodes;
+    }
 
     function scoreNode(node) {
       var isCurrent = _.contains(partition[state], node);
