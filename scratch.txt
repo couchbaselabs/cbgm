@@ -2,67 +2,23 @@ max outbound / inbound connections or fan-out/fan-in between nodes.
 - e.g., 50 node cluster, but node X doesn't talk to all 49 other nodes.
 - e.g., 10,000 node cluster, but node X doesn't talk to all 9999 other nodes.
 
-shelf/rack/zone clumping - RI vs R matrices.
-z0
- c0.0
-  s0.0.0
-   a,b,c
-  s0.0.1
-   d,e
- c0.1
-  s0.1.0
-   f,g
+comtainer-tree
+  z0
+   c0.0
+    s0.0.0
+     a,b,c
+    s0.0.1
+     d,e
+   c0.1
+    s0.1.0
+     f,g
 
-- first slave on same shelf as master; (0)
-    second slave on different shelf, same cabinet; (1)
-       third slave on different cabinet. (2)
-- first slave on different shelf, same cabinet as master; (1)
-    second slave on different cabinet, same zone; (2)
-       third slave on different zone. (3)
-- first slave on different cabinet, same zone; (2)
-    second slave on different shelf, same cabinet as master; (1)
-       third slave on different zone. (3)
-- same X, but optionally not same X.child as master or slave-0...
-       same      but not same
-       shelf,    n/a          1,0 => 10
-       cabinet,  shelf        2,1 => 21
-       cabinet,  n/a          2,0 => 20
-       zone,     cabinet      3,2 => 32
-       zone,     shelf        3,1 => 31
-       zone,     n/a          3,0 => 30
-       universe, zone         0,3 =>  3
-       universe, cabinent     0,2 =>  2
-       universe, shelf        0,1 =>  1
-       anywhere, n/a          0,0 =>  0
-
-for master-1, w.r.t. master-0, same cabinet, different shelf
-
-for master-1, w.r.t. master-0, same zone, different cabinet
-
-for slave-0, w.r.t. master-0, same cabinet, different shelf
-for slave-1, w.r.t. master-0, same zone, different cabinet
-
-for slave-0, w.r.t. master-0, same zone, different cabinet
-for slave-1, w.r.t. master-0, same cabinet, different shelf
-for slave-2, w.r.t. master-0, same shelf, (different node)
-
-rack/zone limits as hard versus soft
+container-tree limits as hard versus soft
 
 is max fan-out just an edge case of rack/zone tagging?
-- same hash clump as master-0?
-- it's kind of like a sub-sorting?
-  same clump - 1,0
+- some kind of stable sub-sorting
 
 ----------------
-targetMap: want to reach this state on all nodes & partitions in the cluster.
-currentMap: represents the combined view of currentNodeMap's from all nodes.
-currentNodeMap: represents the current state of partitions on a single node in the cluster.
-
-actor kinds:
-- participant (reads work queue and updates currentState)
-- spectator
-- conductor
-
 hash-partitioned multiMaster:
 "settings": {
   "constraints": {
@@ -115,10 +71,6 @@ range-partitioned masterSlave:
   }
 }
 
-how about heterogeneous machines
-- some machines are stronger than others and can handle more patitions?
-- this is supported by weighting the stateNodeCounts
-
 request to node X: for partition P on node X,
   atomic state change from state S0 to S1.
 
@@ -170,10 +122,7 @@ healthiness:
 - yellow
 - green
 
-node:
-{
-  "volumes": []
-}
+node: { "volumes": [] }
 
 "config": {
   "maxFullScansPerVolumeType": {
@@ -192,7 +141,7 @@ how about proxy/router
 
 how about failOvers
 - should work
-- this is just a slave-to-master state change,
+- is failOver a slave-to-master state change,
     as long as there are no other masters,
     and
 
@@ -207,7 +156,6 @@ rolling upgrade
 how about GC'ing dead partitions to null?
 
 how about other replica-like things
-- should work
 - index
 - backIndex
 -- need to record the source of each partition
@@ -220,4 +168,3 @@ how about range splitting/repartitioning?
 
 detect when constraints aren't met?
 - e.g., number of slaves doesn't meet constraints
-
