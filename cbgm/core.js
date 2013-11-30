@@ -82,6 +82,7 @@ function planNextMap(ctx, req) {
 
   req.stateNodeCounts = countStateNodes(nextPartitions);
   req.hierarchy = req.nextPartitionMap.hierarchy;
+  req.hierarchyRules = req.nextPartitionMap.hierarchyRules || {};
   req.hierarchyChildren = mapParentsToMapChildren(req.hierarchy);
 
   // Run through the sorted partition states (master, slave, etc) that
@@ -140,6 +141,24 @@ function planNextMap(ctx, req) {
       req.stateNodeCounts[state] || {};
     var candidateNodes = excludeHigherPriorityNodes(req.nextPartitionMap.nodes);
     candidateNodes = _.sortBy(candidateNodes, scoreNode);
+
+    var stateHierarchyRules = req.hierarchyRules[state];
+    if (!_.isEmpty(stateHierarchyRules)) {
+      var highestPriorityState = req.partitionModelStates[0].name;
+      var highestPriorityNode = _.first(partition[highestPriorityState]);
+      var hierarchyNodes = [];
+      _.each(stateHierarchyRules, function(stateHierarchyRule) {
+          var hierarchyCandidates =
+            _.sortBy(includeExcludeNodes(highestPriorityNode || hierarchyNodes[0],
+                                         stateHierarchyRule,
+                                         req.hierarchy,
+                                         req.hierarchyChildren),
+                     scoreNode);
+          hierarchyNodes.push(_.first(hierarchyCandidates) || candidateNodes[0]);
+        });
+      candidateNodes = _.uniq(hierarchyNodes.concat(candidateNodes));
+    }
+
     candidateNodes = candidateNodes.slice(0, constraints);
     if (candidateNodes.length < constraints) {
       req.warnings.push("warning: could not meet constraints: " + constraints +
