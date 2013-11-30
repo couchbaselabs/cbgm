@@ -17,17 +17,14 @@ function initPartitionModel(ctx, req) {
     req.err = "error: missing partitionModel-" + req.wantPartitionParams.model;
     return;
   }
+  req.mapStatePriority = {}; // Key is state name ("master"), val is priority int.
   req.partitionModelStates =
-    sortDesc(_.reduce(req.partitionModel.states, function(a, v, k) {
-          a.push(_.defaults(_.clone(v), { name: k }));
+    sortDesc(_.reduce(req.partitionModel.states, function(a, s, stateName) {
+          req.mapStatePriority[stateName] = s.priority;
+          a.push(_.defaults(_.clone(s), { name: stateName }));
           return a;
         }, []),
       "priority");
-  req.mapStatePriority = // Key is state name (e.g., "master"), val is priority int.
-    _.reduce(req.partitionModel.states, function(m, partitionModel, name) {
-        m[name] = partitionModel.priority;
-        return m;
-      }, {});
 }
 
 function validatePartitionSettings(ctx, req) {
