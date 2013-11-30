@@ -20,12 +20,16 @@
       "propertyKind": "int"
     },
     { "class": "propertyDict",
-      "name": "tags",
+      "name": "weights",
+      "propertyKind": "float"
+    },
+    { "class": "propertyDict",
+      "name": "hierarchy",
       "propertyKind": "string"
     },
     { "class": "propertyDict",
-      "name": "weights",
-      "propertyKind": "float"
+      "name": "hierarchyRules",
+      "propertyKind": "any"
     }
   ]
 }

@@ -6,8 +6,9 @@ function main(ctx, page) {
       nodes: "a",
       numPartitions: 10,
       constraints: 1,
-      tags: "{}",
       weights: "{}",
+      hierarchy: "{}",
+      hierarchyRules: "{}"
     };
   page.visualBucketEvent = visualBucketEvent;
   page.r = registerEventHandlers(ctx, page.render("main"));
@@ -34,8 +35,9 @@ function registerEventHandlers(ctx, r) {
         nodes: want.nodes.split(','),
         numPartitions: parseInt(want.numPartitions),
         constraints: {},
-        tags: JSON.parse(want.tags),
-        weights: JSON.parse(want.weights)
+        weights: JSON.parse(want.weights),
+        hierarchy: JSON.parse(want.hierarchy),
+        hierarchyRules: JSON.parse(want.hierarchyRules)
       };
       params.constraints[modelToConstraints[params.model]] =
         parseInt(want.constraints);

@@ -16,10 +16,12 @@
           <input type="text" value="{{want.numPartitions}}"/>
           <label>constraints</label>
           <input type="text" value="{{want.constraints}}"/>
-          <label>tags (json dict nodeName to string)</label>
-          <input type="text" value="{{want.tags}}"/>
           <label>weights (json dict nodeName to float)</label>
           <input type="text" value="{{want.weights}}"/>
+          <label>hierarchy (json dict nodeName to string)</label>
+          <input type="text" value="{{want.hierarchy}}"/>
+          <label>hierarchyRules (json dict nodeName to [int])</label>
+          <input type="text" value="{{want.hierarchyRules}}"/>
         </div>
         <button class="btn btn-small" on-click="rebalance">
           rebalance
