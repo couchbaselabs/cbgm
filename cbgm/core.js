@@ -139,6 +139,13 @@ function planNextMap(ctx, req) {
     var stateNodeCounts =
       req.stateNodeCounts[state] =
       req.stateNodeCounts[state] || {};
+    var nodePartitionCounts =
+      _.reduce(req.stateNodeCounts, function(r, nodeCounts) {
+          _.each(nodeCounts, function(count, node) {
+              r[node] = (r[node] || 0) + count;
+            });
+          return r;
+        }, {});
     var candidateNodes = excludeHigherPriorityNodes(req.nextPartitionMap.nodes);
     candidateNodes = _.sortBy(candidateNodes, scoreNode);
 
@@ -183,11 +190,14 @@ function planNextMap(ctx, req) {
 
     function scoreNode(node) {
       var isCurrent = _.contains(partition[state], node);
-      var currentFactor = isCurrent ? -1 : 0;
+      var currentFactor = isCurrent ? -2 : 0;
+      var filledFactor =
+        0.1 * ((nodePartitionCounts[node] || 0) / (1.0 * req.nextPartitionMapNumPartitions));
       var r = stateNodeCounts[node] || 0;
+      r = r + filledFactor;
       var w = weights[node] || 0;
       if (w > 0) {
-        r = r / w;
+        r = r / (1.0 * w);
       }
       r = r + currentFactor;
       return r;
