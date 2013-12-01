@@ -149,10 +149,13 @@ function planNextMap(ctx, req) {
       var hierarchyNodes = [];
       _.each(stateHierarchyRules, function(stateHierarchyRule) {
           var hierarchyCandidates =
-            _.sortBy(includeExcludeNodes(highestPriorityNode || hierarchyNodes[0],
-                                         stateHierarchyRule,
-                                         req.hierarchy,
-                                         req.hierarchyChildren),
+            includeExcludeNodes(highestPriorityNode || hierarchyNodes[0],
+                                stateHierarchyRule,
+                                req.hierarchy,
+                                req.hierarchyChildren);
+          hierarchyCandidates =
+            _.sortBy(excludeHigherPriorityNodes(_.intersection(hierarchyCandidates,
+                                                               req.nextPartitionMap.nodes)),
                      scoreNode);
           hierarchyNodes.push(_.first(hierarchyCandidates) || candidateNodes[0]);
         });
