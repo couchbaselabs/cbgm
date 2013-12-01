@@ -54,7 +54,7 @@ function validatePartitionSettings(ctx, req) {
   }
 
   req.deltaNodes = { added: _.difference(req.wantPartitionParams.nodes,
-                                       (req.lastPartitionParams || {}).nodes),
+                                         (req.lastPartitionParams || {}).nodes),
                      removed: _.difference((req.lastPartitionParams || {}).nodes,
                                            req.wantPartitionParams.nodes) };
 }
