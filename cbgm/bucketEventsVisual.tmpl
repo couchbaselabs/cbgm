@@ -2,9 +2,11 @@
   {{#obj}}
     <ul class="visual">
     {{#events:eventIdx}}
-      <li class="bucketEvent">
-        {{{ visualBucketEvent(.) }}}
-      </li>
+      {{# class == "partitionMap" }}
+        <li class="bucketEvent">
+          {{{ visualBucketEvent(.) }}}
+        </li>
+      {{/}}
     {{/events}}
     </ul>
   {{/obj}}

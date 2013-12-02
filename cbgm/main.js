@@ -71,21 +71,19 @@ function sortEvents(obj) {
 
 function visualBucketEvent(be) {
   var res = [];
-  if (be.class == "partitionMap") {
-    res.push('<div class="bucketEvent_when">' + be.when + '</div>');
-    res.push('<div class="nodes">');
-    res.push('<div class="partitionId"></div>');
-    _.each(be.nodes, function(nodeName) {
-        res.push('<div class="nodeId">' + nodeName + '</div>');
-      });
-    res.push('</div>');
-    _.each(be.partitions, function(partition, partitionId) {
-        res.push('<div class="partition">');
-        res.push('<div class="partitionId">' + partitionId + '</div>');
-        res.push(visualPartitionNodes(partition, be.nodes));
-        res.push('</div>');
-      });
-  }
+  res.push('<div class="bucketEvent_when">' + be.when + '</div>');
+  res.push('<div class="nodes">');
+  res.push('<div class="partitionId"></div>');
+  _.each(be.nodes, function(nodeName) {
+      res.push('<div class="nodeId">' + nodeName + '</div>');
+    });
+  res.push('</div>');
+  _.each(be.partitions, function(partition, partitionId) {
+      res.push('<div class="partition">');
+      res.push('<div class="partitionId">' + partitionId + '</div>');
+      res.push(visualPartitionNodes(partition, be.nodes));
+      res.push('</div>');
+    });
   return res.join('\n');
 }
 
