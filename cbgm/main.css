@@ -71,4 +71,7 @@
     -webkit-transform: translate(2em,0)
                        translate(-50%,-50%) rotate(-40deg) translate(50%,50%);
 }
-
+.warnings {
+    margin-top: 2em;
+    font-size: 8pt;
+}

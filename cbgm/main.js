@@ -52,16 +52,16 @@ function registerEventHandlers(ctx, r) {
       }
       alert("done");
       if (res.nextBucketEvents) {
-        refresh(r, res.nextBucketEvents);
+        refresh(r, res.nextBucketEvents, res.warnings);
       }
     }
   });
   return r;
 }
 
-function refresh(r, obj) {
+function refresh(r, obj, warnings) {
   sortEvents(obj);
-  r.set({ obj: obj, objJSON: JSON.stringify(obj) });
+  r.set({ obj: obj, objJSON: JSON.stringify(obj), warnings: warnings });
 }
 
 function sortEvents(obj) {
