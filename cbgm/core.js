@@ -149,26 +149,23 @@ function planNextMap(ctx, req) {
     var candidateNodes = excludeHigherPriorityNodes(req.nextPartitionMap.nodes);
     candidateNodes = _.sortBy(candidateNodes, scoreNode);
 
-    var stateHierarchyRules = req.hierarchyRules[state];
-    if (!_.isEmpty(stateHierarchyRules)) {
-      var highestPriorityState = req.partitionModelStates[0].name;
-      var highestPriorityNode = _.first(partition[highestPriorityState]);
-      var hierarchyNodes = [];
-      _.each(stateHierarchyRules, function(stateHierarchyRule) {
-          var hierarchyCandidates =
-            includeExcludeNodes(highestPriorityNode || hierarchyNodes[0],
-                                stateHierarchyRule,
-                                req.hierarchy,
-                                req.hierarchyChildren);
-          hierarchyCandidates =
-            _.sortBy(excludeHigherPriorityNodes(_.intersection(hierarchyCandidates,
-                                                               req.nextPartitionMap.nodes)),
-                     scoreNode);
-          hierarchyNodes.push(_.first(hierarchyCandidates) || candidateNodes[0]);
-        });
-      candidateNodes = _.uniq(hierarchyNodes.concat(candidateNodes));
-    }
+    var highestPriorityState = req.partitionModelStates[0].name;
+    var highestPriorityNode = _.first(partition[highestPriorityState]);
+    var hierarchyNodes = [];
+    _.each(req.hierarchyRules[state], function(stateHierarchyRule) {
+        var hierarchyCandidates =
+          includeExcludeNodes(highestPriorityNode || hierarchyNodes[0],
+                              stateHierarchyRule,
+                              req.hierarchy,
+                              req.hierarchyChildren);
+        hierarchyCandidates =
+          _.sortBy(excludeHigherPriorityNodes(_.intersection(hierarchyCandidates,
+                                                             req.nextPartitionMap.nodes)),
+                   scoreNode);
+        hierarchyNodes.push(_.first(hierarchyCandidates) || candidateNodes[0]);
+      });
 
+    candidateNodes = _.uniq(hierarchyNodes.concat(candidateNodes));
     candidateNodes = candidateNodes.slice(0, constraints);
     if (candidateNodes.length < constraints) {
       req.warnings.push("warning: could not meet constraints: " + constraints +

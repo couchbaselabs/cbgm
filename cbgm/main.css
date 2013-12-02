@@ -73,5 +73,6 @@
 }
 .warnings {
     margin-top: 2em;
-    font-size: 8pt;
+    max-width: 16em;
+    font-size: 7pt;
 }
