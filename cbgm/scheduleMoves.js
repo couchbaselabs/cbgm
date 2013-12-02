@@ -23,8 +23,9 @@ function planSchedule(ctx, req) {
     var endStateName = nodeState(partitionEnd, node);
     var curStateName = nodeState(partitionBeg, node);
     while (curStateName != endStateName) {
-      schedule.push([ partitionId, node, curStateName ]);
+      var prevStateName = curStateName;
       curStateName = req.mapState[curStateName].transitions[endStateName];
+      schedule.push([ partitionId, node, prevStateName, curStateName ]);
     }
   }
 
