@@ -57,14 +57,24 @@ function registerEventHandlers(ctx, r) {
       if (bucketEvents.class != "bucketEvents") {
         return alert("error: obj is not a bucketEvents");
       }
-      var bucketEventEndIdx;
-      var bucketEventEnd = _.find(bucketEvents.events, function(be, idx) {
-          bucketEventEndIdx = idx;
+      var partitionMapEndIdx;
+      var partitionMapEnd = _.find(bucketEvents.events, function(be, idx) {
+          partitionMapEndIdx = idx;
           return be.class == "partitionMap" && be.when == event.node.id;
         });
-      var bucketEventBeg = bucketEvents.events[bucketEventEndIdx + 1];
-      r.set("schedule",
-            JSON.stringify(bucketEventEnd) + JSON.stringify(bucketEventBeg));
+      var partitionMapBeg = bucketEvents.events[partitionMapEndIdx + 1] || null;
+      var res = scheduleMoves(ctx, {
+        wantPartitionParams: partitionMapEnd,
+        beg: partitionMapBeg,
+        end: partitionMapEnd
+      });
+      console.log(res);
+      if (res.err) {
+        return alert("error: " + res.err);
+      }
+      r.set({ warnings: res.warnings,
+              schedule: JSON.stringify(partitionMapEnd) + ' ' +
+                        JSON.stringify(partitionMapBeg) });
     },
   });
   return r;

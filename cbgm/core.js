@@ -9,24 +9,6 @@ function rebalanceMap(ctx, req) {
              validateNextMap);
 }
 
-function initPartitionModel(ctx, req) {
-  req.warnings = [];
-  req.partitionModel =
-    ctx.getObj("partitionModel-" + req.wantPartitionParams.model).result;
-  if (!req.partitionModel) {
-    req.err = "error: missing partitionModel-" + req.wantPartitionParams.model;
-    return;
-  }
-  req.mapStatePriority = {}; // Key is state name ("master"), val is priority int.
-  req.partitionModelStates =
-    sortDesc(_.reduce(req.partitionModel.states, function(a, s, stateName) {
-          req.mapStatePriority[stateName] = s.priority;
-          a.push(_.defaults(_.clone(s), { name: stateName }));
-          return a;
-        }, []),
-      "priority");
-}
-
 function validatePartitionSettings(ctx, req) {
   req.nextBucketEvents = _.clone(req.prevBucketEvents);
   req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [], "when");

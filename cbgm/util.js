@@ -1,3 +1,21 @@
+function initPartitionModel(ctx, req) {
+  req.warnings = [];
+  req.partitionModel =
+    ctx.getObj("partitionModel-" + req.wantPartitionParams.model).result;
+  if (!req.partitionModel) {
+    req.err = "error: missing partitionModel-" + req.wantPartitionParams.model;
+    return;
+  }
+  req.mapStatePriority = {}; // Key is state name ("master"), val is priority int.
+  req.partitionModelStates =
+    sortDesc(_.reduce(req.partitionModel.states, function(a, s, stateName) {
+          req.mapStatePriority[stateName] = s.priority;
+          a.push(_.defaults(_.clone(s), { name: stateName }));
+          return a;
+        }, []),
+      "priority");
+}
+
 // Returns partition with nodes removed.  Example, when removeNodes == ["a"],
 //   input  - partition: {"0": { "master": ["a"], "slave": ["b"] } }
 //   return - partition: {"0": { "master": [], "slave": ["b"] } }
