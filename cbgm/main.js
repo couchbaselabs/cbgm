@@ -65,16 +65,14 @@ function registerEventHandlers(ctx, r) {
       var partitionMapBeg = bucketEvents.events[partitionMapEndIdx + 1] || null;
       var res = scheduleMoves(ctx, {
         wantPartitionParams: partitionMapEnd,
-        beg: partitionMapBeg,
-        end: partitionMapEnd
+        partitionMapBeg: partitionMapBeg,
+        partitionMapEnd: partitionMapEnd
       });
       console.log(res);
       if (res.err) {
         return alert("error: " + res.err);
       }
-      r.set({ warnings: res.warnings,
-              schedule: JSON.stringify(partitionMapEnd) + ' ' +
-                        JSON.stringify(partitionMapBeg) });
+      r.set({ schedule: JSON.stringify(res.schedule), warnings: res.warnings });
     },
   });
   return r;

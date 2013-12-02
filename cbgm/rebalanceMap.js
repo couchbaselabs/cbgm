@@ -69,7 +69,7 @@ function planNextMap(ctx, req) {
 
   // Run through the sorted partition states (master, slave, etc) that
   // have constraints and invoke assignStateToPartitions().
-  _.each(req.partitionModelStates, function(s, sIndex) {
+  _.each(req.partitionModelStates, function(s) {
       var constraints =
         parseInt((req.wantPartitionParams.constraints || {})[s.name]) ||
         parseInt(s.constraints) || 0;
