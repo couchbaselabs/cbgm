@@ -1,4 +1,4 @@
-keyFunc = {
+var keyFunc = {
   "hash-crc32": {
     allocPartitions: function(req) {
       var res = {};

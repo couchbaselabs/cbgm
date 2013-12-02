@@ -1,4 +1,4 @@
-moves = {
+var moves = {
   "masterSlave": {
     "slave": {
       "master": function(schedule, partitionId, partitionEnd, partitionBeg, node) {
