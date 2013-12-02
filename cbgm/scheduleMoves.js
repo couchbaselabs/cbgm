@@ -14,13 +14,18 @@ function planSchedule(ctx, req) {
                                                           partitionMapBeg.nodes);
   _.each(partitionMapEndPartitions, function(partitionEnd, partitionId) {
       var partitionBeg = partitionMapBegPartitions[partitionId] || {};
-      _.each(partitionMapEnd.nodes, function(node) {
-          planNode(partitionId, partitionEnd, partitionBeg, node);
+      _.each(req.partitionModelStates, function(state) {
+          _.each(partitionMapEnd.nodes, function(node) {
+              planNode(partitionId, partitionEnd, partitionBeg, state.name, node);
+            });
         });
     });
 
-  function planNode(partitionId, partitionEnd, partitionBeg, node) {
+  function planNode(partitionId, partitionEnd, partitionBeg, stateName, node) {
     var endStateName = nodeState(partitionEnd, node);
+    if (endStateName != stateName) {
+      return;
+    }
     var curStateName = nodeState(partitionBeg, node);
     while (curStateName != endStateName) {
       var prevStateName = curStateName;

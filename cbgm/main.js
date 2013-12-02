@@ -62,7 +62,9 @@ function registerEventHandlers(ctx, r) {
           partitionMapEndIdx = idx;
           return be.class == "partitionMap" && be.when == event.node.id;
         });
-      var partitionMapBeg = bucketEvents.events[partitionMapEndIdx + 1] || null;
+      var partitionMapBeg = _.find(bucketEvents.events, function(be, idx) {
+          return be.class == "partitionMap" && idx > partitionMapEndIdx;
+        });
       var res = scheduleMoves(ctx, {
         wantPartitionParams: partitionMapEnd,
         partitionMapBeg: partitionMapBeg,
