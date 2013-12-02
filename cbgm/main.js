@@ -25,8 +25,7 @@ function registerEventHandlers(ctx, r) {
     "rebalanceMap": function(event) {
       var obj = r.get("obj");
       if (obj.class != "bucketEvents") {
-        alert("error: obj is not a bucketEvents");
-        return;
+        return alert("error: obj is not a bucketEvents");
       }
       var want = r.get("want");
       var params = {
@@ -47,21 +46,25 @@ function registerEventHandlers(ctx, r) {
         { err: "unexpected rebalance error" };
       console.log(res);
       if (res.err) {
-        alert("error: " + res.err);
-        return;
+        return alert("error: " + res.err);
       }
       if (res.nextBucketEvents) {
         refresh(r, res.nextBucketEvents, res.warnings);
       }
     },
     "scheduleMoves": function(event) {
-      var obj = r.get("obj");
-      if (obj.class != "bucketEvents") {
-        alert("error: obj is not a bucketEvents");
-        return;
+      var bucketEvents = r.get("obj");
+      if (bucketEvents.class != "bucketEvents") {
+        return alert("error: obj is not a bucketEvents");
       }
-      var when = event.node.id;
-      r.set("schedule", when);
+      var bucketEventEndIdx;
+      var bucketEventEnd = _.find(bucketEvents.events, function(be, idx) {
+          bucketEventEndIdx = idx;
+          return be.class == "partitionMap" && be.when == event.node.id;
+        });
+      var bucketEventBeg = bucketEvents.events[bucketEventEndIdx + 1];
+      r.set("schedule",
+            JSON.stringify(bucketEventEnd) + JSON.stringify(bucketEventBeg));
     },
   });
   return r;
