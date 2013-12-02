@@ -22,7 +22,7 @@ var modelToConstraints = {
 
 function registerEventHandlers(ctx, r) {
   r.on({
-    "rebalance": function(event) {
+    "rebalanceMap": function(event) {
       var obj = r.get("obj");
       if (obj.class != "bucketEvents") {
         alert("error: obj is not a bucketEvents");
@@ -53,7 +53,16 @@ function registerEventHandlers(ctx, r) {
       if (res.nextBucketEvents) {
         refresh(r, res.nextBucketEvents, res.warnings);
       }
-    }
+    },
+    "scheduleMoves": function(event) {
+      var obj = r.get("obj");
+      if (obj.class != "bucketEvents") {
+        alert("error: obj is not a bucketEvents");
+        return;
+      }
+      var when = event.node.id;
+      r.set("schedule", when);
+    },
   });
   return r;
 }
