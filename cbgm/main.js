@@ -50,7 +50,6 @@ function registerEventHandlers(ctx, r) {
         alert("error: " + res.err);
         return;
       }
-      alert("done");
       if (res.nextBucketEvents) {
         refresh(r, res.nextBucketEvents, res.warnings);
       }
