@@ -73,6 +73,7 @@ function sortEvents(obj) {
 function visualBucketEvent(be) {
   var res = [];
   if (be.class == "partitionMap") {
+    res.push('<div class="bucketEvent_when">' + be.when + '</div>');
     res.push('<div class="nodes">');
     res.push('<div class="partitionId"></div>');
     _.each(be.nodes, function(nodeName) {
@@ -85,14 +86,6 @@ function visualBucketEvent(be) {
         res.push(visualPartitionNodes(partition, be.nodes));
         res.push('</div>');
       });
-  }
-  if (be.class == "partitionParams") {
-    res.push('<div class="partitionParams">');
-    res.push('<div class="partitionParam">' +
-             be.nodes + '</div>');
-    res.push('<div class="partitionParam">' +
-             JSON.stringify(be.constraints) + '</div>');
-    res.push('</div>');
   }
   return res.join('\n');
 }
