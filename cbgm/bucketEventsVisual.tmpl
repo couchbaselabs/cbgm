@@ -5,9 +5,13 @@
       {{# class == "partitionMap" }}
         <li class="bucketEvent">
           {{{ visualBucketEvent(.) }}}
+          <button id="{{when}}" class="btn btn-mini schedule" on-click="scheduleMoves">
+            schedule
+          </button>
         </li>
       {{/}}
     {{/events}}
     </ul>
   {{/obj}}
+  <div class="schedule">{{schedule}}</div>
 {{/}}
