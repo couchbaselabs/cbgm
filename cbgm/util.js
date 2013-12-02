@@ -6,11 +6,11 @@ function initPartitionModel(ctx, req) {
     req.err = "error: missing partitionModel-" + req.wantPartitionParams.model;
     return;
   }
-  req.mapStatePriority = {}; // Key is state name ("master"), val is priority int.
+  req.mapState = {}; // Key is state name ("master"), val is state object.
   req.partitionModelStates =
-    sortDesc(_.reduce(req.partitionModel.states, function(a, s, stateName) {
-          req.mapStatePriority[stateName] = s.priority;
-          a.push(_.defaults(_.clone(s), { name: stateName }));
+    sortDesc(_.reduce(req.partitionModel.states, function(a, state, stateName) {
+          req.mapState[stateName] = state;
+          a.push(_.defaults(_.clone(state), { name: stateName }));
           return a;
         }, []),
       "priority");

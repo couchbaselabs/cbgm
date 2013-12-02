@@ -117,7 +117,7 @@ function planNextMap(ctx, req) {
 
   function findBestNodes(partitionId, partition, state, constraints) {
     var weights = req.nextPartitionMap.weights || {};
-    var statePriority = req.mapStatePriority[state];
+    var statePriority = req.mapState[state].priority;
     var stateNodeCounts =
       req.stateNodeCounts[state] =
       req.stateNodeCounts[state] || {};
@@ -160,7 +160,7 @@ function planNextMap(ctx, req) {
       // Filter out nodes of a higher priority state; e.g., if
       // we're assigning slaves, leave the masters untouched.
       _.each(partition, function(sNodes, s) {
-          if (req.mapStatePriority[s] > statePriority) {
+          if (req.mapState[s].priority > statePriority) {
             nodes = _.difference(nodes, sNodes);
           }
         });
