@@ -53,8 +53,20 @@
 .visual .node .master {
     background-color: green;
 }
+.visual .node .master.pos1 {
+    background-color: #30A030;
+}
+.visual .node .master.pos2 {
+    background-color: #60B060;
+}
 .visual .node .slave {
     background-color: orange;
+}
+.visual .node .slave.pos1 {
+    background-color: #FFC520;
+}
+.visual .node .slave.pos2 {
+    background-color: #FFE570;
 }
 .visual .node .dead {
     background-color: #ccc;

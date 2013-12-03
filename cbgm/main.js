@@ -116,9 +116,10 @@ function visualPartitionNodes(partition, nodes) {
   _.each(nodes, function(node, nodeIdx) {
       res.push('<div class="node">');
       var empty = true;
-      _.each(partition, function(partitionState, state) {
-          if (_.contains(partitionState, nodeIdx)) {
-            res.push('<div class="' + state + '"></div>');
+      _.each(partition, function(nodeIdxs, state) {
+          var i = nodeIdxs.indexOf(nodeIdx);
+          if (i >= 0) {
+            res.push('<div class="' + state + ' pos' + i + '"></div>');
             empty = false;
           }
         });
