@@ -66,6 +66,7 @@ function planNextMap(ctx, req) {
   req.hierarchy = req.nextPartitionMap.hierarchy;
   req.hierarchyRules = req.nextPartitionMap.hierarchyRules || {};
   req.hierarchyChildren = mapParentsToMapChildren(req.hierarchy);
+  var zeroes = "00000000000";
 
   // Run through the sorted partition states (master, slave, etc) that
   // have constraints and invoke assignStateToPartitions().
@@ -83,20 +84,25 @@ function planNextMap(ctx, req) {
     // Sort the partitions to help reach a better assignment.
     var partitionIds =
       _.sortBy(_.keys(nextPartitions).sort(), function(partitionId) {
-        // First, favor partitions on nodes that are to-be-removed.
-        var lastPartition = lastPartitions[partitionId] || {};
-        if (!_.isEmpty(_.intersection(lastPartition[state],
-                                      req.deltaNodes.removed))) {
-          return 0;
-        }
-        // Then, favor partitions who haven't been assigned to any
-        // newly added nodes yet for any state.
-        if (_.isEmpty(_.intersection(_.flatten(_.values(nextPartitions[partitionId])),
-                                     req.deltaNodes.added))) {
-          return 1;
-        }
-        return 2;
-      });
+          var suffix = partitionId;
+          if (partitionId == String(parseInt(partitionId))) {
+            suffix = zeroes.slice(0, zeroes.length - partitionId.length) + partitionId;
+          }
+          var partitionIdInt = parseInt(partitionId);
+          // First, favor partitions on nodes that are to-be-removed.
+          var lastPartition = lastPartitions[partitionId] || {};
+          if (!_.isEmpty(_.intersection(lastPartition[state],
+                                        req.deltaNodes.removed))) {
+            return 0 + suffix;
+          }
+          // Then, favor partitions who haven't been assigned to any
+          // newly added nodes yet for any state.
+          if (_.isEmpty(_.intersection(_.flatten(_.values(nextPartitions[partitionId])),
+                                       req.deltaNodes.added))) {
+            return 1 + suffix;
+          }
+          return 2 + suffix;
+        });
 
     // Key is higherPriorityNode, val is { lowerPriorityNode: count }.
     req.nodeToNodeCounts = {};
