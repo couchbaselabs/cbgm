@@ -98,6 +98,9 @@ function planNextMap(ctx, req) {
         return 2;
       });
 
+    // Key is higherPriorityNode, val is { lowerPriorityNode: count }.
+    req.nodeToNodeCounts = {};
+
     nextPartitions =
       _.object(_.map(partitionIds, function(partitionId) {
             var partition = nextPartitions[partitionId];
@@ -128,11 +131,12 @@ function planNextMap(ctx, req) {
             });
           return r;
         }, {});
+    var highestPriorityState = req.partitionModelStates[0].name;
+    var highestPriorityNode = _.first(partition[highestPriorityState]);
+
     var candidateNodes = excludeHigherPriorityNodes(req.nextPartitionMap.nodes);
     candidateNodes = _.sortBy(candidateNodes, scoreNode);
 
-    var highestPriorityState = req.partitionModelStates[0].name;
-    var highestPriorityNode = _.first(partition[highestPriorityState]);
     var hierarchyNodes = [];
     _.each(req.hierarchyRules[state], function(stateHierarchyRule) {
         var hierarchyCandidates =
@@ -154,13 +158,20 @@ function planNextMap(ctx, req) {
                         ", state: " + state +
                         ", partitionId: " + partitionId);
     }
+
+    _.each(candidateNodes, function(candidateNode) {
+        var m = req.nodeToNodeCounts[highestPriorityNode] =
+          req.nodeToNodeCounts[highestPriorityNode] || {};
+        m[candidateNode] = (m[candidateNode] || 0) + 1;
+      });
+
     return candidateNodes;
 
     function excludeHigherPriorityNodes(nodes) {
       // Filter out nodes of a higher priority state; e.g., if
       // we're assigning slaves, leave the masters untouched.
-      _.each(partition, function(sNodes, s) {
-          if (req.mapState[s].priority > statePriority) {
+      _.each(partition, function(sNodes, state) {
+          if (req.mapState[state].priority > statePriority) {
             nodes = _.difference(nodes, sNodes);
           }
         });
@@ -170,9 +181,13 @@ function planNextMap(ctx, req) {
     function scoreNode(node) {
       var isCurrent = _.contains(partition[state], node);
       var currentFactor = isCurrent ? -2 : 0;
+      var numPartitions = req.nextPartitionMapNumPartitions * 1.0;
       var filledFactor =
-        0.1 * ((nodePartitionCounts[node] || 0) / (1.0 * req.nextPartitionMapNumPartitions));
+        0.001 * (nodePartitionCounts[node] || 0) / numPartitions;
+      var lowerPriorityBalanceFactor =
+        ((req.nodeToNodeCounts[highestPriorityNode] || {})[node] || 0) / numPartitions;
       var r = stateNodeCounts[node] || 0;
+      r = r + lowerPriorityBalanceFactor;
       r = r + filledFactor;
       var w = weights[node] || 0;
       if (w > 0) {
