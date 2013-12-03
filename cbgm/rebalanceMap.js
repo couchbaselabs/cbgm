@@ -88,7 +88,6 @@ function planNextMap(ctx, req) {
           if (partitionId == String(parseInt(partitionId))) {
             suffix = zeroes.slice(0, zeroes.length - partitionId.length) + partitionId;
           }
-          var partitionIdInt = parseInt(partitionId);
           // First, favor partitions on nodes that are to-be-removed.
           var lastPartition = lastPartitions[partitionId] || {};
           if (!_.isEmpty(_.intersection(lastPartition[state],
