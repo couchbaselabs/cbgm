@@ -8,7 +8,8 @@ function main(ctx, page) {
       constraints: 1,
       weights: "{}",
       hierarchy: "{}",
-      hierarchyRules: "{}"
+      hierarchyRules: "{}",
+      stickiness: "{}"
     };
   page.visualBucketEvent = visualBucketEvent;
   page.r = registerEventHandlers(ctx, page.render("main"));
@@ -42,7 +43,8 @@ function registerEventHandlers(ctx, r) {
         parseInt(want.constraints);
       var res = rebalanceMap(ctx, {
         prevBucketEvents: deepClone(obj),
-        wantPartitionParams: ctx.newObj("partitionParams", params).result }) ||
+        wantPartitionParams: ctx.newObj("partitionParams", params).result,
+        stickiness: JSON.parse(want.stickiness) }) ||
         { err: "unexpected rebalance error" };
       console.log(res);
       if (res.err) {

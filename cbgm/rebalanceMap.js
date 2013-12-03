@@ -120,6 +120,7 @@ function planNextMap(ctx, req) {
 
   function findBestNodes(partitionId, partition, state, constraints) {
     var weights = req.nextPartitionMap.weights || {};
+    var stickiness = (req.stickiness || {})[state] || 1.5;
     var statePriority = req.mapState[state].priority;
     var stateNodeCounts =
       req.stateNodeCounts[state] =
@@ -180,7 +181,7 @@ function planNextMap(ctx, req) {
 
     function scoreNode(node) {
       var isCurrent = _.contains(partition[state], node);
-      var currentFactor = isCurrent ? -2 : 0;
+      var currentFactor = isCurrent ? -stickiness : 0;
       var numPartitions = req.nextPartitionMapNumPartitions * 1.0;
       var filledFactor =
         0.001 * (nodePartitionCounts[node] || 0) / numPartitions;
