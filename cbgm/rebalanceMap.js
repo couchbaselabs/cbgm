@@ -237,11 +237,11 @@ function validateNextMap(ctx, req) {
 }
 
 // Example, with partitions of...
-//   { "0": { "master": ["a"], "slave": ["b", "c"] } },
-//   { "1": { "master": ["b"], "slave": ["c"] } }
+//   { "0": { "master": ["a"], "slave": ["b", "c"] },
+//     "1": { "master": ["b"], "slave": ["c"] } }
 // then return value will be...
-//   { "master": { "a": 1, "b": 1 } },
-//   { "slave": { "b": 1, "c": 2 } }
+//   { "master": { "a": 1, "b": 1 },
+//     "slave": { "b": 1, "c": 2 } }
 function countStateNodes(partitions) {
   return _.reduce(partitions, function(r, partition, partitionId) {
       return _.reduce(partition, function(r, nodes, state) {

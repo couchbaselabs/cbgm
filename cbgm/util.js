@@ -46,9 +46,9 @@ function partitionsWithNodeIndexes(partitions, nodes) {
                        function(nodeName) { return _.indexOf(nodes, nodeName); });
 }
 
-// Like map(), but runs f() on every nodes array in the partition.
+// Like map(), but runs map(f) on every nodes array in the partition.
 // Example, with partitions == { "0": { "master": ["a"], "slave": ["b", "c"] } }
-// then you'll see f(["a"]) and f(["b", "c"]).
+// then you'll see map(["a"], f) and map(["b", "c"], f).
 function partitionsMap(partitions, f) {
   return _.object(_.map(partitions, function(partition, partitionId) {
         return [partitionId,
