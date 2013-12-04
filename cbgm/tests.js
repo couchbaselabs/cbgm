@@ -86,6 +86,8 @@ function tests() {
       if (!ctx) {
         return;
       }
+
+      // -----------------------------------------------------------
       var prevBucketEvents = ctx.newObj("bucketEvents").result;
       var wantPartitionParams = ctx.newObj("partitionParams", {
         keyFunc: "hash-crc32",
@@ -113,10 +115,12 @@ function tests() {
       equal(pm.nodes.length, 1, "just 1 node");
       equal(_.size(pm.partitions), 10, "10 partitions");
 
+      deepEqual(countStatePartitions(pm.partitions),
+                { master: 10 });
+
       deepEqual(countStateNodes(pm.partitions), { master: { 0: 10 } });
 
-      // ----------------------------------------
-
+      // -----------------------------------------------------------
       prevBucketEvents = res.nextBucketEvents;
       wantPartitionParams = ctx.newObj("partitionParams", {
         keyFunc: "hash-crc32",
@@ -145,7 +149,87 @@ function tests() {
       equal(pm.nodes.length, 2, "now 2 nodes");
       equal(_.size(pm.partitions), 10, "still 10 partitions");
 
+      deepEqual(countStatePartitions(pm.partitions),
+                { master: 10, slave: 10 });
+
       deepEqual(countStateNodes(pm.partitions),
                 { master: { 0: 5, 1: 5 }, slave: { 0: 5, 1: 5 } });
+
+      // -----------------------------------------------------------
+      prevBucketEvents = res.nextBucketEvents;
+      wantPartitionParams = ctx.newObj("partitionParams", {
+        keyFunc: "hash-crc32",
+        model: "masterSlave",
+        nodes: ["a", "B"], // Swap rebalance.
+        numPartitions: 10,
+        constraints: { slave: 1 },
+        weights: {},
+        hierarchy: {},
+        hierarchyRules: {}
+      }).result;
+
+      res = rebalanceMap(ctx, {
+        prevBucketEvents: prevBucketEvents,
+        wantPartitionParams: wantPartitionParams
+      });
+      ok(!res.err);
+      ok(res.nextBucketEvents);
+      ok(res.nextBucketEvents.events.length > res.prevBucketEvents.events.length);
+
+      pm = res.nextBucketEvents.events[0];
+      pp = res.nextBucketEvents.events[1];
+      equal(pm.class, "partitionMap");
+      equal(pp.class, "partitionParams");
+
+      equal(pm.nodes.length, 2, "now 2 nodes");
+      equal(_.size(pm.partitions), 10, "still 10 partitions");
+
+      deepEqual(countStatePartitions(pm.partitions),
+                { master: 10, slave: 10 });
+
+      deepEqual(countStateNodes(pm.partitions),
+                { master: { 0: 5, 1: 5 }, slave: { 0: 5, 1: 5 } });
+
+      // -----------------------------------------------------------
+      prevBucketEvents = res.nextBucketEvents;
+      wantPartitionParams = ctx.newObj("partitionParams", {
+        keyFunc: "hash-crc32",
+        model: "masterSlave",
+        nodes: ["a", "B", "c"], // A third node.
+        numPartitions: 10,
+        constraints: { slave: 1 },
+        weights: {},
+        hierarchy: {},
+        hierarchyRules: {}
+      }).result;
+
+      res = rebalanceMap(ctx, {
+        prevBucketEvents: prevBucketEvents,
+        wantPartitionParams: wantPartitionParams
+      });
+      ok(!res.err);
+      ok(res.nextBucketEvents);
+      ok(res.nextBucketEvents.events.length > res.prevBucketEvents.events.length);
+
+      pm = res.nextBucketEvents.events[0];
+      pp = res.nextBucketEvents.events[1];
+      equal(pm.class, "partitionMap");
+      equal(pp.class, "partitionParams");
+
+      equal(pm.nodes.length, 3, "now 3 nodes");
+      equal(_.size(pm.partitions), 10, "still 10 partitions");
+
+      deepEqual(countStatePartitions(pm.partitions),
+                { master: 10, slave: 10 });
     });
+
+  function countStatePartitions(partitions) {
+    return _.reduce(countStateNodes(partitions),
+                    function(r, nodeCounts, state) {
+                      r[state] = _.reduce(nodeCounts, function(s, c) {
+                          return s + c;
+                        }, 0);
+                      return r;
+                    }, {});
+  }
 };
