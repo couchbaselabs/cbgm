@@ -88,9 +88,14 @@
     max-width: 16em;
     font-size: 7pt;
 }
-.schedule {
+.controls {
+    max-width: 10em;
     margin-top: 2em;
     margin-left: 2em;
+}
+.controls button {
+    display: block;
+    margin-top: 1em;
 }
 #qunit {
     margin-top: 4em;
