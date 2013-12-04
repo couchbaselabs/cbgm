@@ -223,6 +223,53 @@ function tests() {
                 { master: 10, slave: 10 });
     });
 
+  test("50node-masterSlave", function() {
+      var ctx = g_ctx;
+      if (!ctx) {
+        return;
+      }
+
+      // -----------------------------------------------------------
+      var prevBucketEvents = ctx.newObj("bucketEvents").result;
+      var wantPartitionParams = ctx.newObj("partitionParams", {
+        keyFunc: "hash-crc32",
+        model: "masterSlave",
+         nodes: _.map(_.range(50), String),
+        numPartitions: 1024,
+        constraints: { slave: 1 },
+        weights: {},
+        hierarchy: {},
+        hierarchyRules: {}
+      }).result;
+      var res = rebalanceMap(ctx, {
+        prevBucketEvents: prevBucketEvents,
+        wantPartitionParams: wantPartitionParams
+      });
+      ok(!res.err);
+      ok(res.nextBucketEvents);
+      ok(res.nextBucketEvents.events.length > res.prevBucketEvents.events.length);
+
+      var pm = res.nextBucketEvents.events[0];
+      var pp = res.nextBucketEvents.events[1];
+      equal(pm.class, "partitionMap");
+      equal(pp.class, "partitionParams");
+
+      equal(pm.nodes.length, 50, "50 nodes");
+      equal(_.size(pm.partitions), 1024, "1024 partitions");
+
+      deepEqual(countStatePartitions(pm.partitions),
+                { master: 1024, slave: 1024 });
+
+      var csn = countStateNodes(pm.partitions);
+      var max = _.max(csn.master);
+      var min = _.min(csn.master);
+      ok(max - min <= 1, "master max (" + max + ") 1 or less close to min (" + min + ")");
+
+      max = _.max(csn.slave);
+      min = _.min(csn.slave);
+      ok(max - min <= 1, "slave max (" + max + ") 1 or less close to min (" + min + ")");
+    });
+
   function countStatePartitions(partitions) {
     return _.reduce(countStateNodes(partitions),
                     function(r, nodeCounts, state) {
