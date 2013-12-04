@@ -38,7 +38,7 @@
     <div class="span7">
       <div class="rhs">
         {{>bucketEventsVisual}}
-        {{# obj.class != 'bucketEvents' }}
+        {{# obj.class != 'bucketEvents' && obj.class != 'app' }}
           {{#obj}}{{>__object}}{{/obj}}
         {{/}}
       </div>
