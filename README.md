@@ -3,7 +3,7 @@ cbgm
 
 To start:
 
-    ../jscion/jscion -appsPath=../jscion/apps,. -staticPath=../jscion/static
+    ../jscion/jscion -appsPath=../jscion/apps,./apps -staticPath=../jscion/static
 
 Then visit:
 
