@@ -26,7 +26,7 @@ function registerEventHandlers(ctx, r) {
     "rebalanceMap": function(event) {
       var obj = r.get("obj");
       if (obj.class != "bucketEvents") {
-        return alert("error: obj is not a bucketEvents");
+        obj = ctx.newObj("bucketEvents").result;
       }
       var want = r.get("want");
       var params = {
