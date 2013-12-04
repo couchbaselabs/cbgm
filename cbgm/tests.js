@@ -229,7 +229,6 @@ function tests() {
         return;
       }
 
-      // -----------------------------------------------------------
       var prevBucketEvents = ctx.newObj("bucketEvents").result;
       var wantPartitionParams = ctx.newObj("partitionParams", {
         keyFunc: "hash-crc32",
