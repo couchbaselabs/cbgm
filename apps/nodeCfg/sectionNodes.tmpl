@@ -7,13 +7,14 @@
         <h1>nodes</h1>
         <ul>
           {{#nodeCfgs}}
-            <li><a href="#">{{.name}}</a></li>
+            <li><a href="#sectionNodes:nodeCfg-{{.name}}">{{.name}}</a></li>
           {{/nodeCfgs}}
         </ul>
       </div>
     </div>
     <div class="span7">
       <div class="rhs">
+        {{#obj}}{{>__object}}{{/obj}}
       </div>
     </div>
   </div>

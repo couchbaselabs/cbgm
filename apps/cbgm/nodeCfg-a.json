@@ -1,3 +1,4 @@
 { "class": "nodeCfg",
-  "name": "a"
+  "name": "a",
+  "usage": ["kv", "index"]
 }
