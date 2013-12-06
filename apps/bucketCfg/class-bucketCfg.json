@@ -3,10 +3,19 @@
   "super": "object",
   "properties": [
     { "name": "ident",
-      "propertyKind": "string"
+      "propertyKind": "docId"
     },
     { "name": "name",
       "propertyKind": "string"
+    },
+    { "name": "kind",
+      "propertyKind": "string"
+    },
+    { "name": "quotaMemory",
+      "propertyKind": "int"
+    },
+    { "name": "quotaStorage",
+      "propertyKind": "int"
     }
   ]
 }

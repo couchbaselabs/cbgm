@@ -1,12 +1,5 @@
 <div class="bucketCfgPanel">
 <div class="bucketCfg">
-  <div>
-    <label>ident</label>
-    <a href="#sectionBuckets:{{.ident}}">{{.name}}</a>
-  </div>
-  <div>
-    <label>name</label>
-    {{.name}}
-  </div>
+  {{#obj}}{{>__object}}{{/obj}}
 </div>
 </div>

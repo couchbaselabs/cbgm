@@ -1,4 +1,7 @@
 { "class": "bucketCfg",
   "ident": "bucketCfg-bar",
-  "name": "bar"
+  "name": "bar",
+  "kind": "ep",
+  "quotaMemory": 4000,
+  "quotaStorage": 80000
 }

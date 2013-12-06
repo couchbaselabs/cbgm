@@ -1,4 +1,7 @@
 { "class": "bucketCfg",
   "ident": "bucketCfg-foo",
-  "name": "foo"
+  "name": "foo",
+  "kind": "ep",
+  "quotaMemory": 2000,
+  "quotaStorage": 60000
 }
