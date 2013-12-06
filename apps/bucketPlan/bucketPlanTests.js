@@ -1,9 +1,9 @@
-function tests() {
-  module("basic");
+allTests = window.allTests || [];
+allTests.push(bucketPlanTests);
+function tests() { _.each(allTests, function(f) { f(); }); }
 
-  test("ok", function() {
-      ok(true);
-    });
+function bucketPlanTests() {
+  module("bucketPlanTests.basic");
 
   test("sortDesc", function() {
       deepEqual([{x: 3}, {x: 2}, {x: 1}], sortDesc([{x: 1}, {x: 2}, {x: 3}], 'x'));
@@ -53,25 +53,6 @@ function tests() {
                 removeNodesFromPartition(partitions, [1, 0]));
     });
 
-  test("findAncestor", function() {
-      var parents = { A1a: "A1", A1: "A" };
-      equal("A1a", findAncestor("A1a", parents, 0));
-      equal("A1", findAncestor("A1a", parents, 1));
-      equal("A", findAncestor("A1a", parents, 2));
-      equal(undefined, findAncestor("A1a", parents, 3));
-      equal(undefined, findAncestor("A1a", parents, 4));
-      equal("are you my mother?", findAncestor("are you my mother?", parents, 0));
-      equal(undefined, findAncestor("are you my mother?", parents, 1));
-    });
-
-  test("findLeaves", function() {
-      var parents = { A1a: "A1", A1b: "A1", A1: "A", A2: "A", A2a: "A2", A2b: "A2" };
-      var children = mapParentsToMapChildren(parents);
-      deepEqual(["A1a"], findLeaves("A1a", children));
-      deepEqual(["A1a", "A1b"], findLeaves("A1", children));
-      deepEqual(["A1a", "A1b", "A2a", "A2b"], findLeaves("A", children));
-    });
-
   test("countStateNodes", function() {
       deepEqual(countStateNodes({ "0": { "master": ["a"], "slave": ["b", "c"] },
                                   "1": { "master": ["b"], "slave": ["c"] } }),
@@ -79,7 +60,7 @@ function tests() {
                   "slave": { "b": 1, "c": 2 } });
     });
 
-  module("rebalance");
+  module("bucketPlanTests.rebalance");
 
   test("basic-masterSlave", function() {
       var ctx = g_ctx;
