@@ -1,0 +1,47 @@
+{{>main_header}}
+
+<div class="container-fluid main">
+  <div class="row-fluid">
+    <div class="span3">
+      <div class="lhs">
+        <h1>rebalance</h1>
+        <div>
+          <label>nodes (comma separated)</label>
+          <input type="text" value="{{want.nodes}}"/>
+          <label>keyFunc</label>
+          <input type="text" value="{{want.keyFunc}}"/>
+          <label>model (masterSlave, multiMaster, etc)</label>
+          <input type="text" value="{{want.model}}"/>
+          <label>num partitions</label>
+          <input type="text" value="{{want.numPartitions}}"/>
+          <label>constraints</label>
+          <input type="text" value="{{want.constraints}}"/>
+          <label>weights (json dict nodeName to float)</label>
+          <input type="text" value="{{want.weights}}"/>
+          <label>hierarchy (json dict nodeName to string)</label>
+          <input type="text" value="{{want.hierarchy}}"/>
+          <label>hierarchyRules (json dict nodeName to [int])</label>
+          <input type="text" value="{{want.hierarchyRules}}"/>
+        </div>
+        <button class="btn btn-small" on-click="rebalanceMap">
+          rebalance
+        </button>
+        <ul class="warnings">
+          {{#warnings}}
+            <li>{{.}}</li>
+          {{/warnings}}
+        </ul>
+      </div>
+    </div>
+    <div class="span7">
+      <div class="rhs">
+        {{>resourceEventsVisual}}
+        {{# obj.class != 'resourceEvents' && obj.class != 'app' }}
+          {{#obj}}{{>__object}}{{/obj}}
+        {{/}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{>main_footer}}

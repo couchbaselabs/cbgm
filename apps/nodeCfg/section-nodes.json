@@ -1,5 +1,5 @@
 { "class": "section",
   "title": "nodes",
-  "target": "#section:nodes",
+  "target": "#sectionNodes:",
   "displayOrder": 10
 }

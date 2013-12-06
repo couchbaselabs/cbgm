@@ -1,5 +1,5 @@
 { "class": "section",
   "title": "buckets",
-  "target": "#section:buckets",
+  "target": "#sectionBuckets:",
   "displayOrder": 20
 }

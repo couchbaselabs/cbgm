@@ -1,5 +1,5 @@
 { "class": "section",
   "title": "rebalance",
-  "target": "#section:rebalance",
+  "target": "#sectionRebalance:",
   "displayOrder": 30
 }
