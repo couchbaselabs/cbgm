@@ -45,7 +45,7 @@ function allocNextMap(ctx, req) {
   req.nextPartitionMap =
     ctx.newObj("partitionMap", _.omit(req.wantPartitionParams, "class")).result;
   req.nextPartitionMap.partitions =
-    keyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req);
+    bucketKeyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req);
   req.nextPartitionMapNumPartitions =
     _.size(req.nextPartitionMap.partitions);
 }

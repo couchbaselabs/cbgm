@@ -30,7 +30,7 @@ function planSchedule(ctx, req) {
     while (curStateName != endStateName) {
       var prevStateName = curStateName;
       curStateName = req.mapState[curStateName].transitions[endStateName];
-      var fn = ((moves[partitionMapEnd.model] || {})[prevStateName] || {})[curStateName];
+      var fn = ((partitionMoves[partitionMapEnd.model] || {})[prevStateName] || {})[curStateName];
       if (fn) {
         fn(schedule, partitionId, partitionEnd, partitionBeg, node);
       } else {
