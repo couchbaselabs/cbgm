@@ -9,6 +9,8 @@ function sectionRebalance(ctx, page) {
       hierarchy: "{}",
       hierarchyRules: "{}"
     };
+  sortEvents(page.obj);
+  page.visualResourceEvent = visualResourceEvent;
   main(ctx, page, "sectionRebalance");
   sectionRebalanceEventHandlers(ctx, page.r);
 }
@@ -47,7 +49,7 @@ function sectionRebalanceEventHandlers(ctx, r) {
         return alert("error: " + res.err);
       }
       if (res.nextResourceEvents) {
-        refresh(r, res.nextResourceEvents, res.warnings);
+        refreshResourceEvents(r, res.nextResourceEvents, res.warnings);
       }
     },
     "scheduleMoves": function(event) {
@@ -76,4 +78,19 @@ function sectionRebalanceEventHandlers(ctx, r) {
     },
   });
   return r;
+}
+
+function refreshResourceEvents(r, obj, warnings) {
+  sortEvents(obj);
+  r.set({ obj: obj, objJSON: JSON.stringify(obj), warnings: warnings });
+}
+
+function sortEvents(obj) {
+  if (obj.events) {
+    obj.events = sortDesc(obj.events, "when");
+  }
+}
+
+function deepClone(x) {
+  return JSON.parse(JSON.stringify(x));
 }

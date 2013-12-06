@@ -5,6 +5,7 @@
     <div class="span3">
       <div class="lhs">
         <h1>nodes</h1>
+        <input on-change="newNodeCfg" class="newNodeCfg" placeholder="new node names"/>
         <ul>
           {{#nodeCfgs}}
             <li><a href="#sectionNodes:nodeCfg-{{.name}}">{{.name}}</a></li>
