@@ -5,6 +5,11 @@
     <div class="span3">
       <div class="lhs">
         <h1>buckets</h1>
+        <ul>
+          {{#bucketCfgs}}
+            <li><a href="#">{{.name}}</a></li>
+          {{/bucketCfgs}}
+        </ul>
       </div>
     </div>
     <div class="span7">

@@ -2,6 +2,9 @@
   "name": "nodeCfgBase",
   "super": "object",
   "properties": [
+    { "name": "name",
+      "propertyKind": "string"
+    },
     { "name": "description",
       "propertyKind": "string"
     },
