@@ -1,6 +1,6 @@
 { "class": "class",
   "name": "partitionParams",
-  "super": "bucketEvent",
+  "super": "resourceEvent",
   "properties": [
     { "name": "keyFunc",
       "propertyKind": "string"

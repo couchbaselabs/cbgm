@@ -1,4 +1,4 @@
-var bucketKeyFunc = {
+var resourceKeyFunc = {
   "hash-crc32": {
     allocPartitions: function(req) {
       var res = {};

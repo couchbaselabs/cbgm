@@ -10,10 +10,10 @@ function rebalanceMap(ctx, req) {
 }
 
 function validatePartitionSettings(ctx, req) {
-  req.nextBucketEvents = _.clone(req.prevBucketEvents);
-  req.nextBucketEvents.events = sortDesc(req.nextBucketEvents.events || [], "when");
+  req.nextResourceEvents = _.clone(req.prevResourceEvents);
+  req.nextResourceEvents.events = sortDesc(req.nextResourceEvents.events || [], "when");
 
-  req.lastPartitionParams = _.findWhere(req.nextBucketEvents.events,
+  req.lastPartitionParams = _.findWhere(req.nextResourceEvents.events,
                                         { class: "partitionParams" });
   if (req.lastPartitionParams) {
     req.err = _.reduce(["keyFunc", "model", "numPartitions"], function(r, k) {
@@ -28,7 +28,7 @@ function validatePartitionSettings(ctx, req) {
     }
   }
 
-  req.lastPartitionMap = _.findWhere(req.nextBucketEvents.events,
+  req.lastPartitionMap = _.findWhere(req.nextResourceEvents.events,
                                      { class: "partitionMap" });
   if (req.lastPartitionMap) {
     req.lastPartitions = partitionsWithNodeNames(req.lastPartitionMap.partitions,
@@ -45,7 +45,7 @@ function allocNextMap(ctx, req) {
   req.nextPartitionMap =
     ctx.newObj("partitionMap", _.omit(req.wantPartitionParams, "class")).result;
   req.nextPartitionMap.partitions =
-    bucketKeyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req);
+    resourceKeyFunc[req.wantPartitionParams.keyFunc].allocPartitions(req);
   req.nextPartitionMapNumPartitions =
     _.size(req.nextPartitionMap.partitions);
 }
@@ -232,8 +232,8 @@ function planNextMap(ctx, req) {
 
 function validateNextMap(ctx, req) {
   // TODO: do real validation here.
-  req.nextBucketEvents.events.unshift(req.wantPartitionParams);
-  req.nextBucketEvents.events.unshift(req.nextPartitionMap);
+  req.nextResourceEvents.events.unshift(req.wantPartitionParams);
+  req.nextResourceEvents.events.unshift(req.nextPartitionMap);
 }
 
 // Example, with partitions of...

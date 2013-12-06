@@ -1,9 +1,9 @@
 allTests = window.allTests || [];
-allTests.push(bucketPlanTests);
+allTests.push(resourcePlanTests);
 function tests() { _.each(allTests, function(f) { f(); }); }
 
-function bucketPlanTests() {
-  module("bucketPlanTests.basic");
+function resourcePlanTests() {
+  module("resourcePlanTests.basic");
 
   test("sortDesc", function() {
       deepEqual([{x: 3}, {x: 2}, {x: 1}], sortDesc([{x: 1}, {x: 2}, {x: 3}], 'x'));
@@ -60,7 +60,7 @@ function bucketPlanTests() {
                   "slave": { "b": 1, "c": 2 } });
     });
 
-  module("bucketPlanTests.rebalance");
+  module("resourcePlanTests.rebalance");
 
   test("basic-masterSlave", function() {
       var ctx = g_ctx;
@@ -69,7 +69,7 @@ function bucketPlanTests() {
       }
 
       // -----------------------------------------------------------
-      var prevBucketEvents = ctx.newObj("bucketEvents").result;
+      var prevResourceEvents = ctx.newObj("resourceEvents").result;
       var wantPartitionParams = ctx.newObj("partitionParams", {
         keyFunc: "hash-crc32",
         model: "masterSlave",
@@ -81,15 +81,15 @@ function bucketPlanTests() {
         hierarchyRules: {}
       }).result;
       var res = rebalanceMap(ctx, {
-        prevBucketEvents: prevBucketEvents,
+        prevResourceEvents: prevResourceEvents,
         wantPartitionParams: wantPartitionParams
       });
       ok(!res.err);
-      ok(res.nextBucketEvents);
-      ok(res.nextBucketEvents.events.length > res.prevBucketEvents.events.length);
+      ok(res.nextResourceEvents);
+      ok(res.nextResourceEvents.events.length > res.prevResourceEvents.events.length);
 
-      var pm = res.nextBucketEvents.events[0];
-      var pp = res.nextBucketEvents.events[1];
+      var pm = res.nextResourceEvents.events[0];
+      var pp = res.nextResourceEvents.events[1];
       equal(pm.class, "partitionMap");
       equal(pp.class, "partitionParams");
 
@@ -102,7 +102,7 @@ function bucketPlanTests() {
       deepEqual(countStateNodes(pm.partitions), { master: { 0: 10 } });
 
       // -----------------------------------------------------------
-      prevBucketEvents = res.nextBucketEvents;
+      prevResourceEvents = res.nextResourceEvents;
       wantPartitionParams = ctx.newObj("partitionParams", {
         keyFunc: "hash-crc32",
         model: "masterSlave",
@@ -115,15 +115,15 @@ function bucketPlanTests() {
       }).result;
 
       res = rebalanceMap(ctx, {
-        prevBucketEvents: prevBucketEvents,
+        prevResourceEvents: prevResourceEvents,
         wantPartitionParams: wantPartitionParams
       });
       ok(!res.err);
-      ok(res.nextBucketEvents);
-      ok(res.nextBucketEvents.events.length > res.prevBucketEvents.events.length);
+      ok(res.nextResourceEvents);
+      ok(res.nextResourceEvents.events.length > res.prevResourceEvents.events.length);
 
-      pm = res.nextBucketEvents.events[0];
-      pp = res.nextBucketEvents.events[1];
+      pm = res.nextResourceEvents.events[0];
+      pp = res.nextResourceEvents.events[1];
       equal(pm.class, "partitionMap");
       equal(pp.class, "partitionParams");
 
@@ -137,7 +137,7 @@ function bucketPlanTests() {
                 { master: { 0: 5, 1: 5 }, slave: { 0: 5, 1: 5 } });
 
       // -----------------------------------------------------------
-      prevBucketEvents = res.nextBucketEvents;
+      prevResourceEvents = res.nextResourceEvents;
       wantPartitionParams = ctx.newObj("partitionParams", {
         keyFunc: "hash-crc32",
         model: "masterSlave",
@@ -150,15 +150,15 @@ function bucketPlanTests() {
       }).result;
 
       res = rebalanceMap(ctx, {
-        prevBucketEvents: prevBucketEvents,
+        prevResourceEvents: prevResourceEvents,
         wantPartitionParams: wantPartitionParams
       });
       ok(!res.err);
-      ok(res.nextBucketEvents);
-      ok(res.nextBucketEvents.events.length > res.prevBucketEvents.events.length);
+      ok(res.nextResourceEvents);
+      ok(res.nextResourceEvents.events.length > res.prevResourceEvents.events.length);
 
-      pm = res.nextBucketEvents.events[0];
-      pp = res.nextBucketEvents.events[1];
+      pm = res.nextResourceEvents.events[0];
+      pp = res.nextResourceEvents.events[1];
       equal(pm.class, "partitionMap");
       equal(pp.class, "partitionParams");
 
@@ -172,7 +172,7 @@ function bucketPlanTests() {
                 { master: { 0: 5, 1: 5 }, slave: { 0: 5, 1: 5 } });
 
       // -----------------------------------------------------------
-      prevBucketEvents = res.nextBucketEvents;
+      prevResourceEvents = res.nextResourceEvents;
       wantPartitionParams = ctx.newObj("partitionParams", {
         keyFunc: "hash-crc32",
         model: "masterSlave",
@@ -185,15 +185,15 @@ function bucketPlanTests() {
       }).result;
 
       res = rebalanceMap(ctx, {
-        prevBucketEvents: prevBucketEvents,
+        prevResourceEvents: prevResourceEvents,
         wantPartitionParams: wantPartitionParams
       });
       ok(!res.err);
-      ok(res.nextBucketEvents);
-      ok(res.nextBucketEvents.events.length > res.prevBucketEvents.events.length);
+      ok(res.nextResourceEvents);
+      ok(res.nextResourceEvents.events.length > res.prevResourceEvents.events.length);
 
-      pm = res.nextBucketEvents.events[0];
-      pp = res.nextBucketEvents.events[1];
+      pm = res.nextResourceEvents.events[0];
+      pp = res.nextResourceEvents.events[1];
       equal(pm.class, "partitionMap");
       equal(pp.class, "partitionParams");
 
@@ -210,7 +210,7 @@ function bucketPlanTests() {
         return;
       }
 
-      var prevBucketEvents = ctx.newObj("bucketEvents").result;
+      var prevResourceEvents = ctx.newObj("resourceEvents").result;
       var wantPartitionParams = ctx.newObj("partitionParams", {
         keyFunc: "hash-crc32",
         model: "masterSlave",
@@ -222,15 +222,15 @@ function bucketPlanTests() {
         hierarchyRules: {}
       }).result;
       var res = rebalanceMap(ctx, {
-        prevBucketEvents: prevBucketEvents,
+        prevResourceEvents: prevResourceEvents,
         wantPartitionParams: wantPartitionParams
       });
       ok(!res.err);
-      ok(res.nextBucketEvents);
-      ok(res.nextBucketEvents.events.length > res.prevBucketEvents.events.length);
+      ok(res.nextResourceEvents);
+      ok(res.nextResourceEvents.events.length > res.prevResourceEvents.events.length);
 
-      var pm = res.nextBucketEvents.events[0];
-      var pp = res.nextBucketEvents.events[1];
+      var pm = res.nextResourceEvents.events[0];
+      var pp = res.nextResourceEvents.events[1];
       equal(pm.class, "partitionMap");
       equal(pp.class, "partitionParams");
 

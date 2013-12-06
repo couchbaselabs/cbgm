@@ -1,10 +1,10 @@
 { "class": "class",
-  "name": "bucketEvents",
+  "name": "resourceEvents",
   "super": "object",
   "properties": [
     { "class": "propertyArray",
       "name": "events",
-      "propertyKind": "bucketEvent"
+      "propertyKind": "resourceEvent"
     }
   ]
 }

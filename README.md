@@ -7,7 +7,7 @@ To start:
 
 Then visit:
 
-    http://127.0.0.1:8080/apps/cbgm/#bucketEvents-bar
+    http://127.0.0.1:8080/apps/cbgm/
 
 Then hit the rebalance button.  Try fiddling with the constraints
 (number of slaves) and the nodes (such as to "a,b,c"), and rebalance

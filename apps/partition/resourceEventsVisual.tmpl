@@ -1,10 +1,10 @@
-{{# obj.class == 'bucketEvents' }}
+{{# obj.class == 'resourceEvents' }}
   {{#obj}}
     <ul class="visual">
     {{#events:eventIdx}}
       {{# class == "partitionMap" }}
-        <li class="bucketEvent">
-          {{{ visualBucketEvent(.) }}}
+        <li class="resourceEvent">
+          {{{ visualResourceEvent(.) }}}
           <div class="controls">
             <button id="{{when}}" class="btn btn-mini" on-click="scheduleMoves">
               moves

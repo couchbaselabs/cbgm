@@ -1,5 +1,5 @@
 { "class": "class",
-  "name": "bucketEvent",
+  "name": "resourceEvent",
   "super": "object",
   "properties": [
     { "name": "when",
