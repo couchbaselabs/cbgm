@@ -5,6 +5,9 @@
     { "name": "title",
       "propertyKind": "string"
     },
+    { "name": "target",
+      "propertyKind": "string"
+    },
     { "name": "displayOrder",
       "propertyKind": "float"
     }

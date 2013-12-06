@@ -1,9 +1,10 @@
-.lhs {
+.main {
     margin-top: 3.5em;
+}
+.lhs {
     margin-bottom: 3.5em;
 }
 .rhs {
-    margin-top: 3.5em;
     margin-bottom: 3.5em;
 }
 .visual .resourceEvent {

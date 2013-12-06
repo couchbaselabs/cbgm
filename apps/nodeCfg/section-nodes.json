@@ -1,4 +1,5 @@
 { "class": "section",
   "title": "nodes",
+  "target": "#section:nodes",
   "displayOrder": 10
 }
