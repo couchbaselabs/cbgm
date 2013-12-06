@@ -1,3 +1,4 @@
 { "class": "bucketCfg",
+  "ident": "bucketCfg-foo",
   "name": "foo"
 }

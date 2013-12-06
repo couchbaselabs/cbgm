@@ -7,13 +7,18 @@
         <h1>buckets</h1>
         <ul>
           {{#bucketCfgs}}
-            <li><a href="#">{{.name}}</a></li>
+            <li><a href="#sectionBuckets:{{.ident}}">{{.name}}</a></li>
           {{/bucketCfgs}}
         </ul>
       </div>
     </div>
     <div class="span7">
       <div class="rhs">
+        {{#obj}}
+          {{# .class == "bucketCfg" }}
+            {{>bucketCfgPanel}}
+          {{/ .class == "bucketCfg" }}
+        {{/obj}}
       </div>
     </div>
   </div>

@@ -2,6 +2,9 @@
   "name": "bucketCfg",
   "super": "object",
   "properties": [
+    { "name": "ident",
+      "propertyKind": "string"
+    },
     { "name": "name",
       "propertyKind": "string"
     }
