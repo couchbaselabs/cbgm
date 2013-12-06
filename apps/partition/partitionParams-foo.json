@@ -1,9 +1,0 @@
-{
-  "class": "partitionParams",
-  "constraints": {
-    "slave": 1
-  },
-  "numPartitions": 1440,
-  "model": "masterSlave",
-  "keyFunc": "hash-crc32"
-}
