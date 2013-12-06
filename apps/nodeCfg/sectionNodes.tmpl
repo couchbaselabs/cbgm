@@ -14,7 +14,9 @@
     </div>
     <div class="span7">
       <div class="rhs">
-        {{#obj}}{{>__object}}{{/obj}}
+        {{# obj.class == "nodeCfg" }}
+          {{#obj}}{{>__object}}{{/obj}}
+        {{/}}
       </div>
     </div>
   </div>
