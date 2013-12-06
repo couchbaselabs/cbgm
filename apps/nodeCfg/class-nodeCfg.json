@@ -1,0 +1,12 @@
+{ "class": "class",
+  "name": "nodeCfg",
+  "super": "nodeCfgBase",
+  "properties": [
+    { "name": "base",
+      "propertyKind": "string"
+    },
+    { "name": "container",
+      "propertyKind": "string"
+    }
+  ]
+}

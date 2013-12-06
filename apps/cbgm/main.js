@@ -10,6 +10,7 @@ function main(ctx, page) {
       hierarchy: "{}",
       hierarchyRules: "{}"
     };
+  page.sections = ctx.filterObjs(function(o) { return o.class == "section"; }).result;
   page.visualResourceEvent = visualResourceEvent;
   page.r = registerEventHandlers(ctx, page.render("main"));
   refresh(page.r, page.obj);

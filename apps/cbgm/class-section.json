@@ -1,0 +1,9 @@
+{ "class": "class",
+  "name": "section",
+  "super": "object",
+  "properties": [
+    { "name": "title",
+      "propertyKind": "string"
+    }
+  ]
+}
