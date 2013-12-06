@@ -4,6 +4,9 @@
   "properties": [
     { "name": "title",
       "propertyKind": "string"
+    },
+    { "name": "displayOrder",
+      "propertyKind": "float"
     }
   ]
 }

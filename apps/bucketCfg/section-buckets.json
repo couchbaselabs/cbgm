@@ -1,3 +1,4 @@
 { "class": "section",
-  "title": "buckets"
+  "title": "buckets",
+  "displayOrder": 20
 }
