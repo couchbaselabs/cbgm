@@ -1,3 +1,3 @@
 { "class": "app",
-  "include": ["bucketPlan", "base"]
+  "include": ["partition", "base"]
 }
