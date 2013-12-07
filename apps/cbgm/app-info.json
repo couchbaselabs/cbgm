@@ -1,3 +1,3 @@
 { "class": "app",
-  "include": ["partition", "bucketCfg", "nodeCfg", "base"]
+  "include": ["partition", "bucketCfg", "nodeCfg", "section"]
 }
