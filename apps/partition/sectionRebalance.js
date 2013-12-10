@@ -36,7 +36,7 @@ function sectionRebalanceEventHandlers(ctx, r) {
         numPartitions: parseInt(want.numPartitions),
         constraints: {},
         nodeWeights: JSON.parse(want.nodeWeights),
-        partitonWeights: JSON.parse(want.partitionWeights),
+        partitionWeights: JSON.parse(want.partitionWeights),
         hierarchy: JSON.parse(want.hierarchy),
         hierarchyRules: JSON.parse(want.hierarchyRules)
       };

@@ -62,11 +62,13 @@ function planNextMap(ctx, req) {
           return [partitionId, nextPartition];
         }));
 
-  req.stateNodeCounts = countStateNodes(nextPartitions);
+  req.partitionWeights = req.nextPartitionMap.partitionWeights || {};
+  req.stateNodeCounts = countStateNodes(nextPartitions, req.partitionWeights);
   req.hierarchy = req.nextPartitionMap.hierarchy;
   req.hierarchyRules = req.nextPartitionMap.hierarchyRules || {};
   req.hierarchyChildren = mapParentsToMapChildren(req.hierarchy);
-  var zeroes = "00000000000";
+  var zeroesL = "0000000000000";
+  var zeroesS = "0000";
 
   // Run through the sorted partition states (master, slave, etc) that
   // have constraints and invoke assignStateToPartitions().
@@ -83,25 +85,33 @@ function planNextMap(ctx, req) {
   function assignStateToPartitions(state, constraints) {
     // Sort the partitions to help reach a better assignment.
     var partitionIds =
-      _.sortBy(_.keys(nextPartitions).sort(), function(partitionId) {
-          var suffix = partitionId;
-          if (partitionId == String(parseInt(partitionId))) {
-            suffix = zeroes.slice(0, zeroes.length - partitionId.length) + partitionId;
-          }
+      _.sortBy(_.sortBy(_.keys(nextPartitions), zeroPrefix), function(partitionId) {
+          var pid = zeroPrefix(partitionId);
+          // Secondary sort by partitionWeight.
+          var pw = String(parseInt("1" + zeroesS) -
+                          (req.partitionWeights[partitionId] || 1));
+          var pwz = zeroesS.slice(0, zeroesS.length - pw.length) + pw;
           // First, favor partitions on nodes that are to-be-removed.
           var lastPartition = lastPartitions[partitionId] || {};
           if (!_.isEmpty(_.intersection(lastPartition[state],
                                         req.deltaNodes.removed))) {
-            return 0 + suffix;
+            return "0." + pwz + "." + pid;
           }
           // Then, favor partitions who haven't been assigned to any
           // newly added nodes yet for any state.
           if (_.isEmpty(_.intersection(_.flatten(_.values(nextPartitions[partitionId])),
                                        req.deltaNodes.added))) {
-            return 1 + suffix;
+            return "1." + pwz + "." + pid;
           }
-          return 2 + suffix;
+          return "2." + pwz + "." + pid;
         });
+
+    function zeroPrefix(s) {
+      if (s == String(parseInt(s))) {
+        return zeroesL.slice(0, zeroesL.length - s.length) + s;
+      }
+      return s;
+    }
 
     // Key is higherPriorityNode, val is { lowerPriorityNode: count }.
     req.nodeToNodeCounts = {};
@@ -109,6 +119,7 @@ function planNextMap(ctx, req) {
     nextPartitions =
       _.object(_.map(partitionIds, function(partitionId) {
             var partition = nextPartitions[partitionId];
+            var partitionWeight = req.partitionWeights[partitionId] || 1;
             var nodesToAssign = findBestNodes(partitionId, partition,
                                               state, constraints);
             partition = removeNodesFromPartition(partition,
@@ -120,12 +131,21 @@ function planNextMap(ctx, req) {
             partition[state] = nodesToAssign;
             incStateNodeCounts(state, nodesToAssign);
             return [partitionId, partition];
+
+            function incStateNodeCounts(state, nodes) {
+              adjustStateNodeCounts(req.stateNodeCounts, state, nodes,
+                                    partitionWeight);
+            }
+            function decStateNodeCounts(state, nodes) {
+              adjustStateNodeCounts(req.stateNodeCounts, state, nodes,
+                                    -partitionWeight);
+            }
           }));
   }
 
   function findBestNodes(partitionId, partition, state, constraints) {
     var nodeWeights = req.nextPartitionMap.nodeWeights || {};
-    var stickiness = (req.stickiness || {})[state] || 1.5;
+    var stickiness = req.partitionWeights[partitionId] || (req.stickiness || {})[state] || 1.5;
     var statePriority = req.mapState[state].priority;
     var stateNodeCounts =
       req.stateNodeCounts[state] =
@@ -207,17 +227,11 @@ function planNextMap(ctx, req) {
     }
   }
 
-  function incStateNodeCounts(state, nodes) {
-    adjustStateNodeCounts(req.stateNodeCounts, state, nodes, 1);
-  }
-  function decStateNodeCounts(state, nodes) {
-    adjustStateNodeCounts(req.stateNodeCounts, state, nodes, -1);
-  }
   function adjustStateNodeCounts(stateNodeCounts, state, nodes, amt) {
     _.each(nodes, function(n) {
         var s = stateNodeCounts[state] = stateNodeCounts[state] || {};
         s[n] = (s[n] || 0) + amt;
-        if (s[n] < 0 || s[n] > req.nextPartitionMapNumPartitions) {
+        if (s[n] < 0) {
           console.log("ERROR: adjustStateNodeCounts out of range" +
                       ", state: " + state + " node: " + n + " s[n]: " + s[n]);
         }
@@ -242,12 +256,13 @@ function validateNextMap(ctx, req) {
 // then return value will be...
 //   { "master": { "a": 1, "b": 1 },
 //     "slave": { "b": 1, "c": 2 } }
-function countStateNodes(partitions) {
+function countStateNodes(partitions, partitionWeights) {
+  partitionWeights = partitionWeights || {};
   return _.reduce(partitions, function(r, partition, partitionId) {
       return _.reduce(partition, function(r, nodes, state) {
           _.each(nodes, function(node) {
               var s = r[state] = r[state] || {};
-              s[node] = (s[node] || 0) + 1;
+              s[node] = (s[node] || 0) + (partitionWeights[partitionId] || 1);
             });
           return r;
         }, r);
