@@ -1,3 +1,5 @@
+// Only U/I related JS goes here.
+
 function sectionRebalance(ctx, page) {
   page.want = page.want ||
     { keyFunc: "hash-crc32",

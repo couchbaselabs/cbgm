@@ -1,3 +1,5 @@
+// Only U/I related JS goes here.
+
 function sectionNodes(ctx, page) {
   page.nodeCfgs = page.nodeCfgs ||
     _.sortBy(ctx.filterObjs(function(o) { return o.class == "nodeCfg"; }).result,
@@ -17,19 +19,13 @@ function sectionNodesEventHandlers(ctx, r) {
         _.each(names.split(","), function(name) {
             var nodeCfg = ctx.newObj("nodeCfg", { "name": name }).result;
             var nodeCfgs = r.get("nodeCfgs").unshift(nodeCfg);
-            updateNodeCfg(ctx, r, nodeCfg);
+            r.update("nodeCfgs");
+            renderNodeCfg(ctx, r, nodeCfg);
             event.node.value = "";
             event.node.focus();
           });
       }
     });
-  return r;
-}
-
-function updateNodeCfg(ctx, r, orig, edit) {
-  edit = edit || orig;
-  renderNodeCfg(ctx, r, orig);
-  r.update("nodeCfgs");
 }
 
 function renderNodeCfg(ctx, r, nodeCfg, extras) {
