@@ -5,20 +5,18 @@
     <div class="span3">
       <div class="lhs">
         <h1>nodes</h1>
-        <input on-change="newNodeCfg" class="newNodeCfg" placeholder="new node names"/>
+        <input on-change="newNodeKnown" class="newNodeKnown" placeholder="new known node names"/>
         <ul>
-          {{#nodeCfgs}}
+          {{#nodesKnown}}
             <li><input type="checkbox" checked="{{.wanted}}"/>
-                <a href="#sectionNode:nodeCfg-{{.name}}">{{.name}}</a></li>
-          {{/nodeCfgs}}
+                <a href="#sectionNode:nodeKnown-{{.name}}">{{.name}}</a></li>
+          {{/nodesKnown}}
         </ul>
       </div>
     </div>
     <div class="span7">
       <div class="rhs">
-        {{# obj.class == "nodeCfg" }}
-          {{#obj}}{{>__object}}{{/obj}}
-        {{/}}
+        {{#obj}}{{>__object}}{{/obj}}
         <button class="btn btn-small" on-click="editTask">
           {{ doEdit ? 'cancel edit' : 'edit task' }}
         </button>

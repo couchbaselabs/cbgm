@@ -1,11 +1,14 @@
 { "class": "class",
-  "name": "nodeCfgBase",
+  "name": "nodeBase",
   "super": "object",
   "properties": [
     { "name": "name",
       "propertyKind": "string"
     },
     { "name": "description",
+      "propertyKind": "string"
+    },
+    { "name": "container",
       "propertyKind": "string"
     },
     { "class": "propertyArray",
