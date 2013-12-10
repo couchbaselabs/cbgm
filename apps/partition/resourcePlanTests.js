@@ -76,7 +76,8 @@ function resourcePlanTests() {
         nodes: ["a"],
         numPartitions: 10,
         constraints: { slave: 1 },
-        weights: {},
+        nodeWeights: {},
+        partitionWeights: {},
         hierarchy: {},
         hierarchyRules: {}
       }).result;
@@ -109,7 +110,8 @@ function resourcePlanTests() {
         nodes: ["a", "b"], // Add one more node.
         numPartitions: 10,
         constraints: { slave: 1 },
-        weights: {},
+        nodeWeights: {},
+        partitionWeights: {},
         hierarchy: {},
         hierarchyRules: {}
       }).result;
@@ -144,7 +146,8 @@ function resourcePlanTests() {
         nodes: ["a", "B"], // Swap rebalance.
         numPartitions: 10,
         constraints: { slave: 1 },
-        weights: {},
+        nodeWeights: {},
+        partitionWeights: {},
         hierarchy: {},
         hierarchyRules: {}
       }).result;
@@ -179,7 +182,8 @@ function resourcePlanTests() {
         nodes: ["a", "B", "c"], // A third node.
         numPartitions: 10,
         constraints: { slave: 1 },
-        weights: {},
+        nodeWeights: {},
+        partitionWeights: {},
         hierarchy: {},
         hierarchyRules: {}
       }).result;
@@ -217,7 +221,8 @@ function resourcePlanTests() {
          nodes: _.map(_.range(50), String),
         numPartitions: 1024,
         constraints: { slave: 1 },
-        weights: {},
+        nodeWeights: {},
+        partitionWeights: {},
         hierarchy: {},
         hierarchyRules: {}
       }).result;

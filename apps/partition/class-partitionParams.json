@@ -20,7 +20,11 @@
       "propertyKind": "int"
     },
     { "class": "propertyDict",
-      "name": "weights",
+      "name": "nodeWeights",
+      "propertyKind": "float"
+    },
+    { "class": "propertyDict",
+      "name": "partitionWeights",
       "propertyKind": "float"
     },
     { "class": "propertyDict",

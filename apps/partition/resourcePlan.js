@@ -124,7 +124,7 @@ function planNextMap(ctx, req) {
   }
 
   function findBestNodes(partitionId, partition, state, constraints) {
-    var weights = req.nextPartitionMap.weights || {};
+    var nodeWeights = req.nextPartitionMap.nodeWeights || {};
     var stickiness = (req.stickiness || {})[state] || 1.5;
     var statePriority = req.mapState[state].priority;
     var stateNodeCounts =
@@ -198,7 +198,7 @@ function planNextMap(ctx, req) {
       var r = stateNodeCounts[node] || 0;
       r = r + lowerPriorityBalanceFactor;
       r = r + filledFactor;
-      var w = weights[node] || 0;
+      var w = nodeWeights[node] || 0;
       if (w > 0) {
         r = r / (1.0 * w);
       }

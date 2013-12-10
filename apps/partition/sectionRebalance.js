@@ -5,7 +5,8 @@ function sectionRebalance(ctx, page) {
       nodes: "a",
       numPartitions: 10,
       constraints: 1,
-      weights: "{}",
+      nodeWeights: "{}",
+      partitionWeights: "{}",
       hierarchy: "{}",
       hierarchyRules: "{}"
     };
@@ -34,7 +35,8 @@ function sectionRebalanceEventHandlers(ctx, r) {
         nodes: want.nodes.split(','),
         numPartitions: parseInt(want.numPartitions),
         constraints: {},
-        weights: JSON.parse(want.weights),
+        nodeWeights: JSON.parse(want.nodeWeights),
+        partitonWeights: JSON.parse(want.partitionWeights),
         hierarchy: JSON.parse(want.hierarchy),
         hierarchyRules: JSON.parse(want.hierarchyRules)
       };

@@ -16,8 +16,10 @@
           <input type="text" value="{{want.numPartitions}}"/>
           <label>constraints</label>
           <input type="text" value="{{want.constraints}}"/>
-          <label>weights (json dict nodeName to float)</label>
-          <input type="text" value="{{want.weights}}"/>
+          <label>node weights (json dict nodeName to float)</label>
+          <input type="text" value="{{want.nodeWeights}}"/>
+          <label>partition weights (json dict partitionId string to float)</label>
+          <input type="text" value="{{want.partitionWeights}}"/>
           <label>hierarchy (json dict nodeName to string)</label>
           <input type="text" value="{{want.hierarchy}}"/>
           <label>hierarchyRules (json dict nodeName to [int])</label>
