@@ -3,11 +3,13 @@
 function sectionNode(ctx, page) {
   page.nodesKnown = page.nodesKnown ||
     _.sortBy(ctx.filterObjs(function(o) { return o.class == "nodeKnown"; }).result,
-             "name");
+             "name").reverse();
   page.nodesWanted = page.nodesWanted ||
     _.sortBy(ctx.filterObjs(function(o) { return o.class == "nodeWanted"; }).result,
-             "name");
-  page.obj = findObj(ctx, page.nodesKnown, "nodeKnown", page.ident);
+             "name").reverse();
+  page.obj =
+    findObj(ctx, page.nodesKnown, "nodeKnown", page.ident) ||
+    findObj(ctx, page.nodesWanted, "nodeWanted", page.ident);
   main(ctx, page, "sectionNode");
   sectionNodeEventHandlers(ctx, page.r);
 }
