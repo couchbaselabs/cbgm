@@ -8,7 +8,8 @@
         <input on-change="newNodeCfg" class="newNodeCfg" placeholder="new node names"/>
         <ul>
           {{#nodeCfgs}}
-            <li><a href="#sectionNode:nodeCfg-{{.name}}">{{.name}}</a></li>
+            <li><input type="checkbox" checked="{{.wanted}}"/>
+                <a href="#sectionNode:nodeCfg-{{.name}}">{{.name}}</a></li>
           {{/nodeCfgs}}
         </ul>
       </div>
@@ -18,6 +19,9 @@
         {{# obj.class == "nodeCfg" }}
           {{#obj}}{{>__object}}{{/obj}}
         {{/}}
+        <button class="btn btn-small" on-click="editTask">
+          {{ doEdit ? 'cancel edit' : 'edit task' }}
+        </button>
       </div>
     </div>
   </div>
