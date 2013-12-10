@@ -1,4 +1,0 @@
-{ "class": "nodeKnown",
-  "name": "c",
-  "usage": ["kv", "index", "proxy"]
-}
