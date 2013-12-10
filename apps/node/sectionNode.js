@@ -1,15 +1,15 @@
 // Only U/I related JS goes here.
 
-function sectionNodes(ctx, page) {
+function sectionNode(ctx, page) {
   page.nodeCfgs = page.nodeCfgs ||
     _.sortBy(ctx.filterObjs(function(o) { return o.class == "nodeCfg"; }).result,
              "name");
   page.obj = findObj(ctx, page.nodeCfgs, "nodeCfg", page.ident);
-  main(ctx, page, "sectionNodes");
-  sectionNodesEventHandlers(ctx, page.r);
+  main(ctx, page, "sectionNode");
+  sectionNodeEventHandlers(ctx, page.r);
 }
 
-function sectionNodesEventHandlers(ctx, r) {
+function sectionNodeEventHandlers(ctx, r) {
   r.on({
       "newNodeCfg": function(event) {
         var names = (event.node.value || "").trim();
