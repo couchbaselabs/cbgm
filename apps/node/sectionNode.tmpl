@@ -5,7 +5,8 @@
     <div class="span3">
       <div class="lhs">
         <h1>nodes</h1>
-        <input on-change="newNodeKnown" class="newNodeKnown" placeholder="new known node names"/>
+        <input on-change="newNodeKnown" class="newNodeKnown"
+               placeholder="new known node names"/>
         <ul>
           {{#nodeKnownArr}}
             <li><input type="checkbox" checked="{{.wanted}}"/>
