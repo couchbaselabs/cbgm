@@ -21,7 +21,7 @@ function sectionNodeEventHandlers(ctx, r) {
         }
         _.each(names.split(","), function(name) {
             var nodeKnown = ctx.newObj("nodeKnown", { "name": name }).result;
-            var nodesKnown = r.get("nodesKnown").unshift(nodeKnown);
+            var nodesKnown = r.get("nodesKnown").push(nodeKnown);
             r.update("nodesKnown");
             renderObj(ctx, r, nodeKnown);
             event.node.value = "";
