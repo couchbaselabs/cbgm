@@ -20,6 +20,9 @@ function sectionNodeEventHandlers(ctx, r) {
           return;
         }
         _.each(names.split(","), function(name) {
+            if (findObj(ctx, r.get("nodesKnown"), "nodeKnown", name)) {
+              return alert("error: node (" + name + ") is already known.");
+            }
             var nodeKnown = ctx.newObj("nodeKnown", { "name": name }).result;
             var nodesKnown = r.get("nodesKnown").push(nodeKnown);
             r.update("nodesKnown");
