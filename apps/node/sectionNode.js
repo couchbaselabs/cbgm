@@ -2,11 +2,9 @@
 
 function sectionNode(ctx, page) {
   page.nodesKnown = page.nodesKnown ||
-    _.sortBy(ctx.filterObjs(function(o) { return o.class == "nodeKnown"; }).result,
-             "name").reverse();
+    _.sortBy(instances(ctx, "nodeKnown"), "name").reverse();
   page.nodesWanted = page.nodesWanted ||
-    _.sortBy(ctx.filterObjs(function(o) { return o.class == "nodeWanted"; }).result,
-             "name").reverse();
+    _.sortBy(instances(ctx, "nodeWanted"), "name").reverse();
   page.obj =
     findObj(ctx, page.nodesKnown, "nodeKnown", page.ident) ||
     findObj(ctx, page.nodesWanted, "nodeWanted", page.ident);

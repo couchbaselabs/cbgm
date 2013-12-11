@@ -1,6 +1,4 @@
 function main(ctx, page, template) {
-  page.sections =
-    _.sortBy(ctx.filterObjs(function(o) { return o.class == "section"; }).result,
-             "displayOrder");
+  page.sections = _.sortBy(instances(ctx, "section"), "displayOrder");
   page.r = page.render(template || "main");
 }

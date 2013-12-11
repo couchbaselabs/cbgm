@@ -14,3 +14,6 @@ function findObj(ctx, objs, className, nameOrIdent) {
   function where(n) { return n.class == className && n.name == name; };
 }
 
+function instances(ctx, className) {
+  return ctx.filterObjs(function(o) { return o.class == className; }).result;
+}
