@@ -31,6 +31,9 @@ function sectionNodeEventHandlers(ctx, page, r) {
         }
         var ident;
         _.each(names.split(","), function(name) {
+            if (!name) {
+              return alert("error: node name is missing");
+            }
             if (findObjByNameOrIdent(ctx, "nodeKnown", name)) {
               return alert("error: node (" + name + ") is already known.");
             }

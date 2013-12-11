@@ -1,11 +1,11 @@
 function renderObj(ctx, r, obj, extras) {
   r.set(_.defaults(extras || {}, {
         "obj": obj,
+        "objJSON": JSON.stringify(obj),
         "objEdit": _.clone(obj),
         "objEditErrs": null,
         "doEdit": false
       }));
-  r.set("objJSON", JSON.stringify(obj));
 }
 
 function findObjByNameOrIdent(ctx, className, nameOrIdent) {
