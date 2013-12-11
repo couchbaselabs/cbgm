@@ -5,36 +5,43 @@
     <div class="span3">
       <div class="lhs">
         <h1>nodes</h1>
-        <input on-change="newNodeKnown" class="newNodeKnown"
-               placeholder="new known node names"/>
         <div>
           in cluster:
           <ul>
             {{#nodeWantedNames}}
               <li>
-                <input type="checkbox" checked=""/>
+                &#x2714;
+                <input type="checkbox" checked="true" name="nodeWanted-{{.}}"
+                       on-change="checkboxWantedChanged"/>
                 <a href="#sectionNode:nodeWanted-{{.}}">{{.}}</a></li>
             {{/nodeWantedNames}}
           </ul>
         </div>
         <div>
-          not in cluster:
+          known, but not in cluster:
           <ul>
             {{#nodeUnwantedNames}}
               <li>
-                <input type="checkbox" checked=""/>
+                <input type="checkbox" checked="true" name="nodeKnown-{{.}}"
+                       on-change="checkboxWantedChanged"/>
                 <a href="#sectionNode:nodeKnown-{{.}}">{{.}}</a></li>
             {{/nodeUnwantedNames}}
           </ul>
+        </div>
+        <div>
+          <button class="btn" on-click="addRemoveNodes">
+            add/keep selected nodes
+          </button>
+        </div>
+        <div>
+          <input on-change="newNodeKnown" class="newNodeKnown"
+                 placeholder="new known node names"/>
         </div>
       </div>
     </div>
     <div class="span7">
       <div class="rhs">
         {{#obj}}{{>__object}}{{/obj}}
-        <button class="btn btn-small" on-click="editTask">
-          {{ doEdit ? 'cancel edit' : 'edit task' }}
-        </button>
       </div>
     </div>
   </div>

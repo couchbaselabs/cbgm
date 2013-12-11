@@ -8,21 +8,22 @@ function sectionNode(ctx, page) {
 
 function sectionNodeRefresh(ctx, page, ident) {
   var nodeKnownArr = _.sortBy(instances(ctx, "nodeKnown"), "name");
+  var nodeKnownMap = _.indexBy(nodeKnownArr, "name");
   var nodeKnownNames = _.pluck(nodeKnownArr, "name");
   var nodeWantedArr = _.sortBy(instances(ctx, "nodeWanted"), "name");
+  var nodeWantedMap = _.indexBy(nodeWantedArr, "name");
   var nodeWantedNames = _.pluck(nodeWantedArr, "name");
-  var nodeNames = _.union(nodeKnownNames, nodeWantedNames);
   var obj =
     findObjByNameOrIdent(ctx, "nodeKnown", ident || page.ident) ||
     findObjByNameOrIdent(ctx, "nodeWanted", ident || page.ident);
   renderObj(ctx, page.r, obj, {
     nodeKnownArr: nodeKnownArr,
+    nodeKnownMap: nodeKnownMap,
     nodeKnownNames: nodeKnownNames,
     nodeWantedArr: nodeWantedArr,
+    nodeWantedMap: nodeWantedMap,
     nodeWantedNames: nodeWantedNames,
-    nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames),
-    nodeNames: nodeNames,
-    nodeNamesMap: _.object(nodeNames, nodeNames)
+    nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames)
   });
 }
 
@@ -47,6 +48,9 @@ function sectionNodeEventHandlers(ctx, page, r) {
         event.node.value = "";
         event.node.focus();
         sectionNodeRefresh(ctx, page, ident);
-      }
+      },
+     "checkboxWantedChanged": function(event) {
+       console.log(event);
+     },
     });
 }
