@@ -8,10 +8,10 @@ function renderObj(ctx, r, obj, extras) {
   r.set("objJSON", JSON.stringify(obj));
 }
 
-function findObj(ctx, objs, className, nameOrIdent) {
+function findObjByNameOrIdent(ctx, className, nameOrIdent) {
   var name = (nameOrIdent || "").split("-")[1] || nameOrIdent;
-  return _.find(objs, where) || ctx.findObj(where).result;
-  function where(n) { return n.class == className && n.name == name; };
+  return ctx.findObj(where).result;
+  function where(o) { return o.class == className && o.name == name; }
 }
 
 function instances(ctx, className) {
