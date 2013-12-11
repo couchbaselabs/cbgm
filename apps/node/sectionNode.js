@@ -8,9 +8,10 @@ function sectionNode(ctx, page) {
 
 function sectionNodeRefresh(ctx, page, ident) {
   var nodeKnownArr = _.sortBy(instances(ctx, "nodeKnown"), "name");
-  var nodeKnownNames = _.pluck(page.nodeKnownArr, "name");
+  var nodeKnownNames = _.pluck(nodeKnownArr, "name");
   var nodeWantedArr = _.sortBy(instances(ctx, "nodeWanted"), "name");
-  var nodeWantedNames = _.pluck(page.nodeKnownArr, "name");
+  var nodeWantedNames = _.pluck(nodeWantedArr, "name");
+  var nodeNames = _.union(nodeKnownNames, nodeWantedNames);
   var obj =
     findObjByNameOrIdent(ctx, "nodeKnown", ident || page.ident) ||
     findObjByNameOrIdent(ctx, "nodeWanted", ident || page.ident);
@@ -18,7 +19,10 @@ function sectionNodeRefresh(ctx, page, ident) {
     nodeKnownArr: nodeKnownArr,
     nodeKnownNames: nodeKnownNames,
     nodeWantedArr: nodeWantedArr,
-    nodeWantedNames: nodeWantedNames
+    nodeWantedNames: nodeWantedNames,
+    nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames),
+    nodeNames: nodeNames,
+    nodeNamesMap: _.object(nodeNames, nodeNames)
   });
 }
 

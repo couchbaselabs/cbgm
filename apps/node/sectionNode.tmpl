@@ -7,12 +7,26 @@
         <h1>nodes</h1>
         <input on-change="newNodeKnown" class="newNodeKnown"
                placeholder="new known node names"/>
-        <ul>
-          {{#nodeKnownArr}}
-            <li><input type="checkbox" checked="{{.wanted}}"/>
-                <a href="#sectionNode:nodeKnown-{{.name}}">{{.name}}</a></li>
-          {{/nodeKnownArr}}
-        </ul>
+        <div>
+          in cluster:
+          <ul>
+            {{#nodeWantedNames}}
+              <li>
+                <input type="checkbox" checked=""/>
+                <a href="#sectionNode:nodeWanted-{{.}}">{{.}}</a></li>
+            {{/nodeWantedNames}}
+          </ul>
+        </div>
+        <div>
+          not in cluster:
+          <ul>
+            {{#nodeUnwantedNames}}
+              <li>
+                <input type="checkbox" checked=""/>
+                <a href="#sectionNode:nodeKnown-{{.}}">{{.}}</a></li>
+            {{/nodeUnwantedNames}}
+          </ul>
+        </div>
       </div>
     </div>
     <div class="span7">
