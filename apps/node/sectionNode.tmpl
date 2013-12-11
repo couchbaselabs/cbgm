@@ -7,10 +7,10 @@
         <h1>nodes</h1>
         <input on-change="newNodeKnown" class="newNodeKnown" placeholder="new known node names"/>
         <ul>
-          {{#nodesKnown}}
+          {{#nodeKnownArr}}
             <li><input type="checkbox" checked="{{.wanted}}"/>
                 <a href="#sectionNode:nodeKnown-{{.name}}">{{.name}}</a></li>
-          {{/nodesKnown}}
+          {{/nodeKnownArr}}
         </ul>
       </div>
     </div>
