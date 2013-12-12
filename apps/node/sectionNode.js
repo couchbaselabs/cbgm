@@ -28,6 +28,8 @@ function sectionNodeRefresh(ctx, page, ident) {
     nodeWantedNames: nodeWantedNames,
     nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames)
   });
+
+  $("input.node").attr("checked", false);
 }
 
 function sectionNodeEventHandlers(ctx, page, r) {
@@ -55,20 +57,30 @@ function sectionNodeEventHandlers(ctx, page, r) {
      "addNodes": function(event) {
        _.each(_.pluck(_.where($("input.nodeKnown"), { "checked": true }), "id"),
               function(ident) {
-                var n = findObjByNameOrIdent(ctx, "nodeWanted", ident);
-                if (n) {
-                  return alert("error: already a nodeWanted, ident: " + ident);
-                }
-                var nk = findObjByNameOrIdent(ctx, "nodeKnown", ident);
-                if (!nk) {
+                var nk = ctx.getObj(ident).result;
+                if (!nk || nk.class != "nodeKnown") {
                   return alert("error: not a nodeKnown, ident: " + ident);
                 }
-                var nw = ctx.newObj("nodeWanted",
-                                    _.omit(nk, "class", "createdAt", "updatedAt")).result;
-                console.log(nw);
+                var nw = ctx.getObj("nodeWanted-" + nk.name).result;
+                if (nw) {
+                  return alert("error: already a nodeWanted, ident: " + ident);
+                }
+                nw = ctx.newObj("nodeWanted",
+                                _.omit(nk, "class", "createdAt", "updatedAt")).result;
                 ctx.setObj("nodeWanted-" + nw.name, nw);
               });
-     sectionNodeRefresh(ctx, page);
+       sectionNodeRefresh(ctx, page);
      },
-    });
+     "removeNodes": function(event) {
+       _.each(_.pluck(_.where($("input.nodeWanted"), { "checked": true }), "id"),
+              function(ident) {
+                var nw = ctx.getObj(ident).result;
+                if (!nw || nw.class != "nodeWanted") {
+                  return alert("error: not a nodeWanted, ident: " + ident);
+                }
+                ctx.delObj(ident);
+              });
+       sectionNodeRefresh(ctx, page);
+     }
+  });
 }
