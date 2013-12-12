@@ -17,14 +17,27 @@ function sectionNodeRefresh(ctx, page, ident) {
   var nodeWantedArr = _.sortBy(instances(ctx, "nodeWanted"), "name");
   var nodeWantedNames = _.pluck(nodeWantedArr, "name");
 
+  renderObj(ctx, page.r, obj, {
+    nodeKnownArr: nodeKnownArr,
+    nodeKnownNames: nodeKnownNames,
+    nodeWantedArr: nodeWantedArr,
+    nodeWantedNames: nodeWantedNames,
+    nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames),
+    sectionNodeHierarchy: sectionNodeHierarchy
+  });
+
+  $("input.node").attr("checked", false);
+}
+
+function sectionNodeHierarchy(nodeKnownArr, nodeWantedArr) {
   var mapContainerChildren = {};
   var visitContainer = function(node) {
     var parent = "/";
     if (node.container) {
-      _.each(node.container.split("/"), function(child) {
+      _.each(node.container.split("/"), function(x) {
           mapContainerChildren[parent] = mapContainerChildren[parent] || {};
-          mapContainerChildren[parent][child] = "container";
-          parent = child;
+          mapContainerChildren[parent][parent + x + "/"] = "container";
+          parent = parent + x + "/";
         });
     }
     mapContainerChildren[parent] = mapContainerChildren[parent] || {};
@@ -33,16 +46,25 @@ function sectionNodeRefresh(ctx, page, ident) {
   _.each(nodeKnownArr, visitContainer);
   _.each(nodeWantedArr, visitContainer);
 
-  renderObj(ctx, page.r, obj, {
-    nodeKnownArr: nodeKnownArr,
-    nodeKnownNames: nodeKnownNames,
-    nodeWantedArr: nodeWantedArr,
-    nodeWantedNames: nodeWantedNames,
-    nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames),
-    mapContainerChildren: mapContainerChildren
-  });
-
-  $("input.node").attr("checked", false);
+  var res = [];
+  function gen(container) {
+    var path = container.split("/");
+    res.push(path[path.length - 2]);
+    res.push("<ul>");
+    _.each(mapContainerChildren[container], function(childKind, child) {
+        res.push("<li>");
+        if (childKind == "container") {
+          gen(child);
+        } else {
+          res.push('<a href="#sectionNode:' + childKind + '-' + child + '">' +
+                   child + '</a>');
+        }
+        res.push("</li>");
+      });
+    res.push("</ul>");
+  }
+  gen("/");
+  return res.join("");
 }
 
 function sectionNodeEventHandlers(ctx, page, r) {
