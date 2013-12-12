@@ -17,12 +17,29 @@ function sectionNodeRefresh(ctx, page, ident) {
   var nodeWantedArr = _.sortBy(instances(ctx, "nodeWanted"), "name");
   var nodeWantedNames = _.pluck(nodeWantedArr, "name");
 
+  var mapContainerChildren = {};
+  var visitContainer = function(node) {
+    var parent = "/";
+    if (node.container) {
+      _.each(node.container.split("/"), function(child) {
+          mapContainerChildren[parent] = mapContainerChildren[parent] || {};
+          mapContainerChildren[parent][child] = "container";
+          parent = child;
+        });
+    }
+    mapContainerChildren[parent] = mapContainerChildren[parent] || {};
+    mapContainerChildren[parent][node.name] = node.class;
+  }
+  _.each(nodeKnownArr, visitContainer);
+  _.each(nodeWantedArr, visitContainer);
+
   renderObj(ctx, page.r, obj, {
     nodeKnownArr: nodeKnownArr,
     nodeKnownNames: nodeKnownNames,
     nodeWantedArr: nodeWantedArr,
     nodeWantedNames: nodeWantedNames,
-    nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames)
+    nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames),
+    mapContainerChildren: mapContainerChildren
   });
 
   $("input.node").attr("checked", false);
