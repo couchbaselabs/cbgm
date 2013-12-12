@@ -34,23 +34,8 @@ function sectionNodeRefresh(ctx, page, ident) {
 
 function sectionNodeEventHandlers(ctx, page, r) {
   r.on({
-    "newNodeKnown": function(event) {
-      var names = (event.node.value || "").trim();
-      var ident;
-      _.each(names.split(","), function(name) {
-          if (!name) {
-            return alert("error: node name is missing");
-          }
-          if (findObjByNameOrIdent(ctx, "nodeKnown", name)) {
-            return alert("error: node (" + name + ") is already known.");
-          }
-          ident = "nodeKnown-" + name;
-          ctx.setObj(ident, ctx.newObj("nodeKnown", { "name": name }).result);
-        });
-      event.node.value = "";
-      event.node.focus();
-      sectionNodeRefresh(ctx, page, ident);
-    },
+      "newNodeKnown": newNamedObjEventHandler(ctx, page,
+                                              "nodeKnown", sectionNodeRefresh),
     "addNodes": function(event) {
       _.each(_.pluck(_.where($("input.nodeKnown"), { "checked": true }), "id"),
              function(ident) {
