@@ -10,12 +10,15 @@ function sectionNodeRefresh(ctx, page, ident) {
   var nodeKnownArr = _.sortBy(instances(ctx, "nodeKnown"), "name");
   var nodeKnownMap = _.indexBy(nodeKnownArr, "name");
   var nodeKnownNames = _.pluck(nodeKnownArr, "name");
+
   var nodeWantedArr = _.sortBy(instances(ctx, "nodeWanted"), "name");
   var nodeWantedMap = _.indexBy(nodeWantedArr, "name");
   var nodeWantedNames = _.pluck(nodeWantedArr, "name");
+
   var obj =
-    findObjByNameOrIdent(ctx, "nodeKnown", ident || page.ident) ||
-    findObjByNameOrIdent(ctx, "nodeWanted", ident || page.ident);
+    findObjByNameOrIdent(ctx, "nodeWanted", ident || page.ident) ||
+    findObjByNameOrIdent(ctx, "nodeKnown", ident || page.ident);
+
   renderObj(ctx, page.r, obj, {
     nodeKnownArr: nodeKnownArr,
     nodeKnownMap: nodeKnownMap,
@@ -49,8 +52,23 @@ function sectionNodeEventHandlers(ctx, page, r) {
         event.node.focus();
         sectionNodeRefresh(ctx, page, ident);
       },
-     "checkboxWantedChanged": function(event) {
-       console.log(event);
+     "addNodes": function(event) {
+       _.each(_.pluck(_.where($("input.nodeKnown"), { "checked": true }), "id"),
+              function(ident) {
+                var n = findObjByNameOrIdent(ctx, "nodeWanted", ident);
+                if (n) {
+                  return alert("error: already a nodeWanted, ident: " + ident);
+                }
+                var nk = findObjByNameOrIdent(ctx, "nodeKnown", ident);
+                if (!nk) {
+                  return alert("error: not a nodeKnown, ident: " + ident);
+                }
+                var nw = ctx.newObj("nodeWanted",
+                                    _.omit(nk, "class", "createdAt", "updatedAt")).result;
+                console.log(nw);
+                ctx.setObj("nodeWanted-" + nw.name, nw);
+              });
+     sectionNodeRefresh(ctx, page);
      },
     });
 }

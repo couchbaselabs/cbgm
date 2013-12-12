@@ -6,36 +6,33 @@
       <div class="lhs">
         <h1>nodes</h1>
         <div>
-          in cluster:
-          <ul>
-            {{#nodeWantedNames}}
-              <li>
-                &#x2714;
-                <input type="checkbox" checked="true" name="nodeWanted-{{.}}"
-                       on-change="checkboxWantedChanged"/>
-                <a href="#sectionNode:nodeWanted-{{.}}">{{.}}</a></li>
-            {{/nodeWantedNames}}
-          </ul>
+          <input on-change="newNodeKnown" class="newNodeKnown"
+                 placeholder="new node names"/>
         </div>
         <div>
-          known, but not in cluster:
+          nodes not in cluster:
           <ul>
             {{#nodeUnwantedNames}}
               <li>
-                <input type="checkbox" checked="true" name="nodeKnown-{{.}}"
-                       on-change="checkboxWantedChanged"/>
+                <input type="checkbox" class="node nodeKnown"
+                       id="nodeKnown-{{.}}"/>
                 <a href="#sectionNode:nodeKnown-{{.}}">{{.}}</a></li>
             {{/nodeUnwantedNames}}
           </ul>
-        </div>
-        <div>
-          <button class="btn" on-click="addRemoveNodes">
-            add/keep selected nodes
+          <button class="btn" on-click="addNodes">
+            add selected nodes to cluster
           </button>
         </div>
         <div>
-          <input on-change="newNodeKnown" class="newNodeKnown"
-                 placeholder="new known node names"/>
+          nodes in cluster:
+          <ul>
+            {{#nodeWantedArr}}
+              <li>
+                <input type="checkbox" class="node nodeWanted"
+                       id="nodeWanted-{{.name}}"/>
+                <a href="#sectionNode:nodeWanted-{{.name}}">{{.name}}</a></li>
+            {{/nodeWantedArr}}
+          </ul>
         </div>
       </div>
     </div>
