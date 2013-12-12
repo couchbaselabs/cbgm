@@ -14,7 +14,7 @@
             pools:
             <ul>
               {{#pools}}
-                <li>
+                <li class="{{ .class == obj.class && .name == obj.name && 'current' }}">
                   <a href="#sectionPool:pool-{{.name}}">{{.name}}</a>
                 </li>
               {{/pools}}
