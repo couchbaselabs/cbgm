@@ -5,3 +5,9 @@
     margin-top: 2em;
     border-top: 1px solid #888;
 }
+.nodeHierarchy {
+    min-height: 40em;
+    border-left: 1px solid #888;
+    border-right: 1px solid #888;
+    padding-left: 1em;
+}
