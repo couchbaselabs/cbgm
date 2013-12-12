@@ -9,36 +9,38 @@
           <input on-change="newNodeKnown" class="newNodeKnown"
                  placeholder="new node names"/>
         </div>
-        <div class="subSection">
-          nodes not in cluster:
-          <ul>
-            {{#nodeUnwantedNames}}
-              <li>
-                <input type="checkbox" class="node nodeKnown"
-                       id="nodeKnown-{{.}}"/>
-                <a href="#sectionNode:nodeKnown-{{.}}">{{.}}</a>
-              </li>
-            {{/nodeUnwantedNames}}
-          </ul>
-          <button class="btn" on-click="addNodes">
-            add nodes to cluster
-          </button>
-        </div>
-        <div class="subSection">
-          nodes in cluster:
-          <ul>
-            {{#nodeWantedArr}}
-              <li>
-                <input type="checkbox" class="node nodeWanted"
-                       id="nodeWanted-{{.name}}"/>
-                <a href="#sectionNode:nodeWanted-{{.name}}">{{.name}}</a>
-              </li>
-            {{/nodeWantedArr}}
-          </ul>
-          <button class="btn" on-click="removeNodes">
-            remove nodes from cluster
-          </button>
-        </div>
+        {{# nodeUnwantedNames.length > 0 || nodeWantedArr.length > 0 }}
+          <div class="subSection">
+            nodes not in cluster:
+            <ul>
+              {{#nodeUnwantedNames}}
+                <li>
+                  <input type="checkbox" class="node nodeKnown"
+                         id="nodeKnown-{{.}}"/>
+                  <a href="#sectionNode:nodeKnown-{{.}}">{{.}}</a>
+                </li>
+              {{/nodeUnwantedNames}}
+            </ul>
+            <button class="btn" on-click="addNodes">
+              add nodes to cluster
+            </button>
+          </div>
+          <div class="subSection">
+            nodes in cluster:
+            <ul>
+              {{#nodeWantedArr}}
+                <li>
+                  <input type="checkbox" class="node nodeWanted"
+                         id="nodeWanted-{{.name}}"/>
+                  <a href="#sectionNode:nodeWanted-{{.name}}">{{.name}}</a>
+                </li>
+              {{/nodeWantedArr}}
+            </ul>
+            <button class="btn" on-click="removeNodes">
+              remove nodes from cluster
+            </button>
+          </div>
+        {{/}}
       </div>
     </div>
     <div class="span7">

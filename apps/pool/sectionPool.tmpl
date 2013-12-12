@@ -9,21 +9,23 @@
           <input on-change="newPool" class="newPool"
                  placeholder="new pool names"/>
         </div>
-        <div class="subSection">
-          pools:
-          <ul>
-            {{#pools}}
-              <li>
-                <input type="checkbox" class="pool"
-                       id="pool-{{.name}}"/>
-                <a href="#sectionPool:pool-{{.name}}">{{.name}}</a>
-              </li>
-            {{/pools}}
-          </ul>
-          <button class="btn" on-click="removePools">
-            remove pool
-          </button>
-        </div>
+        {{# pools.length > 0 }}
+          <div class="subSection">
+            pools:
+            <ul>
+              {{#pools}}
+                <li>
+                  <input type="checkbox" class="pool"
+                         id="pool-{{.name}}"/>
+                  <a href="#sectionPool:pool-{{.name}}">{{.name}}</a>
+                </li>
+              {{/pools}}
+            </ul>
+            <button class="btn" on-click="removePools">
+              remove pool
+            </button>
+          </div>
+        {{/}}
       </div>
     </div>
     <div class="span7">
