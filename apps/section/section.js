@@ -31,12 +31,19 @@ function newNamedObjEventHandler(ctx, page, className, cb, props) {
         }
         ident = className + "-" + name;
         var params = _.reduce(props || [], function(r, prop) {
-            r[prop] = $("#" + className + "_" + prop).val();
+            var parts = prop.split("[]");
+            var val = $("#" + className + "_" + parts[0]).val();
+            if (parts.length > 1) {
+              val = val.split(",");
+            }
+            r[parts[0]] = val;
             return r;
           }, { "name": name });
         ctx.setObj(ident, ctx.newObj(className, params).result);
       });
-    _.each(props, function(prop) { $("#" + className + "_" + prop).val(""); });
+    _.each(props, function(prop) {
+        $("#" + className + "_" + prop.split('[]')[0]).val("");
+      });
     $("#" + className + "_name").val("");
     cb(ctx, page, ident);
   }
