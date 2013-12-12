@@ -5,6 +5,25 @@
     <div class="span3">
       <div class="lhs">
         <h1>pools</h1>
+        <div>
+          <input on-change="newPool" class="newPool"
+                 placeholder="new pool names"/>
+        </div>
+        <div>
+          pools:
+          <ul>
+            {{#pools}}
+              <li>
+                <input type="checkbox" class="pool"
+                       id="pool-{{.name}}"/>
+                <a href="#sectionPool:pool-{{.name}}">{{.name}}</a>
+              </li>
+            {{/pools}}
+          </ul>
+          <button class="btn" on-click="removePools">
+            remove pool
+          </button>
+        </div>
       </div>
     </div>
     <div class="span7">

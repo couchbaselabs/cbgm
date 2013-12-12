@@ -16,7 +16,8 @@
               <li>
                 <input type="checkbox" class="node nodeKnown"
                        id="nodeKnown-{{.}}"/>
-                <a href="#sectionNode:nodeKnown-{{.}}">{{.}}</a></li>
+                <a href="#sectionNode:nodeKnown-{{.}}">{{.}}</a>
+              </li>
             {{/nodeUnwantedNames}}
           </ul>
           <button class="btn" on-click="addNodes">
@@ -30,7 +31,8 @@
               <li>
                 <input type="checkbox" class="node nodeWanted"
                        id="nodeWanted-{{.name}}"/>
-                <a href="#sectionNode:nodeWanted-{{.name}}">{{.name}}</a></li>
+                <a href="#sectionNode:nodeWanted-{{.name}}">{{.name}}</a>
+              </li>
             {{/nodeWantedArr}}
           </ul>
           <button class="btn" on-click="removeNodes">

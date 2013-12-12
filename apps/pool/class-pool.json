@@ -1,0 +1,20 @@
+{ "class": "class",
+  "name": "pool",
+  "super": "object",
+  "properties": [
+    { "name": "createdAt",
+      "propertyKind": "dateTimeStamp"
+    },
+    { "name": "updatedAt",
+      "propertyKind": "dateTimeStamp",
+      "defaultValueExpr": "o.createdAt"
+    },
+    { "name": "name",
+      "propertyKind": "string",
+      "validateExpr": "validators.nonEmptyString"
+    },
+    { "name": "description",
+      "propertyKind": "string"
+    }
+  ]
+}
