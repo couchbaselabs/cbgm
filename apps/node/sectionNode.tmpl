@@ -9,7 +9,7 @@
           <input on-change="newNodeKnown" class="newNodeKnown"
                  placeholder="new node names"/>
         </div>
-        <div>
+        <div class="nodePhase">
           nodes not in cluster:
           <ul>
             {{#nodeUnwantedNames}}
@@ -23,7 +23,7 @@
             add nodes to cluster
           </button>
         </div>
-        <div>
+        <div class="nodePhase">
           nodes in cluster:
           <ul>
             {{#nodeWantedArr}}
