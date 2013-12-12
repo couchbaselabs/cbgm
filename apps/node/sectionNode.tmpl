@@ -6,8 +6,13 @@
       <div class="lhs">
         <h1>nodes</h1>
         <div>
-          <input on-change="newNodeKnown" class="newNodeKnown"
+          <input id="nodeKnown_name"
                  placeholder="new node names"/>
+          <input id="nodeKnown_container"
+                 placeholder="optional container"/>
+          <button class="btn" on-click="newNodeKnown">
+            register nodes
+          </button>
         </div>
         {{# nodeUnwantedNames.length > 0 || nodeWantedArr.length > 0 }}
           <div class="subSection">

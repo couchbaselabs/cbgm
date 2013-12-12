@@ -18,9 +18,9 @@ function instances(ctx, className) {
   return ctx.filterObjs(function(o) { return o.class == className; }).result;
 }
 
-function newNamedObjEventHandler(ctx, page, className, cb) {
+function newNamedObjEventHandler(ctx, page, className, cb, props) {
   return function(event) {
-    var names = (event.node.value || "").trim();
+    var names = $("#" + className + "_name").val();
     var ident;
     _.each(names.split(","), function(name) {
         if (!name) {
@@ -30,10 +30,14 @@ function newNamedObjEventHandler(ctx, page, className, cb) {
           return alert("error: " + className + " (" + name + ") is already known.");
         }
         ident = className + "-" + name;
-        ctx.setObj(ident, ctx.newObj(className, { "name": name }).result);
+        var params = _.reduce(props || [], function(r, prop) {
+            r[prop] = $("#" + className + "_" + prop).val();
+            return r;
+          }, { "name": name });
+        ctx.setObj(ident, ctx.newObj(className, params).result);
       });
-    event.node.value = "";
-    event.node.focus();
+    _.each(props, function(prop) { $("#" + className + "_" + prop).val(""); });
+    $("#" + className + "_name").val("");
     cb(ctx, page, ident);
   }
 }

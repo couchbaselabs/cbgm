@@ -34,8 +34,8 @@ function sectionNodeRefresh(ctx, page, ident) {
 
 function sectionNodeEventHandlers(ctx, page, r) {
   r.on({
-      "newNodeKnown": newNamedObjEventHandler(ctx, page,
-                                              "nodeKnown", sectionNodeRefresh),
+    "newNodeKnown": newNamedObjEventHandler(ctx, page, "nodeKnown",
+                                            sectionNodeRefresh, [ "container" ]),
     "addNodes": function(event) {
       _.each(_.pluck(_.where($("input.nodeKnown"), { "checked": true }), "id"),
              function(ident) {

@@ -15,7 +15,6 @@ function sectionPoolRefresh(ctx, page, ident) {
 
 function sectionPoolEventHandlers(ctx, page, r) {
   r.on({
-    "newPool": newNamedObjEventHandler(ctx, page,
-                                       "pool", sectionPoolRefresh)
+    "newPool": newNamedObjEventHandler(ctx, page, "pool", sectionPoolRefresh)
   });
 }
