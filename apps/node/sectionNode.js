@@ -29,44 +29,6 @@ function sectionNodeRefresh(ctx, page, ident) {
   $("input.node").attr("checked", false);
 }
 
-function sectionNodeHierarchy(nodeKnownArr, nodeWantedArr) {
-  var mapContainerChildren = {};
-  var visitContainer = function(node) {
-    var parent = "/";
-    if (node.container) {
-      _.each(node.container.split("/"), function(x) {
-          mapContainerChildren[parent] = mapContainerChildren[parent] || {};
-          mapContainerChildren[parent][parent + x + "/"] = "container";
-          parent = parent + x + "/";
-        });
-    }
-    mapContainerChildren[parent] = mapContainerChildren[parent] || {};
-    mapContainerChildren[parent][node.name] = node.class;
-  }
-  _.each(nodeKnownArr, visitContainer);
-  _.each(nodeWantedArr, visitContainer);
-
-  var res = [];
-  function gen(container) {
-    var path = container.split("/");
-    res.push(path[path.length - 2]);
-    res.push("<ul>");
-    _.each(mapContainerChildren[container], function(childKind, child) {
-        res.push("<li>");
-        if (childKind == "container") {
-          gen(child);
-        } else {
-          res.push('<a href="#sectionNode:' + childKind + '-' + child + '">' +
-                   child + '</a>');
-        }
-        res.push("</li>");
-      });
-    res.push("</ul>");
-  }
-  gen("/");
-  return res.join("");
-}
-
 function sectionNodeEventHandlers(ctx, page, r) {
   r.on({
     "newNodeKnown":
@@ -104,4 +66,42 @@ function sectionNodeEventHandlers(ctx, page, r) {
       sectionNodeRefresh(ctx, page);
     }
   });
+}
+
+function sectionNodeHierarchy(nodeKnownArr, nodeWantedArr) {
+  var mapContainerChildren = {};
+  var visitContainer = function(node) {
+    var parent = "/";
+    if (node.container) {
+      _.each(node.container.split("/"), function(x) {
+          mapContainerChildren[parent] = mapContainerChildren[parent] || {};
+          mapContainerChildren[parent][parent + x + "/"] = "nodeContainer";
+          parent = parent + x + "/";
+        });
+    }
+    mapContainerChildren[parent] = mapContainerChildren[parent] || {};
+    mapContainerChildren[parent][node.name] = node.class;
+  }
+  _.each(nodeKnownArr, visitContainer);
+  _.each(nodeWantedArr, visitContainer);
+
+  var res = [];
+  function gen(container) {
+    var path = container.split("/");
+    res.push(path[path.length - 2]);
+    res.push("<ul>");
+    _.each(mapContainerChildren[container], function(childKind, child) {
+        res.push('<li class="' + childKind + '">');
+        if (childKind == "nodeContainer") {
+          gen(child);
+        } else {
+          res.push('<a href="#sectionNode:' + childKind + '-' + child + '">' +
+                   child + '</a>');
+        }
+        res.push("</li>");
+      });
+    res.push("</ul>");
+  }
+  gen("/");
+  return res.join("");
 }

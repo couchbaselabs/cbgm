@@ -11,3 +11,6 @@
     border-right: 1px solid #888;
     padding-left: 1em;
 }
+.nodeHierarchy li.nodeWanted a:after {
+    content: " ✔";
+}
