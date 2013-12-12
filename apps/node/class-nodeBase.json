@@ -22,6 +22,9 @@
     { "class": "propertyArray",
       "name": "usage",
       "propertyKind": "string"
+    },
+    { "name": "weight",
+      "propertyKind": "float"
     }
   ]
 }

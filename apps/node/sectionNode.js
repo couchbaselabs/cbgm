@@ -35,7 +35,7 @@ function sectionNodeEventHandlers(ctx, page, r) {
                               sectionNodeRefresh,
                               [ ["container", String],
                                 ["usage", function(s) { return s.split(); }],
-                                ["weight", parseInt] ]),
+                                ["weight", parseFloat] ]),
     "addNodes": function(event) {
       _.each(_.pluck(_.where($("input.nodeKnown"), { "checked": true }), "id"),
              function(ident) {
