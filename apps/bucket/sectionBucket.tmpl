@@ -5,20 +5,35 @@
     <div class="span3">
       <div class="lhs">
         <h1>buckets</h1>
-        <ul>
-          {{#bucketCfgs}}
-            <li><a href="#sectionBucket:{{.ident}}">{{.name}}</a></li>
-          {{/bucketCfgs}}
-        </ul>
+        <div>
+          <select id="bucket_pool">
+            {{#poolNames}}
+              <option value="{{.}}">{{.}}</option>
+            {{/poolNames}}
+          </select>
+          <input id="bucket_name"
+                 placeholder="new bucket names"/>
+          <button class="btn" on-click="newBucket">
+            create buckets
+          </button>
+        </div>
+        {{# buckets.length > 0 }}
+          <div class="subSection">
+            buckets:
+            <ul>
+              {{#buckets}}
+                <li class="{{ .class == obj.class && .path == obj.path && 'current' }}">
+                  <a href="#sectionBucket:bucket-{{.path}}">{{.path}}</a>
+                </li>
+              {{/buckets}}
+            </ul>
+          </div>
+        {{/}}
       </div>
     </div>
     <div class="span7">
       <div class="rhs">
-        {{#obj}}
-          {{# .class == "bucketCfg" }}
-            {{>bucketCfgPanel}}
-          {{/ .class == "bucketCfg" }}
-        {{/obj}}
+        {{#obj}}{{>__object}}{{/obj}}
       </div>
     </div>
   </div>

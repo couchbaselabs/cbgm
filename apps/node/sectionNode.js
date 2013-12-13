@@ -32,8 +32,7 @@ function sectionNodeRefresh(ctx, page, ident) {
 function sectionNodeEventHandlers(ctx, page, r) {
   r.on({
     "newNodeKnown":
-      newNamedObjEventHandler(ctx, page, "nodeKnown",
-                              sectionNodeRefresh,
+      newNamedObjEventHandler(ctx, page, "nodeKnown", sectionNodeRefresh,
                               [ ["container", String],
                                 ["usage", function(s) { return s.split(','); }],
                                 ["weight", parseFloat] ]),

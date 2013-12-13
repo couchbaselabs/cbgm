@@ -1,11 +1,8 @@
 { "class": "class",
-  "name": "bucketCfg",
+  "name": "bucket",
   "super": "object",
   "properties": [
-    { "name": "ident",
-      "propertyKind": "docId"
-    },
-    { "name": "name",
+    { "name": "path",
       "propertyKind": "string"
     },
     { "name": "kind",
