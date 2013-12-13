@@ -36,7 +36,12 @@ function sectionBucketEventHandlers(ctx, page, r) {
             return alert("error: bucket (" + path + ") is already known.");
           }
         ident = "bucket-" + path;
-        ctx.setObj(ident, ctx.newObj("bucket", { path: path }).result);
+        ctx.setObj(ident, ctx.newObj("bucket", {
+          path: path,
+          numPartitions: parseInt($("#bucket_numPartitions").val() || "10"),
+          numSlaves: parseInt($("#bucket_numSlaves").val() || "0"),
+          perNodeMemory: parseInt($("#bucket_perNodeMemory").val() || "100")
+        }).result);
       });
       $("#bucket_name").val("");
       sectionBucketRefresh(ctx, page, ident);

@@ -13,7 +13,13 @@
           </select>
           <input id="bucket_name"
                  placeholder="new bucket names"/>
-          <button class="btn" on-click="newBucket">
+          <input id="bucket_numPartitions"
+                 placeholder="number of partitions"/>
+          <input id="bucket_numSlaves"
+                 placeholder="replica count"/>
+          <input id="bucket_perNodeMemory"
+                 placeholder="RAM quota (MB) per node"/>
+          <button class="btn newBucket" on-click="newBucket">
             create buckets
           </button>
         </div>

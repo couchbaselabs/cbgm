@@ -8,10 +8,13 @@
     { "name": "kind",
       "propertyKind": "string"
     },
-    { "name": "quotaMemory",
+    { "name": "numPartitions",
       "propertyKind": "int"
     },
-    { "name": "quotaStorage",
+    { "name": "numSlaves",
+      "propertyKind": "int"
+    },
+    { "name": "perNodeMemory",
       "propertyKind": "int"
     }
   ]
