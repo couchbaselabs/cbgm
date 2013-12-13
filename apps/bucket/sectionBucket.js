@@ -20,8 +20,27 @@ function sectionBucketRefresh(ctx, page, ident) {
 
 function sectionBucketEventHandlers(ctx, page, r) {
   r.on({
-    "newBucket": newNamedObjEventHandler(ctx, page, "bucket", sectionBucketRefresh,
-                                         [ ["path", getNewBucketPath, "pool"] ])
+    "newBucket": function(event) {
+      var pool = $("#bucket_pool").val();
+      if (!pool) {
+        return alert("error: please choose a pool for the bucket");
+      }
+      var names = $("#bucket_name").val();
+      var ident;
+      _.each(names.split(","), function(name) {
+          if (!name) {
+            return alert("error: bucket name is missing");
+          }
+          var path = pool + "_" + name;
+          if (findObjByNameOrIdent(ctx, "bucket", path, "path")) {
+            return alert("error: bucket (" + path + ") is already known.");
+          }
+        ident = "bucket-" + path;
+        ctx.setObj(ident, ctx.newObj("bucket", { path: path }).result);
+      });
+      $("#bucket_name").val("");
+      sectionBucketRefresh(ctx, page, ident);
+    }
   });
 
   function getNewBucketPath(pool) {

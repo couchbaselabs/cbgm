@@ -28,7 +28,7 @@ function newNamedObjEventHandler(ctx, page, className, cb, props) {
           return alert("error: " + className + " name is missing");
         }
         if (findObjByNameOrIdent(ctx, className, name)) {
-          return alert("error: " + className + " (" + name + ") is already known.");
+          return alert("error: " + className + " (" + name + ") is already known");
         }
         ident = className + "-" + name;
         var params = _.reduce(props || [], function(r, prop) {
