@@ -42,8 +42,4 @@ function sectionBucketEventHandlers(ctx, page, r) {
       sectionBucketRefresh(ctx, page, ident);
     }
   });
-
-  function getNewBucketPath(pool) {
-    return pool + "/" + $("#bucket_name").val();
-  }
 }
