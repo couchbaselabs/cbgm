@@ -68,7 +68,7 @@ function sectionNodeEventHandlers(ctx, page, r) {
   });
 }
 
-function sectionNodeHierarchy(nodeKnownArr, nodeWantedArr) {
+function sectionNodeHierarchy(nodeKnownArr, nodeWantedArr, obj) {
   var mapContainerChildren = {};
   var visitContainer = function(node) {
     var parent = "/";
@@ -91,7 +91,11 @@ function sectionNodeHierarchy(nodeKnownArr, nodeWantedArr) {
     res.push(path[path.length - 2]);
     res.push("<ul>");
     _.each(mapContainerChildren[container], function(childKind, child) {
-        res.push('<li class="' + childKind + '">');
+        var classAttr = "";
+        if (obj && obj.class == childKind && obj.name == child) {
+          classAttr = ' current';
+        }
+        res.push('<li class="' + childKind + classAttr + '">');
         if (childKind == "nodeContainer") {
           gen(child);
         } else {
