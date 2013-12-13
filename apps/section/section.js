@@ -32,14 +32,14 @@ function newNamedObjEventHandler(ctx, page, className, cb, props) {
         }
         ident = className + "-" + name;
         var params = _.reduce(props || [], function(r, prop) {
-            var val = prop[1]($("#" + className + "_" + (prop[2] || prop[0])).val());
+            var val = prop[1]($("#" + className + "_" + prop[0]).val() || prop[2] || "");
             r[prop[0]] = val;
             return r;
           }, { "name": name });
         ctx.setObj(ident, ctx.newObj(className, params).result);
       });
     _.each(props, function(prop) {
-        $("#" + className + "_" + (prop[2] || prop[0])).val("");
+        $("#" + className + "_" + prop[0]).val("");
       });
     $("#" + className + "_name").val("");
     cb(ctx, page, ident);

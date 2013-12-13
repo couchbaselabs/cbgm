@@ -14,37 +14,21 @@
                  placeholder="optional usage"/>
           <input id="nodeKnown_weight"
                  placeholder="optional weight"/>
-          <button class="btn" on-click="newNodeKnown">
+          <button class="btn newNodeKnown" on-click="newNodeKnown">
             register nodes
           </button>
         </div>
         {{# nodeUnwantedNames.length > 0 || nodeWantedArr.length > 0 }}
           <div class="subSection">
             nodes not in cluster:
-            <ul>
-              {{#nodeUnwantedNames}}
-                <li class="{{ 'nodeKnown' == obj.class && . == obj.name && 'current' }}">
-                  <input type="checkbox" class="node nodeKnown"
-                         id="nodeKnown-{{.}}"/>
-                  <a href="#sectionNode:nodeKnown-{{.}}">{{.}}</a>
-                </li>
-              {{/nodeUnwantedNames}}
-            </ul>
+            {{{sectionNodeHierarchy(ctx, "nodeKnown", nodeUnwantedNames, obj)}}}
             <button class="btn" on-click="addNodes">
               add nodes to cluster
             </button>
           </div>
           <div class="subSection">
             nodes in cluster:
-            <ul>
-              {{#nodeWantedArr}}
-                <li class="{{ .class == obj.class && .name == obj.name && 'current' }}">
-                  <input type="checkbox" class="node nodeWanted"
-                         id="nodeWanted-{{.name}}"/>
-                  <a href="#sectionNode:nodeWanted-{{.name}}">{{.name}}</a>
-                </li>
-              {{/nodeWantedArr}}
-            </ul>
+            {{{sectionNodeHierarchy(ctx, "nodeWanted", nodeWantedNames, obj)}}}
             <button class="btn" on-click="removeNodes">
               remove nodes from cluster
             </button>
@@ -52,15 +36,7 @@
         {{/}}
       </div>
     </div>
-    <div class="span3">
-      {{# nodeUnwantedNames.length > 0 || nodeWantedArr.length > 0 }}
-        <div class="nodeHierarchy">
-          node hierarchy:
-          {{{sectionNodeHierarchy(nodeKnownArr, nodeWantedArr, obj)}}}
-        </div>
-      {{/}}
-    </div>
-    <div class="span4">
+    <div class="span7">
       <div class="rhs">
         {{#obj}}{{>__object}}{{/obj}}
       </div>

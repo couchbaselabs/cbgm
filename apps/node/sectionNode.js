@@ -35,7 +35,7 @@ function sectionNodeEventHandlers(ctx, page, r) {
       newNamedObjEventHandler(ctx, page, "nodeKnown", sectionNodeRefresh,
                               [ ["container", String],
                                 ["usage", function(s) { return s.split(','); }],
-                                ["weight", parseFloat] ]),
+                                ["weight", parseFloat, "1" ] ]),
     "addNodes": function(event) {
       _.each(_.pluck(_.where($("input.nodeKnown"), { "checked": true }), "id"),
              function(ident) {
@@ -67,22 +67,21 @@ function sectionNodeEventHandlers(ctx, page, r) {
   });
 }
 
-function sectionNodeHierarchy(nodeKnownArr, nodeWantedArr, obj) {
+function sectionNodeHierarchy(ctx, className, nodeNames, obj) {
   var mapContainerChildren = {};
-  var visitContainer = function(node) {
-    var parent = "/";
-    if (node.container) {
-      _.each(node.container.split("/"), function(x) {
-          mapContainerChildren[parent] = mapContainerChildren[parent] || {};
-          mapContainerChildren[parent][parent + x + "/"] = "nodeContainer";
-          parent = parent + x + "/";
-        });
-    }
-    mapContainerChildren[parent] = mapContainerChildren[parent] || {};
-    mapContainerChildren[parent][node.name] = node.class;
-  }
-  _.each(nodeKnownArr, visitContainer);
-  _.each(nodeWantedArr, visitContainer);
+  _.each(nodeNames, function(nodeName) {
+      var node = ctx.getObj(className + "-" + nodeName).result;
+      var parent = "/";
+      if (node.container) {
+        _.each(node.container.split("/"), function(x) {
+            mapContainerChildren[parent] = mapContainerChildren[parent] || {};
+            mapContainerChildren[parent][parent + x + "/"] = "nodeContainer";
+            parent = parent + x + "/";
+          });
+      }
+      mapContainerChildren[parent] = mapContainerChildren[parent] || {};
+      mapContainerChildren[parent][node.name] = node.class;
+    });
 
   var res = [];
   function gen(container) {
@@ -98,6 +97,8 @@ function sectionNodeHierarchy(nodeKnownArr, nodeWantedArr, obj) {
         if (childKind == "nodeContainer") {
           gen(child);
         } else {
+          res.push('<input type="checkbox" class="node ' + childKind + '"' +
+                   ' id="' + childKind + '-' + child + '"/>');
           res.push('<a href="#sectionNode:' + childKind + '-' + child + '">' +
                    child + '</a>');
         }
