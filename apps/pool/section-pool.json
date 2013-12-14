@@ -1,5 +1,5 @@
 { "class": "section",
   "title": "pools",
-  "target": "#sectionPool:",
+  "target": "#uiPool:",
   "displayOrder": 20
 }
