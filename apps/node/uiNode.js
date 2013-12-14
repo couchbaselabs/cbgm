@@ -1,12 +1,12 @@
 // Only U/I related JS goes here.
 
-function sectionNode(ctx, page) {
-  main(ctx, page, "sectionNode");
-  sectionNodeEventHandlers(ctx, page, page.r);
-  sectionNodeRefresh(ctx, page);
+function uiNode(ctx, page) {
+  main(ctx, page, "uiNode");
+  uiNodeEventHandlers(ctx, page, page.r);
+  uiNodeRefresh(ctx, page);
 }
 
-function sectionNodeRefresh(ctx, page, ident) {
+function uiNodeRefresh(ctx, page, ident) {
   var obj =
     findObjByNameOrIdent(ctx, "nodeWanted", ident || page.ident) ||
     findObjByNameOrIdent(ctx, "nodeKnown", ident || page.ident);
@@ -23,16 +23,16 @@ function sectionNodeRefresh(ctx, page, ident) {
     nodeWantedArr: nodeWantedArr,
     nodeWantedNames: nodeWantedNames,
     nodeUnwantedNames: _.difference(nodeKnownNames, nodeWantedNames),
-    sectionNodeHierarchy: sectionNodeHierarchy
+    uiNodeHierarchy: uiNodeHierarchy
   });
 
   $("input.node").attr("checked", false);
 }
 
-function sectionNodeEventHandlers(ctx, page, r) {
+function uiNodeEventHandlers(ctx, page, r) {
   r.on({
     "newNodeKnown":
-      newNamedObjEventHandler(ctx, page, "nodeKnown", sectionNodeRefresh,
+      newNamedObjEventHandler(ctx, page, "nodeKnown", uiNodeRefresh,
                               [ ["container", String],
                                 ["usage", function(s) { return s.split(','); }],
                                 ["weight", parseFloat, "1" ] ]),
@@ -51,23 +51,23 @@ function sectionNodeEventHandlers(ctx, page, r) {
                                _.omit(nk, "class", "createdAt", "updatedAt")).result;
                ctx.setObj("nodeWanted-" + nw.name, nw);
              });
-      sectionNodeRefresh(ctx, page);
+      uiNodeRefresh(ctx, page);
     },
     "removeNodes": function(event) {
       _.each(_.pluck(_.where($("input.nodeWanted"), { "checked": true }), "id"),
              function(ident) {
                var nw = ctx.getObj(ident).result;
-               if (!nw || nw.class != "nodeWanted") {
+              if (!nw || nw.class != "nodeWanted") {
                  return alert("error: not a nodeWanted, ident: " + ident);
                }
                ctx.delObj(ident);
              });
-      sectionNodeRefresh(ctx, page);
+      uiNodeRefresh(ctx, page);
     }
   });
 }
 
-function sectionNodeHierarchy(ctx, className, nodeNames, obj) {
+function uiNodeHierarchy(ctx, className, nodeNames, obj) {
   var mapContainerChildren = {};
   _.each(nodeNames, function(nodeName) {
       var node = ctx.getObj(className + "-" + nodeName).result;
@@ -99,7 +99,7 @@ function sectionNodeHierarchy(ctx, className, nodeNames, obj) {
         } else {
           res.push('<input type="checkbox" class="node ' + childKind + '"' +
                    ' id="' + childKind + '-' + child + '"/> ');
-          res.push('<a href="#sectionNode:' + childKind + '-' + child + '">' +
+          res.push('<a href="#uiNode:' + childKind + '-' + child + '">' +
                    child + '</a>');
         }
         res.push("</li>");

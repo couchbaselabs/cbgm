@@ -21,14 +21,14 @@
         {{# nodeUnwantedNames.length > 0 || nodeWantedArr.length > 0 }}
           <div class="subSection nodeHierarchy">
             nodes not in cluster:
-            {{{sectionNodeHierarchy(ctx, "nodeKnown", nodeUnwantedNames, obj)}}}
+            {{{uiNodeHierarchy(ctx, "nodeKnown", nodeUnwantedNames, obj)}}}
             <button class="btn" on-click="addNodes">
               add nodes to cluster
             </button>
           </div>
           <div class="subSection nodeHierarchy">
             nodes in cluster:
-            {{{sectionNodeHierarchy(ctx, "nodeWanted", nodeWantedNames, obj)}}}
+            {{{uiNodeHierarchy(ctx, "nodeWanted", nodeWantedNames, obj)}}}
             <button class="btn" on-click="removeNodes">
               remove nodes from cluster
             </button>

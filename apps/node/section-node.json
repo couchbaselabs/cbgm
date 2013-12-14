@@ -1,5 +1,5 @@
 { "class": "section",
   "title": "nodes",
-  "target": "#sectionNode:",
+  "target": "#uiNode:",
   "displayOrder": 10
 }
