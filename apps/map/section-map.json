@@ -1,0 +1,5 @@
+{ "class": "section",
+  "title": "maps",
+  "target": "#uiMap:",
+  "displayOrder": 60
+}
