@@ -1,5 +1,5 @@
 { "class": "section",
   "title": "partitions",
-  "target": "#sectionPartition:",
+  "target": "#uiPartition:",
   "displayOrder": 50
 }

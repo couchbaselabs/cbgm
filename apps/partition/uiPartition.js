@@ -1,6 +1,6 @@
 // Only U/I related JS goes here.
 
-function sectionPartition(ctx, page) {
+function uiPartition(ctx, page) {
   page.want = page.want ||
     { keyFunc: "hash-crc32",
       model: "masterSlave",
@@ -14,8 +14,8 @@ function sectionPartition(ctx, page) {
     };
   sortEvents(page.obj);
   page.visualResourceEvent = visualResourceEvent;
-  main(ctx, page, "sectionPartition");
-  sectionPartitionEventHandlers(ctx, page.r);
+  main(ctx, page, "uiPartition");
+  uiPartitionEventHandlers(ctx, page.r);
 }
 
 var modelToConstraints = {
@@ -23,7 +23,7 @@ var modelToConstraints = {
   multiMaster: "master"
 }
 
-function sectionPartitionEventHandlers(ctx, r) {
+function uiPartitionEventHandlers(ctx, r) {
   r.on({
     "rebalanceMap": function(event) {
       var obj = r.get("obj");
