@@ -1,12 +1,12 @@
 // Only U/I related JS goes here.
 
-function sectionBucket(ctx, page) {
-  main(ctx, page, "sectionBucket");
-  sectionBucketEventHandlers(ctx, page, page.r);
-  sectionBucketRefresh(ctx, page);
+function uiBucket(ctx, page) {
+  main(ctx, page, "uiBucket");
+  uiBucketEventHandlers(ctx, page, page.r);
+  uiBucketRefresh(ctx, page);
 }
 
-function sectionBucketRefresh(ctx, page, ident) {
+function uiBucketRefresh(ctx, page, ident) {
   var obj = findObjByNameOrIdent(ctx, "bucket", ident || page.ident, "path");
 
   var pools = _.sortBy(instances(ctx, "pool"), "name");
@@ -18,7 +18,7 @@ function sectionBucketRefresh(ctx, page, ident) {
   });
 }
 
-function sectionBucketEventHandlers(ctx, page, r) {
+function uiBucketEventHandlers(ctx, page, r) {
   r.on({
     "newBucket": function(event) {
       var pool = $("#bucket_pool").val();
@@ -44,7 +44,7 @@ function sectionBucketEventHandlers(ctx, page, r) {
         }).result);
       });
       $("#bucket_name").val("");
-      sectionBucketRefresh(ctx, page, ident);
+      uiBucketRefresh(ctx, page, ident);
     }
   });
 }
