@@ -98,7 +98,7 @@ function sectionNodeHierarchy(ctx, className, nodeNames, obj) {
           gen(child);
         } else {
           res.push('<input type="checkbox" class="node ' + childKind + '"' +
-                   ' id="' + childKind + '-' + child + '"/>');
+                   ' id="' + childKind + '-' + child + '"/> ');
           res.push('<a href="#sectionNode:' + childKind + '-' + child + '">' +
                    child + '</a>');
         }
