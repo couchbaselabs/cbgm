@@ -1,12 +1,9 @@
 var resourceKeyFunc = {
+  "identity": {
+    allocPartitions: allocNumPartitions
+  },
   "hash-crc32": {
-    allocPartitions: function(req) {
-      var res = {};
-      for (var i = 0; i < req.wantPartitionParams.numPartitions; i++) {
-        res[i.toString()] = {};
-      }
-      return res;
-    }
+    allocPartitions: allocNumPartitions
   },
   "range": {
     allocPartitions: function(req) {
@@ -18,3 +15,11 @@ var resourceKeyFunc = {
     }
   }
 };
+
+function allocNumPartitions(req) {
+  var res = {};
+  for (var i = 0; i < req.wantPartitionParams.numPartitions; i++) {
+    res[i.toString()] = {};
+  }
+  return res;
+}
