@@ -1,0 +1,26 @@
+{{>main_header}}
+
+<div class="container-fluid main">
+  <div class="row-fluid">
+    <div class="span3">
+      <div class="lhs">
+        <h1>maps</h1>
+        <button class="btn btn-small" on-click="refreshMaps">
+          refresh maps
+        </button>
+        <ul class="warnings">
+          {{#warnings}}
+            <li>{{.}}</li>
+          {{/warnings}}
+        </ul>
+      </div>
+    </div>
+    <div class="span7">
+      <div class="rhs">
+        {{#obj}}{{>__object}}{{/obj}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{>main_footer}}
