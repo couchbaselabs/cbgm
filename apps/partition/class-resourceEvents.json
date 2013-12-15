@@ -2,6 +2,9 @@
   "name": "resourceEvents",
   "super": "object",
   "properties": [
+    { "name": "name",
+      "propertyKind": "string"
+    },
     { "class": "propertyArray",
       "name": "events",
       "propertyKind": "resourceEvent"

@@ -8,6 +8,18 @@
         <button class="btn btn-small" on-click="refreshMaps">
           refresh maps
         </button>
+        {{# resourceEvents.length > 0 }}
+          <div class="subSection">
+            maps:
+            <ul>
+              {{#resourceEvents}}
+                <li class="{{ .class == obj.class && .name == obj.name && 'current' }}">
+                  <a href="#uiMap:resourceEvents-{{.name}}">{{.name}}</a>
+                </li>
+              {{/resourceEvents}}
+            </ul>
+          </div>
+        {{/}}
         <ul class="warnings">
           {{#warnings}}
             <li>{{.}}</li>
@@ -17,7 +29,25 @@
     </div>
     <div class="span7">
       <div class="rhs">
-        {{#obj}}{{>__object}}{{/obj}}
+        {{# obj.class == 'resourceEvents' }}
+          {{#obj}}
+            <ul class="visual">
+            {{#events:eventIdx}}
+              {{# class == "partitionMap" }}
+                <li class="resourceEvent">
+                  {{{ visualResourceEvent(.) }}}
+                  <div class="controls">
+                    <button id="{{when}}" class="btn btn-mini" on-click="scheduleMoves">
+                      moves
+                    </button>
+                  </div>
+                </li>
+              {{/}}
+            {{/events}}
+            </ul>
+          {{/obj}}
+          <div class="schedule">{{schedule}}</div>
+        {{/}}
       </div>
     </div>
   </div>

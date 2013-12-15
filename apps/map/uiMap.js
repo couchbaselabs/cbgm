@@ -7,15 +7,16 @@ function uiMap(ctx, page) {
 }
 
 function uiMapRefresh(ctx, page, ident) {
-  var obj = findObjByNameOrIdent(ctx, "map", ident || page.ident);
+  var obj = findObjByNameOrIdent(ctx, "resourceEvents", ident || page.ident);
   renderObj(ctx, page.r, obj, {
-    mapArr: _.sortBy(instances(ctx, "map"), "name")
+    resourceEvents: _.sortBy(instances(ctx, "resourceEvents"), "name")
   });
 }
 
 function uiMapEventHandlers(ctx, page, r) {
   r.on({
     "refreshMaps": function(event) {
+      refreshMaps(ctx);
       uiMapRefresh(ctx, page);
     }
   });

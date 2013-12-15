@@ -1,0 +1,7 @@
+{ "class": "mapWanted",
+  "forEveryInstanceOf": null,
+  "keyFunc":"hash-identity",
+  "model":"masterSlave",
+  "numPartitions":1,
+  "constraints":{"slave": 0}
+}
