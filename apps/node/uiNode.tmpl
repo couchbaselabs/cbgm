@@ -18,7 +18,7 @@
             register nodes
           </button>
         </div>
-        {{# nodeUnwantedNames.length > 0 || nodeWantedArr.length > 0 }}
+        {{# nodeUnwantedNames.length > 0 }}
           <div class="subSection nodeHierarchy">
             nodes not in cluster:
             {{{uiNodeHierarchy(ctx, "nodeKnown", nodeUnwantedNames, obj)}}}
@@ -26,17 +26,21 @@
               add nodes to cluster
             </button>
           </div>
-          <div class="subSection nodeHierarchy">
-            nodes in cluster:
-            {{{uiNodeHierarchy(ctx, "nodeWanted", nodeWantedNames, obj)}}}
-            <button class="btn" on-click="removeNodes">
-              remove nodes from cluster
-            </button>
-          </div>
         {{/}}
       </div>
     </div>
-    <div class="span7">
+    <div class="span3">
+      {{# nodeWantedArr.length > 0 }}
+        <div class="subSection nodeHierarchy">
+          nodes in cluster:
+          {{{uiNodeHierarchy(ctx, "nodeWanted", nodeWantedNames, obj)}}}
+          <button class="btn" on-click="removeNodes">
+            remove nodes from cluster
+          </button>
+        </div>
+      {{/}}
+    </div>
+    <div class="span4">
       <div class="rhs">
         {{#obj}}{{>__object}}{{/obj}}
       </div>
