@@ -42,7 +42,9 @@
     </div>
     <div class="span4">
       <div class="rhs">
-        {{#obj}}{{>__object}}{{/obj}}
+        {{# obj && (obj.class == "nodeKnown" || obj.class == "nodeWanted") }}
+          {{#obj}}{{>__object}}{{/obj}}
+        {{/}}
       </div>
     </div>
   </div>

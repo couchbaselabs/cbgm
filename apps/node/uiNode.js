@@ -9,7 +9,8 @@ function uiNode(ctx, page) {
 function uiNodeRefresh(ctx, page, ident) {
   var obj =
     findObjByNameOrIdent(ctx, "nodeWanted", ident || page.ident) ||
-    findObjByNameOrIdent(ctx, "nodeKnown", ident || page.ident);
+    findObjByNameOrIdent(ctx, "nodeKnown", ident || page.ident) ||
+    page.obj;
 
   var nodeKnownArr = _.sortBy(instances(ctx, "nodeKnown"), "name");
   var nodeKnownNames = _.pluck(nodeKnownArr, "name");
