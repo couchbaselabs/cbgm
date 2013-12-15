@@ -31,20 +31,23 @@ function refreshMaps(ctx) {
         constraints: { slave: bucket.numSlaves || 0 },
         hierarchyRules: {}
       };
-      refreshMap(ctx, want, nodesWanted, "kv_" + bucket.path, errs, warnings);
+      var nodesToUse = _.filter(nodesWanted, function(node) {
+          return _.isEmpty(node.usage) || _.contains(node.usage, "kv");
+        });
+      refreshMap(ctx, want, nodesToUse, "kv_" + bucket.path, errs, warnings);
     });
 
   return { errs: errs, warnings: warnings };
 }
 
-function refreshMap(ctx, want, nodesWanted, name, errs, warnings) {
+function refreshMap(ctx, want, nodesToUse, name, errs, warnings) {
   var resourceEventsIdent = "resourceEvent-" + name;
   var prevResourceEvents = ctx.getObj(resourceEventsIdent).result;
   if (!prevResourceEvents) {
     prevResourceEvents = ctx.newObj("resourceEvents").result;
   }
-  var nodeNames = _.pluck(nodesWanted, "name");
-  var nodeWeights = _.reduce(nodesWanted, function(w, node) {
+  var nodeNames = _.pluck(nodesToUse, "name");
+  var nodeWeights = _.reduce(nodesToUse, function(w, node) {
       if (node.weight) {
         w[node.name] = node.weight;
       }

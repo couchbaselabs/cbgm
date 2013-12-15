@@ -34,7 +34,9 @@ function uiNodeEventHandlers(ctx, page, r) {
     "newNodeKnown":
       newNamedObjEventHandler(ctx, page, "nodeKnown", uiNodeRefresh,
                               [ ["container", String],
-                                ["usage", function(s) { return s.split(','); }],
+                                ["usage", function(s) {
+                                    return _.compact(s.split(','));
+                                  }],
                                 ["weight", parseFloat, "1" ] ]),
     "addNodes": function(event) {
       _.each(_.pluck(_.where($("input.nodeKnown"), { "checked": true }), "id"),
