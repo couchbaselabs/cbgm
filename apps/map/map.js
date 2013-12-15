@@ -23,16 +23,15 @@ function refreshMaps(ctx) {
   var warnings = [];
   var nodesWanted = instances(ctx, "nodeWanted");
 
-  var want = {
-    keyFunc: "hash-crc32",
-    model: "masterSlave",
-    numPartitions: 10,
-    constraints: { slave: 1 },
-    hierarchyRules: {}
-  };
-
   _.each(instances(ctx, "bucket"), function(bucket) {
-      refreshMap(ctx, want, nodesWanted, "bucket_" + bucket.path, errs, warnings);
+      var want = {
+        keyFunc: "hash-crc32",
+        model: "masterSlave",
+        numPartitions: bucket.numPartitions || 1024,
+        constraints: { slave: bucket.numSlaves || 0 },
+        hierarchyRules: {}
+      };
+      refreshMap(ctx, want, nodesWanted, "kv_" + bucket.path, errs, warnings);
     });
 
   return { errs: errs, warnings: warnings };
