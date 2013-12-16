@@ -1,0 +1,21 @@
+{ "class": "class",
+  "name": "index",
+  "super": "object",
+  "properties": [
+    { "name": "path",
+      "propertyKind": "string"
+    },
+    { "name": "kind",
+      "propertyKind": "string"
+    },
+    { "name": "numPartitions",
+      "propertyKind": "int"
+    },
+    { "name": "numSlaves",
+      "propertyKind": "int"
+    },
+    { "name": "perNodeMemory",
+      "propertyKind": "int"
+    }
+  ]
+}

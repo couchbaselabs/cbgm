@@ -1,0 +1,39 @@
+{{>main_header}}
+
+<div class="container-fluid main">
+  <div class="row-fluid">
+    <div class="span3">
+      <div class="lhs">
+        <h1>indexes</h1>
+        <div>
+          <select id="index_bucket">
+            {{#bucketPaths}}
+              <option value="{{.}}">{{.}}</option>
+            {{/bucketPaths}}
+          </select>
+          <input id="index_name" on-change="newIndex"
+                 placeholder="new index names"/>
+        </div>
+        {{# indexes.length > 0 }}
+          <div class="subSection">
+            indexes:
+            <ul>
+              {{#indexes}}
+                <li class="{{ .class == obj.class && .path == obj.path && 'current' }}">
+                  <a href="#uiIndex:index-{{.path}}">{{.path}}</a>
+                </li>
+              {{/indexes}}
+            </ul>
+          </div>
+        {{/}}
+      </div>
+    </div>
+    <div class="span7">
+      <div class="rhs">
+        {{#obj}}{{>__object}}{{/obj}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{>main_footer}}

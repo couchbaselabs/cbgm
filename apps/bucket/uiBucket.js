@@ -8,13 +8,11 @@ function uiBucket(ctx, page) {
 
 function uiBucketRefresh(ctx, page, ident) {
   var obj = findObjByNameOrIdent(ctx, "bucket", ident || page.ident, "path");
-
   var pools = _.sortBy(instances(ctx, "pool"), "name");
-  var poolNames = _.pluck(pools, "name");
 
   renderObj(ctx, page.r, obj, {
     buckets: _.sortBy(instances(ctx, "bucket"), "path"),
-    poolNames: poolNames
+    poolNames: _.pluck(pools, "name")
   });
 }
 
