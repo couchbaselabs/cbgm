@@ -11,8 +11,17 @@
               <option value="{{.}}">{{.}}</option>
             {{/bucketPaths}}
           </select>
-          <input id="index_name" on-change="newIndex"
+          <input id="index_name"
                  placeholder="new index names"/>
+          <input id="index_numPartitions"
+                 placeholder="number of partitions"/>
+          <input id="index_numSlaves"
+                 placeholder="replica count"/>
+          <input id="index_perNodeMemory"
+                 placeholder="RAM quota (MB) per node"/>
+          <button class="btn newIndex" on-click="newIndex">
+            create indexes
+          </button>
         </div>
         {{# indexes.length > 0 }}
           <div class="subSection">
