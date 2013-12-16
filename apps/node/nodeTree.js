@@ -1,13 +1,11 @@
-// The rule is an int, where 10's place is tree ancestor inclusion
-// level, and 1's place is tree ancestor exclusion level.  Example: a
-// rule value of 21 == 2*10 + 1, means include nodes with the same
-// grandparent (level 2), but exclude nodes with the same parent
-// (level 1).
-function includeExcludeNodes(node, rule, mapParents, mapChildren) {
-  var incLevels = Math.floor(rule / 10);
-  var excLevels = rule % 10;
-  var incNodes = findLeaves(findAncestor(node, mapParents, incLevels), mapChildren);
-  var excNodes = findLeaves(findAncestor(node, mapParents, excLevels), mapChildren);
+// The includeLevel is tree ancestor inclusion level, and excludeLevel
+// is tree ancestor exclusion level.  Example: includeLevel of 2 and
+// excludeLevel of 1 means include nodes with the same grandparent
+// (level 2), but exclude nodes with the same parent (level 1).
+function includeExcludeNodes(node, includeLevel, excludeLevel,
+                             mapParents, mapChildren) {
+  var incNodes = findLeaves(findAncestor(node, mapParents, includeLevel), mapChildren);
+  var excNodes = findLeaves(findAncestor(node, mapParents, excludeLevel), mapChildren);
   return _.difference(incNodes, excNodes);
 }
 

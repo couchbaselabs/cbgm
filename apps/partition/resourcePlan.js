@@ -168,7 +168,8 @@ function planNextMap(ctx, req) {
     _.each(req.hierarchyRules[state], function(stateHierarchyRule) {
         var hierarchyCandidates =
           includeExcludeNodes(highestPriorityNode || hierarchyNodes[0],
-                              stateHierarchyRule,
+                              stateHierarchyRule.includeLevel || 0,
+                              stateHierarchyRule.excludeLevel || 0,
                               req.hierarchy,
                               req.hierarchyChildren);
         hierarchyCandidates =
