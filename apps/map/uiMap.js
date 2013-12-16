@@ -18,6 +18,7 @@ function uiMapEventHandlers(ctx, page, r) {
     "refreshMaps": function(event) {
       refreshMaps(ctx);
       uiMapRefresh(ctx, page);
-    }
+    },
+    "scheduleMoves": scheduleMovesEventHandler(ctx, r)
   });
 }

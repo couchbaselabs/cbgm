@@ -19,8 +19,12 @@
           </button>
         </div>
         {{# nodeUnwantedNames.length > 0 }}
-          <div class="subSection nodeHierarchy">
+          <div class="subSection nodeHierarchy nodeUnwantedNames">
             nodes not in cluster:
+            <a onclick="$('.nodeUnwantedNames input[type=checkbox]').trigger('click')"
+               class="toggle">
+              (toggle)
+            </a>
             {{{uiNodeHierarchy(ctx, "nodeKnown", nodeUnwantedNames, obj)}}}
             <button class="btn" on-click="addNodes">
               add nodes to cluster
@@ -31,8 +35,12 @@
     </div>
     <div class="span3">
       {{# nodeWantedArr.length > 0 }}
-        <div class="subSection nodeHierarchy">
+        <div class="subSection nodeHierarchy nodeWantedNames">
           nodes in cluster:
+          <a onclick="$('.nodeWantedNames input[type=checkbox]').trigger('click')"
+             class="toggle">
+            (toggle)
+          </a>
           {{{uiNodeHierarchy(ctx, "nodeWanted", nodeWantedNames, obj)}}}
           <button class="btn" on-click="removeNodes">
             remove nodes from cluster

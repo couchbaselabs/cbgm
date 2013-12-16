@@ -56,30 +56,7 @@ function uiPartitionEventHandlers(ctx, r) {
         refreshResourceEvents(r, res.nextResourceEvents, res.warnings);
       }
     },
-    "scheduleMoves": function(event) {
-      var resourceEvents = r.get("obj");
-      if (resourceEvents.class != "resourceEvents") {
-        return alert("error: obj is not a resourceEvents");
-      }
-      var partitionMapEndIdx;
-      var partitionMapEnd = _.find(resourceEvents.events, function(be, idx) {
-          partitionMapEndIdx = idx;
-          return be.class == "partitionMap" && be.when == event.node.id;
-        });
-      var partitionMapBeg = _.find(resourceEvents.events, function(be, idx) {
-          return be.class == "partitionMap" && idx > partitionMapEndIdx;
-        });
-      var res = scheduleMoves(ctx, {
-        wantPartitionParams: partitionMapEnd,
-        partitionMapBeg: partitionMapBeg,
-        partitionMapEnd: partitionMapEnd
-      });
-      console.log(res);
-      if (res.err) {
-        return alert("error: " + res.err);
-      }
-      r.set({ schedule: JSON.stringify(res.schedule), warnings: res.warnings });
-    },
+    "scheduleMoves": scheduleMovesEventHandler(ctx, r)
   });
   return r;
 }
@@ -97,4 +74,31 @@ function sortEvents(obj) {
 
 function deepClone(x) {
   return JSON.parse(JSON.stringify(x));
+}
+
+function scheduleMovesEventHandler(ctx, r) {
+  return function(event) {
+    var resourceEvents = r.get("obj");
+    if (resourceEvents.class != "resourceEvents") {
+      return alert("error: obj is not a resourceEvents");
+    }
+    var partitionMapEndIdx;
+    var partitionMapEnd = _.find(resourceEvents.events, function(be, idx) {
+        partitionMapEndIdx = idx;
+        return be.class == "partitionMap" && be.when == event.node.id;
+      });
+    var partitionMapBeg = _.find(resourceEvents.events, function(be, idx) {
+        return be.class == "partitionMap" && idx > partitionMapEndIdx;
+      });
+    var res = scheduleMoves(ctx, {
+      wantPartitionParams: partitionMapEnd,
+      partitionMapBeg: partitionMapBeg,
+      partitionMapEnd: partitionMapEnd
+    });
+    console.log(partitionMapBeg, partitionMapEnd, res);
+    if (res.err) {
+      return alert("error: " + res.err);
+    }
+    r.set({ schedule: JSON.stringify(res.schedule), warnings: res.warnings });
+  };
 }

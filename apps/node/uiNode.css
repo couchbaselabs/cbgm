@@ -17,6 +17,9 @@ button.newNodeKnown {
 .nodeHierarchy li.nodeWanted a:after {
     content: " ✔";
 }
-.nodeKnown .usage .propertyArray {
+.nodeHierarchy a.toggle {
+    font-size: 7pt;
+}
+.nodeKnown .usage .propertyArray, .nodeWanted .usage .propertyArray {
     margin-left: 10em;
 }
