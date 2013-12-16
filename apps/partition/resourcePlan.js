@@ -11,7 +11,8 @@ function rebalanceMap(ctx, req) {
 
 function validatePartitionSettings(ctx, req) {
   req.nextResourceEvents = _.clone(req.prevResourceEvents);
-  req.nextResourceEvents.events = sortDesc(req.nextResourceEvents.events || [], "when");
+  req.nextResourceEvents.events =
+    sortDesc(req.nextResourceEvents.events || [], "when");
 
   req.lastPartitionParams = _.findWhere(req.nextResourceEvents.events,
                                         { class: "partitionParams" });
@@ -144,8 +145,9 @@ function planNextMap(ctx, req) {
   }
 
   function findBestNodes(partitionId, partition, state, constraints) {
+    var stickiness =
+      req.partitionWeights[partitionId] || (req.stickiness || {})[state] || 1.5;
     var nodeWeights = req.nextPartitionMap.nodeWeights || {};
-    var stickiness = req.partitionWeights[partitionId] || (req.stickiness || {})[state] || 1.5;
     var statePriority = req.mapState[state].priority;
     var stateNodeCounts =
       req.stateNodeCounts[state] =
