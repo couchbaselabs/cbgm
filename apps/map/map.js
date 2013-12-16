@@ -33,7 +33,7 @@ function refreshMaps(ctx) {
           hierarchyRules: {}
           };
           var nodesToUse = _.filter(nodesWanted, function(node) {
-              return _.isEmpty(node.usage) || _.contains(node.usage, "kv");
+              return _.isEmpty(node.usage) || _.contains(node.usage, className);
             });
           refreshMap(ctx, want, nodesToUse, className + "_" + instance.path,
                      errs, warnings);
