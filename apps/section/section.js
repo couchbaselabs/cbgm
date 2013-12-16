@@ -21,26 +21,29 @@ function instances(ctx, className) {
 
 function newNamedObjEventHandler(ctx, page, className, cb, props) {
   return function(event) {
-    var names = $("#" + className + "_name").val();
+    var names = _.compact($("#" + className + "_name").val().split(","));
+    var errs = _.compact(_.map(names, function(name) {
+          if (!name) {
+            return "error: " + className + " name is missing";
+          }
+          if (findObjByNameOrIdent(ctx, className, name)) {
+            return "error: " + className + " (" + name + ") is already exists";
+          }
+        }));
+    if (!_.isEmpty(errs)) {
+      return alert(errs.join("\n"));
+    }
     var ident;
-    _.each(names.split(","), function(name) {
-        if (!name) {
-          return alert("error: " + className + " name is missing");
-        }
-        if (findObjByNameOrIdent(ctx, className, name)) {
-          return alert("error: " + className + " (" + name + ") is already known");
-        }
+    _.each(names, function(name) {
         ident = className + "-" + name;
         var params = _.reduce(props || [], function(r, prop) {
-            var val = prop[1]($("#" + className + "_" + prop[0]).val() || prop[2] || "");
-            r[prop[0]] = val;
+            r[prop[0]] =
+              prop[1]($("#" + className + "_" + prop[0]).val() || prop[2] || "");
             return r;
           }, { "name": name });
         ctx.setObj(ident, ctx.newObj(className, params).result);
       });
-    _.each(props, function(prop) {
-        $("#" + className + "_" + prop[0]).val("");
-      });
+    _.each(props, function(prop) { $("#" + className + "_" + prop[0]).val(""); });
     $("#" + className + "_name").val("");
     cb(ctx, page, ident);
   }
