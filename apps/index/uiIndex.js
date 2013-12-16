@@ -26,16 +26,21 @@ function uiIndexEventHandlers(ctx, page, r) {
       var names = $("#index_name").val();
       var ident;
       _.each(names.split(","), function(name) {
-          if (!name) {
-            return alert("error: index name is missing");
-          }
-          var path = bucket + "_" + name;
-          if (findObjByNameOrIdent(ctx, "index", path, "path")) {
-            return alert("error: index (" + path + ") is already known.");
-          }
+        if (!name) {
+          return alert("error: index name is missing");
+        }
+        var path = bucket + "_" + name;
+        if (findObjByNameOrIdent(ctx, "index", path, "path")) {
+          return alert("error: index (" + path + ") is already known.");
+        }
+        var target = $("#index_target").val();
+        if (!target) {
+          return alert("error: index target is missing");
+        }
         ident = "index-" + path;
         ctx.setObj(ident, ctx.newObj("index", {
           path: path,
+          target: target,
           numPartitions: parseInt($("#index_numPartitions").val() || "10"),
           numSlaves: parseInt($("#index_numSlaves").val() || "0"),
           perNodeMemory: parseInt($("#index_perNodeMemory").val() || "100")

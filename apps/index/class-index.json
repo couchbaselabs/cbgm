@@ -8,6 +8,9 @@
     { "name": "kind",
       "propertyKind": "string"
     },
+    { "name": "target",
+      "propertyKind": "string"
+    },
     { "name": "numPartitions",
       "propertyKind": "int"
     },
