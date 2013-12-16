@@ -23,18 +23,21 @@ function refreshMaps(ctx) {
   var warnings = [];
   var nodesWanted = instances(ctx, "nodeWanted");
 
-  _.each(instances(ctx, "bucket"), function(bucket) {
-      var want = {
-        keyFunc: "hash-crc32",
-        model: "masterSlave",
-        numPartitions: bucket.numPartitions || 1024,
-        constraints: { slave: bucket.numSlaves || 0 },
-        hierarchyRules: {}
-      };
-      var nodesToUse = _.filter(nodesWanted, function(node) {
-          return _.isEmpty(node.usage) || _.contains(node.usage, "kv");
+  _.each(["bucket", "index"], function(className) {
+      _.each(instances(ctx, className), function(instance) {
+          var want = {
+          keyFunc: "hash-crc32",
+          model: "masterSlave",
+          numPartitions: instance.numPartitions || 1024,
+          constraints: { slave: instance.numSlaves || 0 },
+          hierarchyRules: {}
+          };
+          var nodesToUse = _.filter(nodesWanted, function(node) {
+              return _.isEmpty(node.usage) || _.contains(node.usage, "kv");
+            });
+          refreshMap(ctx, want, nodesToUse, className + "_" + instance.path,
+                     errs, warnings);
         });
-      refreshMap(ctx, want, nodesToUse, "kv_" + bucket.path, errs, warnings);
     });
 
   return { errs: errs, warnings: warnings };
