@@ -5,7 +5,7 @@
     <div class="span3">
       <div class="lhs">
         <h1>buckets</h1>
-        <div>
+        <div class="newBucket">
           <select id="bucket_pool">
             {{#poolNames}}
               <option value="{{.}}">{{.}}</option>
@@ -15,10 +15,17 @@
                  placeholder="new bucket names"/>
           <input id="bucket_numPartitions"
                  placeholder="number of partitions"/>
-          <input id="bucket_numSlaves"
-                 placeholder="replica count"/>
           <input id="bucket_perNodeMemory"
                  placeholder="RAM quota (MB) per node"/>
+          <input id="bucket_numSlaves"
+                 placeholder="replica count"/>
+          <label>replica container rules
+            <select id="bucket_slaveHierarchyRules">
+              {{#hierarchyRuleNames}}
+                <option value="{{.}}">{{.}}</option>
+              {{/hierarchyRuleNames}}
+            </select>
+          </label>
           <button class="btn newBucket" on-click="newBucket">
             create buckets
           </button>

@@ -1,23 +1,3 @@
-var g_everyEligible = ["kvStore",
-                       "backIndexStore",
-                       "viewStore",
-                       "indexStore",
-                       "fullTextStore"];
-
-var g_services = ["governor",
-                  "janitor",
-                  "stats",
-                  "log",
-                  "healthCheck",
-                  "n1ql",
-                  "proxy",
-                  "autoFailOver",
-                  "xdcr",
-                  "backup"];
-
-var maps = ["for each bucket",
-            "for each index"];
-
 function refreshMaps(ctx) {
   var errs = [];
   var warnings = [];
@@ -26,11 +6,12 @@ function refreshMaps(ctx) {
   _.each(["bucket", "index"], function(className) {
       _.each(instances(ctx, className), function(instance) {
           var want = {
-          keyFunc: "hash-crc32",
-          model: "masterSlave",
-          numPartitions: instance.numPartitions || 1024,
-          constraints: { slave: instance.numSlaves || 0 },
-          hierarchyRules: {}
+            keyFunc: "hash-crc32",
+            model: "masterSlave",
+            numPartitions: instance.numPartitions || 1024,
+            constraints: { slave: instance.numSlaves || 0 },
+            partitionWeights: {},
+            hierarchyRules: { slave: instance.slaveHierarchyRules }
           };
           var nodesToUse = _.filter(nodesWanted, function(node) {
               return _.isEmpty(node.usage) || _.contains(node.usage, className);
@@ -56,6 +37,10 @@ function refreshMap(ctx, want, nodesToUse, name, errs, warnings) {
       }
       return w;
     }, {});
+  var mapContainerParent = {};
+  var mapContainerChildren = {};
+  nodeHierarchy(ctx, "nodeWanted", nodeNames,
+                mapContainerParent, mapContainerChildren);
   var params = {
     keyFunc: want.keyFunc,
     model: want.model,
@@ -63,8 +48,8 @@ function refreshMap(ctx, want, nodesToUse, name, errs, warnings) {
     numPartitions: want.numPartitions,
     constraints: want.constraints,
     nodeWeights: nodeWeights,
-    partitionWeights: {},
-    hierarchy: {},
+    partitionWeights: want.partitionWeights,
+    hierarchy: mapContainerParent,
     hierarchyRules: want.hierarchyRules
   };
   var res = rebalanceMap(ctx, {

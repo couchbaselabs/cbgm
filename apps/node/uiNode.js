@@ -71,22 +71,13 @@ function uiNodeEventHandlers(ctx, page, r) {
 }
 
 function uiNodeHierarchy(ctx, className, nodeNames, obj) {
-  var mapContainerChildren = {};
-  _.each(nodeNames, function(nodeName) {
-      var node = ctx.getObj(className + "-" + nodeName).result;
-      var parent = "/";
-      if (node.container) {
-        _.each(node.container.split("/"), function(x) {
-            mapContainerChildren[parent] = mapContainerChildren[parent] || {};
-            mapContainerChildren[parent][parent + x + "/"] = "nodeContainer";
-            parent = parent + x + "/";
-          });
-      }
-      mapContainerChildren[parent] = mapContainerChildren[parent] || {};
-      mapContainerChildren[parent][node.name] = node.class;
-    });
-
   var res = [];
+  var mapContainerParent = {};
+  var mapContainerChildren = {};
+
+  nodeHierarchy(ctx, className, nodeNames,
+                mapContainerParent, mapContainerChildren);
+
   function gen(container) {
     var path = container.split("/");
     res.push(path[path.length - 2]);
@@ -110,5 +101,6 @@ function uiNodeHierarchy(ctx, className, nodeNames, obj) {
     res.push("</ul>");
   }
   gen("/");
+
   return res.join("");
 }

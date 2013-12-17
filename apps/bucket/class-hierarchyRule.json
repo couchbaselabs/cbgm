@@ -1,0 +1,12 @@
+{ "class": "class",
+  "name": "hierarchyRule",
+  "super": "object",
+  "properties": [
+    { "name": "includeLevel",
+      "propertyKind": "int"
+    },
+    { "name": "excludeLevel",
+      "propertyKind": "int"
+    }
+  ]
+}

@@ -5,7 +5,7 @@
     <div class="span3">
       <div class="lhs">
         <h1>indexes</h1>
-        <div>
+        <div class="newIndex">
           <select id="index_bucket">
             {{#bucketPaths}}
               <option value="{{.}}">{{.}}</option>
@@ -17,10 +17,17 @@
                  placeholder="index target"/>
           <input id="index_numPartitions"
                  placeholder="number of partitions"/>
-          <input id="index_numSlaves"
-                 placeholder="replica count"/>
           <input id="index_perNodeMemory"
                  placeholder="RAM quota (MB) per node"/>
+          <input id="index_numSlaves"
+                 placeholder="replica count"/>
+          <label>replica container rules
+            <select id="index_slaveHierarchyRules">
+              {{#hierarchyRuleNames}}
+                <option value="{{.}}">{{.}}</option>
+              {{/hierarchyRuleNames}}
+            </select>
+          </label>
           <button class="btn newIndex" on-click="newIndex">
             create indexes
           </button>

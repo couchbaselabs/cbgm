@@ -1,6 +1,14 @@
 // Only U/I related JS goes here.
 
+var hierarchyRuleMap = {
+  "none": {},
+  "same container": { includeLevel: 1, excludeLevel: 0 },
+  "different container": { includeLevel: 2, excludeLevel: 1 },
+};
+var hierarchyRuleNames = ["none", "same container", "different container" ];
+
 function uiBucket(ctx, page) {
+  page.hierarchyRuleNames = hierarchyRuleNames;
   main(ctx, page, "uiBucket");
   uiBucketEventHandlers(ctx, page, page.r);
   uiBucketRefresh(ctx, page);
@@ -37,10 +45,13 @@ function uiBucketEventHandlers(ctx, page, r) {
         ctx.setObj(ident, ctx.newObj("bucket", {
           path: path,
           numPartitions: parseInt($("#bucket_numPartitions").val() || "10"),
+          perNodeMemory: parseInt($("#bucket_perNodeMemory").val() || "100"),
           numSlaves: parseInt($("#bucket_numSlaves").val() || "0"),
-          perNodeMemory: parseInt($("#bucket_perNodeMemory").val() || "100")
+          slaveHierarchyRules:
+            [hierarchyRuleMap[$("#bucket_slaveHierarchyRules").val() || "none"]]
         }).result);
       });
+      $(".newBucket input").val("");
       $("#bucket_name").val("");
       uiBucketRefresh(ctx, page, ident);
     }

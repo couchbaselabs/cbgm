@@ -1,6 +1,7 @@
 // Only U/I related JS goes here.
 
 function uiIndex(ctx, page) {
+  page.hierarchyRuleNames = hierarchyRuleNames;
   main(ctx, page, "uiIndex");
   uiIndexEventHandlers(ctx, page, page.r);
   uiIndexRefresh(ctx, page);
@@ -42,10 +43,13 @@ function uiIndexEventHandlers(ctx, page, r) {
           path: path,
           target: target,
           numPartitions: parseInt($("#index_numPartitions").val() || "10"),
+          perNodeMemory: parseInt($("#index_perNodeMemory").val() || "100"),
           numSlaves: parseInt($("#index_numSlaves").val() || "0"),
-          perNodeMemory: parseInt($("#index_perNodeMemory").val() || "100")
+          slaveHierarchyRules:
+            [hierarchyRuleMap[$("#index_slaveHierarchyRules").val() || "none"]]
         }).result);
       });
+      $(".newIndex input").val("");
       $("#index_name").val("");
       uiIndexRefresh(ctx, page, ident);
     }

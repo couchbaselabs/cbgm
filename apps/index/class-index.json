@@ -14,11 +14,15 @@
     { "name": "numPartitions",
       "propertyKind": "int"
     },
+    { "name": "perNodeMemory",
+      "propertyKind": "int"
+    },
     { "name": "numSlaves",
       "propertyKind": "int"
     },
-    { "name": "perNodeMemory",
-      "propertyKind": "int"
+    { "class": "propertyArray",
+      "name": "slaveHierarchyRules",
+      "propertyKind": "hierarchyRule"
     }
   ]
 }
