@@ -31,26 +31,32 @@ function uiBucketEventHandlers(ctx, page, r) {
       if (!pool) {
         return alert("error: please choose a pool for the bucket");
       }
-      var names = $("#bucket_name").val();
+      var names = _.compact($("#bucket_name").val().split(","));
+      var errs = _.compact(_.map(names, function(name) {
+            if (!name) {
+              return "error: bucket name is missing";
+            }
+            var path = pool + "_" + name;
+            if (findObjByNameOrIdent(ctx, "bucket", path, "path")) {
+              return "error: bucket (" + path + ") is already known.";
+            }
+          }));
+      if (!_.isEmpty(errs)) {
+        return alert(errs.join("\n"));
+      }
       var ident;
-      _.each(names.split(","), function(name) {
-          if (!name) {
-            return alert("error: bucket name is missing");
-          }
+      _.each(names, function(name) {
           var path = pool + "_" + name;
-          if (findObjByNameOrIdent(ctx, "bucket", path, "path")) {
-            return alert("error: bucket (" + path + ") is already known.");
-          }
-        ident = "bucket-" + path;
-        ctx.setObj(ident, ctx.newObj("bucket", {
-          path: path,
-          numPartitions: parseInt($("#bucket_numPartitions").val() || "10"),
-          perNodeMemory: parseInt($("#bucket_perNodeMemory").val() || "100"),
-          numSlaves: parseInt($("#bucket_numSlaves").val() || "0"),
-          slaveHierarchyRules:
-            [hierarchyRuleMap[$("#bucket_slaveHierarchyRules").val() || "none"]]
-        }).result);
-      });
+          ident = "bucket-" + path;
+          ctx.setObj(ident, ctx.newObj("bucket", {
+              path: path,
+              numPartitions: parseInt($("#bucket_numPartitions").val() || "10"),
+              perNodeMemory: parseInt($("#bucket_perNodeMemory").val() || "100"),
+              numSlaves: parseInt($("#bucket_numSlaves").val() || "0"),
+              slaveHierarchyRules:
+                [hierarchyRuleMap[$("#bucket_slaveHierarchyRules").val() || "none"]]
+            }).result);
+        });
       $(".newBucket input").val("");
       $("#bucket_name").val("");
       uiBucketRefresh(ctx, page, ident);
