@@ -24,31 +24,37 @@ function uiIndexEventHandlers(ctx, page, r) {
       if (!bucket) {
         return alert("error: please choose a bucket for the index");
       }
-      var names = $("#index_name").val();
+      var target = $("#index_target").val();
+      if (!target) {
+        return alert("error: index target is missing");
+      }
+      var names = _.compact($("#index_name").val().split(","));
+      var errs = _.compact(_.map(names, function(name) {
+          if (!name) {
+            return "error: index name is missing";
+          }
+          var path = bucket + "_" + name;
+          if (findObjByNameOrIdent(ctx, "index", path, "path")) {
+            return "error: index (" + path + ") is already known";
+          }
+        }));
+      if (!_.isEmpty(errs)) {
+        return alert(errs.join("\n"));
+      }
       var ident;
-      _.each(names.split(","), function(name) {
-        if (!name) {
-          return alert("error: index name is missing");
-        }
-        var path = bucket + "_" + name;
-        if (findObjByNameOrIdent(ctx, "index", path, "path")) {
-          return alert("error: index (" + path + ") is already known.");
-        }
-        var target = $("#index_target").val();
-        if (!target) {
-          return alert("error: index target is missing");
-        }
-        ident = "index-" + path;
-        ctx.setObj(ident, ctx.newObj("index", {
-          path: path,
-          target: target,
-          numPartitions: parseInt($("#index_numPartitions").val() || "10"),
-          perNodeMemory: parseInt($("#index_perNodeMemory").val() || "100"),
-          numSlaves: parseInt($("#index_numSlaves").val() || "0"),
-          slaveHierarchyRules:
-            [hierarchyRuleMap[$("#index_slaveHierarchyRules").val() || "none"]]
-        }).result);
-      });
+      _.each(names, function(name) {
+          var path = bucket + "_" + name;
+          ident = "index-" + path;
+          ctx.setObj(ident, ctx.newObj("index", {
+            path: path,
+            target: target,
+            numPartitions: parseInt($("#index_numPartitions").val() || "10"),
+            perNodeMemory: parseInt($("#index_perNodeMemory").val() || "100"),
+            numSlaves: parseInt($("#index_numSlaves").val() || "0"),
+            slaveHierarchyRules:
+              [hierarchyRuleMap[$("#index_slaveHierarchyRules").val() || "none"]]
+          }).result);
+        });
       $(".newIndex input").val("");
       $("#index_name").val("");
       uiIndexRefresh(ctx, page, ident);
