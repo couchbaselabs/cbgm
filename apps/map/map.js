@@ -13,15 +13,23 @@ function refreshMaps(ctx) {
             partitionWeights: {},
             hierarchyRules: { slave: instance.slaveHierarchyRules }
           };
-          var nodesToUse = _.filter(nodesWanted, function(node) {
-              return _.isEmpty(node.usage) || _.contains(node.usage, className);
-            });
+          var nodesToUse = filterNodesByUsage(nodesWanted, className);
           refreshMap(ctx, want, nodesToUse, className + "_" + instance.path,
                      errs, warnings);
         });
     });
 
   return { errs: errs, warnings: warnings };
+}
+
+function filterNodesByUsage(nodes, usage) {
+  var notUsage = "-" + usage;
+  return _.filter(nodes, function(node) {
+      var notDisallowed = _.every(node.usage, function(u) {
+          return u[0] == '-' && u != notUsage;
+        });
+      return notDisallowed || _.contains(node.usage, usage);
+    });
 }
 
 function refreshMap(ctx, want, nodesToUse, name, errs, warnings) {
