@@ -33,7 +33,7 @@ function filterNodesByUsage(nodes, usage) {
 }
 
 function refreshMap(ctx, want, nodesToUse, name, errs, warnings) {
-  var resourceEventsIdent = "resourceEvent-" + name;
+  var resourceEventsIdent = "resourceEvents-" + name;
   var prevResourceEvents = ctx.getObj(resourceEventsIdent).result;
   if (!prevResourceEvents) {
     prevResourceEvents = ctx.newObj("resourceEvents").result;
