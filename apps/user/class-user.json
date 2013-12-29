@@ -1,0 +1,20 @@
+{ "class": "class",
+  "name": "user",
+  "super": "object",
+  "properties": [
+    { "name": "createdAt",
+      "propertyKind": "dateTimeStamp"
+    },
+    { "name": "updatedAt",
+      "propertyKind": "dateTimeStamp",
+      "defaultValueExpr": "o.createdAt"
+    },
+    { "name": "name",
+      "propertyKind": "string",
+      "validateExpr": "validators.nonEmptyString"
+    },
+    { "name": "proof",
+      "propertyKind": "string"
+    }
+  ]
+}
