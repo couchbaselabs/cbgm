@@ -1,20 +1,23 @@
 var resourceKeyFunc = {
   "identity": {
-    allocPartitions: allocNumPartitions
+    allocPartitions: clonePartitions
   },
   "hash-crc32": {
     allocPartitions: allocNumPartitions
   },
   "range": {
-    allocPartitions: function(req) {
-      return _.reduce((req.lastPartitionMap && req.lastPartitionMap.partitions) || {},
-                      function(res, partition, partitionId) {
-                        res[partitionId] = {};
-                        return res;
-                      }, {});
-    }
+    allocPartitions: clonePartitions
   }
 };
+
+function clonePartitions(req) {
+  return _.reduce((req.lastPartitionMap && req.lastPartitionMap.partitions) ||
+                  req.initPartitions || {},
+                  function(res, partition, partitionId) {
+                    res[partitionId] = {};
+                    return res;
+                  }, {});
+}
 
 function allocNumPartitions(req) {
   var res = {};
