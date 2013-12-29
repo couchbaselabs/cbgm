@@ -12,7 +12,7 @@ var resourceKeyFunc = {
 
 function clonePartitions(req) {
   return _.reduce((req.lastPartitionMap && req.lastPartitionMap.partitions) ||
-                  req.initPartitions || {},
+                  (req.initPartitionsFunc && req.initPartitionsFunc(req)) || {},
                   function(res, partition, partitionId) {
                     res[partitionId] = {};
                     return res;

@@ -2,19 +2,21 @@ function refreshMaps(ctx) {
   var errs = [];
   var warnings = [];
   var nodesWanted = instances(ctx, "nodeWanted");
+  var mapKinds = [ { name: "bucket", keyFunc: "hash-crc32" },
+                   { name: "index", keyFunc: "hash-crc32" } ];
 
-  _.each(["bucket", "index"], function(className) {
-      _.each(instances(ctx, className), function(instance) {
+  _.each(mapKinds, function(mapKind) {
+      _.each(instances(ctx, mapKind.name), function(instance) {
           var want = {
-            keyFunc: "hash-crc32",
+            keyFunc: mapKind.keyFunc,
             model: "masterSlave",
             numPartitions: instance.numPartitions || 1024,
             constraints: { slave: instance.numSlaves || 0 },
             partitionWeights: {},
             hierarchyRules: { slave: instance.slaveHierarchyRules }
           };
-          var nodesToUse = filterNodesByUsage(nodesWanted, className);
-          refreshMap(ctx, want, nodesToUse, className + "_" + instance.path,
+          var nodesToUse = filterNodesByUsage(nodesWanted, mapKind.name);
+          refreshMap(ctx, want, nodesToUse, mapKind.name + "_" + instance.path,
                      errs, warnings);
         });
     });
