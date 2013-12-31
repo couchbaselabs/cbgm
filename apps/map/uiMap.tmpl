@@ -29,25 +29,9 @@
     </div>
     <div class="span7">
       <div class="rhs">
-        {{# obj.class == 'resourceEvents' }}
-          {{#obj}}
-            {{.name}}
-            <ul class="visual">
-            {{#events:eventIdx}}
-              {{# class == "partitionMap" }}
-                <li class="resourceEvent">
-                  {{{ visualResourceEvent(.) }}}
-                  <div class="controls">
-                    <button id="{{when}}" class="btn btn-mini" on-click="scheduleMoves">
-                      moves
-                    </button>
-                  </div>
-                </li>
-              {{/}}
-            {{/events}}
-            </ul>
-          {{/obj}}
-          <div class="schedule">{{schedule}}</div>
+        {{>resourceEventsVisual}}
+        {{# obj.class != 'resourceEvents' && obj.class != 'app' }}
+          {{#obj}}{{>__object}}{{/obj}}
         {{/}}
       </div>
     </div>

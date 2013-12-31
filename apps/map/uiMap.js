@@ -7,7 +7,7 @@ function uiMap(ctx, page) {
 }
 
 function uiMapRefresh(ctx, page, ident) {
-  var obj = findObjByNameOrIdent(ctx, "resourceEvents", ident || page.ident);
+  var obj = findObjByNameOrIdent(ctx, "resourceEvents", ident || page.ident) || page.obj;
   renderObj(ctx, page.r, obj, {
     resourceEvents: _.sortBy(instances(ctx, "resourceEvents"), "name")
   });
