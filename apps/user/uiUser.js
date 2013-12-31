@@ -7,7 +7,7 @@ function uiUser(ctx, page) {
 }
 
 function uiUserRefresh(ctx, page, ident) {
-  var obj = findObjByNameOrIdent(ctx, "user", ident || page.ident);
+  var obj = findObjByNameOrIdent(ctx, "user", ident || page.ident) || page.obj;
   renderObj(ctx, page.r, obj, {
     users: _.sortBy(instances(ctx, "user"), "name")
   });
@@ -15,6 +15,9 @@ function uiUserRefresh(ctx, page, ident) {
 
 function uiUserEventHandlers(ctx, page, r) {
   r.on({
-    "newUser": newNamedObjEventHandler(ctx, page, "user", uiUserRefresh)
+    "newUser": newNamedObjEventHandler(ctx, page, "user", uiUserRefresh,
+                                       [ ["roles", function(s) {
+                                             return _.compact(s.split(','));
+                                           }] ])
   });
 }

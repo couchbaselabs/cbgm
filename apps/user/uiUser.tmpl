@@ -6,8 +6,13 @@
       <div class="lhs">
         <h1>users</h1>
         <div>
-          <input id="user_name" on-change="newUser"
+          <input id="user_name"
                  placeholder="new user names"/>
+          <input id="user_roles"
+                 placeholder="roles"/>
+          <button class="btn newUser" on-click="newUser">
+            new users
+          </button>
         </div>
         {{# users.length > 0 }}
           <div class="subSection">

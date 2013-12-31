@@ -15,6 +15,10 @@
     },
     { "name": "proof",
       "propertyKind": "string"
+    },
+    { "class": "propertyArray",
+      "name": "roles",
+      "propertyKind": "string"
     }
   ]
 }
